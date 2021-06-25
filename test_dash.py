@@ -49,7 +49,7 @@ app.layout = html.Div([
                             )]),  
 
                     html.Div(["Hospital Capacity: ",
-                            dcc.Input(id='hcap', value=1000000, type='number')])
+                            dcc.Input(id='hcap', value=100000, type='number')])
                     ],
                 id="collapse",
                 ),
@@ -213,7 +213,27 @@ def update_graph(N,r0,hcap,
             pcont, pquar, pcross, pqhsp,  
             pj, ph, pc, pf):
 
-    args = (r0, 
+    def R0_dynamic(t):
+        R0 = r0
+        p_1 = 0.1
+        p_2 = 0.4
+        p_3 = 0.6
+        p_4 = 0.7
+        x = 2
+        delta_R = 1.5
+        
+        if t <= 5:
+            return R0
+        elif 6 <= t <= 19:
+            return R0 * (1 - p_1) - 2 * 1.5/30 * (t-5) * p_1
+        elif 20 <= t <= 29:
+            return R0 * (1 - p_2) - 2 * 1/30 * (t-20) * p_2
+        elif 30 <= t <= 49:
+            return max(R0 * (1 - p_3) - x * 1/30 * (t-30) * p_3,0)
+        else:
+            return max(R0_dynamic(49) - x * 1/30 * (t-49) * p_4,0)
+
+    args = (R0_dynamic, 
             tinf, tinc, thsp, tcrt, 
             ticu, tqar, tqah, trec, 
             pj, pquar, pqhsp, pcross, 
@@ -223,18 +243,16 @@ def update_graph(N,r0,hcap,
     initial_state = [(N - n_infected)/ N, 0, n_infected/N, 0, 0, 0, 0, 0, 0]
 
     sol = solve_ivp(SEIQHCDRO_model, [0, 150], \
-                        initial_state, args=args, \
-                        t_eval=np.arange(151), method = "Radau")
+                    initial_state, args=args, \
+                    t_eval=np.arange(151), method = "Radau")
     S, E, I, Q, H, C, D, R, O = sol.y
-    # SEIQHCDRO_plot(sol_blind, 'SEIQHCDRO, nationwide, intervention 80 % on day 20, R0 = 4.6')
 
     x = np.linspace(0,150,151)
-    fig = make_subplots(rows=3, cols=3)#go.Figure()
+    fig = make_subplots(rows=3, cols=3)
     # Add nhiều plot vô 1 fig thì fig.add_trace(), argument 'name' là để bỏ tên vô legend
     fig.add_trace(go.Scatter(x=x,y=hcap*np.ones(151), name = 'Hospital Capacity'),row=1, col=2)
-    # fig.add_trace(go.Scatter(x=x,y=n/r0*np.ones(100), name = 'n/r0'),row=1, col=1)
-    # fig.add_trace(go.Scatter(x=x,y=np.array([math.exp(-pq*t) for t in x]), name = 'e^{-p_quar*t}'),row=1, col=2)
     hsp = np.round((H + C + D + R) * N)
+
     fig.add_trace(go.Scatter(x=x,y=np.round((I + H + C + D + R + O) * N), name = 'Infected'),row=1, col=1)
     fig.add_trace(go.Scatter(x=x,y=hsp, name = 'Hospitalised'),row=1, col=2)
     fig.add_trace(go.Scatter(x=x,y=np.round((H + R) * N), name = 'Non-critical Hospitalised'),row=1, col=3)
@@ -244,6 +262,7 @@ def update_graph(N,r0,hcap,
     fig.add_trace(go.Scatter(x=x,y=np.round(Q*N), name = 'Daily Quarantined'),row=3, col=1)
     fig.add_trace(go.Scatter(x=x,y=np.array([hsp[i+1]-hsp[i] for i in range(150)]), name = 'Daily Hospital Incidence'),row=3, col=2)
     fig.add_trace(go.Scatter(x=x,y=np.round((E+Q)*N), name = 'Daily Exposed'),row=3, col=3)
+
     fig.update_layout(
         title={
             'text': "Prediction of Different COVID Scenarios in Vietnam",
@@ -267,7 +286,9 @@ def update_graph(N,r0,hcap,
 def update_output_div(pquar,pcross,pqhsp,pj,ph,pc,pf):
     return f'Output: {pj}, {ph}, {pc}, {pf}'
 
-def SEIQHCDRO_model(t, y, R_0, T_inf, T_inc, T_hsp, T_crt, T_icu, T_quar, T_quar_hosp, T_rec, p_h, p_c, p_f, p_cont, p_jrnl, p_quar, p_quar_hosp, p_cross_cont):
+def SEIQHCDRO_model(t, y, R_0, 
+                    T_inf, T_inc, T_hsp, T_crt, T_icu, T_quar, T_quar_hosp, T_rec, 
+                    p_h, p_c, p_f, p_cont, p_jrnl, p_quar, p_quar_hosp, p_cross_cont):
     """
     t: time step for solve_ivp
     y: solution of previous timestep (or initial solution)
@@ -287,23 +308,6 @@ def SEIQHCDRO_model(t, y, R_0, T_inf, T_inc, T_hsp, T_crt, T_icu, T_quar, T_quar
     p_quar: proportion of exposed individual who are quarantined, either at home or at a facility under the supervision of local authority
     p_quar_hosp: proportion of quarantined individuals who are infected with COVID-19 and hospitalised
     p_cross_cont: cross contamination ratio within quarantined facility under the supervision of local authority
-    """
-
-    # if condition in case R_0 is a callable function wrt time
-    
-    """
-    def R0_dynamic(t):
-        if t <= 22:
-            return 4.3 * 0.8   
-        elif 22 < t <= 34:
-            return 4.3 * (1 - 0.5) * (1 - 1/16) - 1/31 * t * 0.5 
-            # 4.4*0.6 - t/31
-        elif 34 < t <= 41:
-            return 4.3 * (1 - 0.5) * (1 - 1/16) - 1/31 * t * 0.5
-            # 4.4 * 0.4 - t/31
-        else:
-            return max(4.3 * (1 - 0.8) * (1 - 1/16) - 1/31 * t * 0.8, 0)
-            # max(4.4*0.3 - t/31,0) 
     """
     
     if callable(R_0):
