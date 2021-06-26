@@ -235,6 +235,14 @@ def toggle_collapse(n, is_open):
         return not is_open
     return is_open
 
+# @app.callback(
+#     Output('my-output2', 'children'),
+#     Input({'role':'r0', 'index':ALL}, component_property='value'),
+# )
+# def update_output_div(r0):
+#     print(r0 if not r0 else r0[0])#[0]
+#     return str(r0)#','.join(r0)
+
 
 # Mỗi cái callback sẽ lấy 1 số input và show 1 số output. Cái function ngay dưới sẽ đc gọi khi Input có thay đổi
 # Ví dụ như callback này lấy 3 cái input và show 1 cái graph
@@ -242,11 +250,10 @@ def toggle_collapse(n, is_open):
 @app.callback(
     # Argument 1 là id của component, Argument 2 là type
     Output('my-output', 'figure'),
-    #Output('my-output2', 'children'),
     Input('slider-N', component_property='value'),
     Input('num', 'value'),
     #Input('slider-r0', component_property='value'),
-    #[Input({'role':'r0', 'index':ALL}, component_property='value')],
+    [Input({'role':'r0', 'index':ALL}, component_property='value')],
     Input('hcap', component_property='value'),
     Input('slider-tinc', component_property='value'),
     Input('slider-tinf', component_property='value'),
@@ -267,7 +274,7 @@ def toggle_collapse(n, is_open):
 
 )
 # Function này để m muốn làm gì input để nó ra output thì ghi vô. Nãy type là 'figure' thì m phải trả 1 cái Figure object
-def update_graph(N, n_r0, hcap,
+def update_graph(N, n_r0, r0, hcap,
                  tinf, tinc, thsp, tcrt,
                  ticu, tqar, tqah, trec,
                  pcont, pquar, pcross, pqhsp,
@@ -292,13 +299,13 @@ def update_graph(N, n_r0, hcap,
         # else:
         #     return max(R0_dynamic(49) - x * 1 / 30 * (t - 49) * p_4, 0)
         
-        # step = np.round(150/n_r0)
-        # i = 0
-        # if t<step:
-        #     i+=1
-        #     while t>=step*(i-1) and t<step*i:
-        #         i+=1
-        return 3.9#r0[0]
+        step = np.round(150/n_r0)
+        if not r0:
+            return 3.9
+        elif t<step:
+            return r0[0]
+        elif t>=step:
+            return r0[0]
 
     args = (R0_dynamic,
             tinf, tinc, thsp, tcrt,
@@ -341,16 +348,6 @@ def update_graph(N, n_r0, hcap,
             'yanchor': 'top'}
     )
     return fig
-
-
-@app.callback(
-    Output('my-output2', 'children'),
-    [Input({'role':'r0', 'index':ALL}, component_property='value')],
-)
-def update_output_div(r0):
-    r0[0]
-    return str(r0)#','.join(r0)
-
 
 def SEIQHCDRO_model(t, y, R_0,
                     T_inf, T_inc, T_hsp, T_crt, T_icu, T_quar, T_quar_hosp, T_rec,
