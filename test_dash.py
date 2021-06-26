@@ -2,7 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import dash_html_components as html
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output, State, MATCH, ALL
 
 import plotly.express as px
 import plotly.graph_objs as go
@@ -27,6 +27,29 @@ styles = {
     }
 }
 
+colors = {
+    'background': '#111111',
+    'text': '#7FDBFF'
+}
+
+def generate_inputs():
+
+    num_slider = [html.Label(html.Strong('Number of Stages')),
+                  dcc.Slider(id='num', min=1, max=5, value=1,
+                             marks={i: str(i) for i in range(6)})]
+    
+    text_boxes = [html.Label(html.Strong('R0 inputs')),
+                  html.Div(id='in-r0')]
+
+    input_list = [num_slider, text_boxes]
+    widgets = list()    
+    for sublist in input_list:
+        sublist.append(html.H1(''))
+        for item in sublist:
+            widgets.append(item)
+
+    return widgets
+
 # Tất cả mọi thứ sẽ nằm trong app.layout, tất cả sub-component của 1 component thì gói vào 1 array. Tên thì cứ như html cơ bản thôi
 app.layout = html.Div([
     html.Div([
@@ -45,15 +68,18 @@ app.layout = html.Div([
                                           tooltip={'always_visible': True}
                                           )]),
 
-                     html.Div([html.H6('R0'),
-                               dcc.Slider(id='slider-r0', min=0, max=20, value=3.9, step=0.1,
-                                          tooltip={'always_visible': True}
-                                          )]),
-
                      html.Div(["Hospital Capacity: ",
-                               dcc.Input(id='hcap', value=100000, type='number')])
+                               dcc.Input(id='hcap', value=100000, type='number')]),
+
+                     html.Div(generate_inputs()),
+                    #  html.Div([html.H6('R0'),
+                    #            dcc.Slider(id='slider-r0', min=0, max=20, value=3.9, step=0.1,
+                    #                       tooltip={'always_visible': True}
+                    #                       )]),
+
                      ],
                     id="collapse",
+                    style = {'width':'33%'}
                 ),
 
                 dbc.Button(
@@ -104,6 +130,7 @@ app.layout = html.Div([
                                           )]),
                      ],
                     id="collapse-p",
+                    style = {'width':'33%'}
                 ),
 
                 dbc.Button(
@@ -153,6 +180,7 @@ app.layout = html.Div([
                                           )]),
                      ],
                     id="collapse-t",
+                    style = {'width':'33%'}
                 ),
             ]
         ),
@@ -166,6 +194,15 @@ app.layout = html.Div([
 
 # Mỗi cái callback sẽ lấy 1 số input và show 1 số output. Cái function ngay dưới sẽ đc gọi khi Input có thay đổi
 # Này là call back của cái collapsible, lấy trên mạng
+@app.callback(
+    Output('in-r0', 'children'),
+    [Input('num', 'value')])
+def ins_generate(n):
+    return [html.Div([html.H6('R0'),
+            dcc.Slider(id={'role':'r0', 'index':i}, min=0, max=20, value=3.9, step=0.1,
+                        tooltip={'always_visible': True}
+                        )]) for i in range(n)]
+
 @app.callback(
     Output("collapse", "is_open"),
     [Input("collapse-button", "n_clicks")],
@@ -205,8 +242,11 @@ def toggle_collapse(n, is_open):
 @app.callback(
     # Argument 1 là id của component, Argument 2 là type
     Output('my-output', 'figure'),
+    #Output('my-output2', 'children'),
     Input('slider-N', component_property='value'),
-    Input('slider-r0', component_property='value'),
+    Input('num', 'value'),
+    #Input('slider-r0', component_property='value'),
+    #[Input({'role':'r0', 'index':ALL}, component_property='value')],
     Input('hcap', component_property='value'),
     Input('slider-tinc', component_property='value'),
     Input('slider-tinf', component_property='value'),
@@ -227,30 +267,38 @@ def toggle_collapse(n, is_open):
 
 )
 # Function này để m muốn làm gì input để nó ra output thì ghi vô. Nãy type là 'figure' thì m phải trả 1 cái Figure object
-def update_graph(N, r0, hcap,
+def update_graph(N, n_r0, hcap,
                  tinf, tinc, thsp, tcrt,
                  ticu, tqar, tqah, trec,
                  pcont, pquar, pcross, pqhsp,
                  pj, ph, pc, pf):
     def R0_dynamic(t):
-        R0 = r0
-        p_1 = 0.1
-        p_2 = 0.4
-        p_3 = 0.6
-        p_4 = 0.7
-        x = 2
-        delta_R = 1.5
+        # R0 = r0
+        # p_1 = 0.1
+        # p_2 = 0.4
+        # p_3 = 0.6
+        # p_4 = 0.7
+        # x = 2
+        # delta_R = 1.5
 
-        if t <= 5:
-            return R0
-        elif 6 <= t <= 19:
-            return R0 * (1 - p_1) - 2 * 1.5 / 30 * (t - 5) * p_1
-        elif 20 <= t <= 29:
-            return R0 * (1 - p_2) - 2 * 1 / 30 * (t - 20) * p_2
-        elif 30 <= t <= 49:
-            return max(R0 * (1 - p_3) - x * 1 / 30 * (t - 30) * p_3, 0)
-        else:
-            return max(R0_dynamic(49) - x * 1 / 30 * (t - 49) * p_4, 0)
+        # if t <= 5:
+        #     return R0
+        # elif 6 <= t <= 19:
+        #     return R0 * (1 - p_1) - 2 * 1.5 / 30 * (t - 5) * p_1
+        # elif 20 <= t <= 29:
+        #     return R0 * (1 - p_2) - 2 * 1 / 30 * (t - 20) * p_2
+        # elif 30 <= t <= 49:
+        #     return max(R0 * (1 - p_3) - x * 1 / 30 * (t - 30) * p_3, 0)
+        # else:
+        #     return max(R0_dynamic(49) - x * 1 / 30 * (t - 49) * p_4, 0)
+        
+        # step = np.round(150/n_r0)
+        # i = 0
+        # if t<step:
+        #     i+=1
+        #     while t>=step*(i-1) and t<step*i:
+        #         i+=1
+        return 3.9#r0[0]
 
     args = (R0_dynamic,
             tinf, tinc, thsp, tcrt,
@@ -297,16 +345,11 @@ def update_graph(N, r0, hcap,
 
 @app.callback(
     Output('my-output2', 'children'),
-    Input('slider-pquar', component_property='value'),
-    Input('slider-pcross', component_property='value'),
-    Input('slider-pqhsp', component_property='value'),
-    Input('slider-pj', component_property='value'),
-    Input('slider-ph', component_property='value'),
-    Input('slider-pc', component_property='value'),
-    Input('slider-pf', component_property='value'),
+    [Input({'role':'r0', 'index':ALL}, component_property='value')],
 )
-def update_output_div(pquar, pcross, pqhsp, pj, ph, pc, pf):
-    return f'Output: {pj}, {ph}, {pc}, {pf}'
+def update_output_div(r0):
+    r0[0]
+    return str(r0)#','.join(r0)
 
 
 def SEIQHCDRO_model(t, y, R_0,
@@ -359,4 +402,5 @@ def SEIQHCDRO_model(t, y, R_0,
 
 # Cái này để chạy sv thôi, k cần sửa gì
 if __name__ == '__main__':
-    app.server.run(port=8000, host='127.0.0.1')
+    #app.server.run(port=8000, host='127.0.0.1')
+    app.run_server(debug=True)
