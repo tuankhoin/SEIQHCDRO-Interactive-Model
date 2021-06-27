@@ -57,24 +57,12 @@ app.layout = html.Div([
         html.Div(
             [
                 dbc.Button(
-                    "Basic Inputs",
+                    html.H2("Basic Inputs"),
                     id="collapse-button",
                     className="mb-3",
                     color="primary",
+                    style={'width':'100%'}
                 ),
-                dbc.Button(
-                    "Proportion Inputs",
-                    id="collapse-button-p",
-                    className="mb-3",
-                    color="info",
-                ),
-                dbc.Button(
-                    "Time Inputs",
-                    id="collapse-button-t",
-                    className="mb-3",
-                    color="danger",
-                ),
-
                 dbc.Collapse(
                     [html.Div([html.H3('Population'),
                                dcc.Slider(id='slider-N', min=100000, max=100000000, value=11000000, step=100000,
@@ -94,15 +82,18 @@ app.layout = html.Div([
 
                      ],
                     id="collapse",
-                    style = {'width':'33%'}
+                    #style = {'width':'33%'}
                 ),
 
+                dbc.Button(
+                    html.H2("Proportion Inputs"),
+                    id="collapse-button-p",
+                    className="mb-3",
+                    color="info",
+                    style={'width':'100%'}
+                ),
                 dbc.Collapse(
-                    [# [html.Div([html.H6('Contained'),
-                    #            dcc.Slider(id='slider-pcont', min=0, max=1, value=0.1, step=0.05,
-                    #                       tooltip={'always_visible': True}
-                    #                       )]),
-
+                    [
                      html.Div([html.H6('Quarantined'),
                                dcc.Slider(id='slider-pquar', min=0, max=1, value=0.7, step=0.05,
                                           tooltip={'always_visible': True}
@@ -139,9 +130,16 @@ app.layout = html.Div([
                                           )]),
                      ],
                     id="collapse-p",
-                    style = {'width':'33%'}
+                    #style = {'width':'33%'}
                 ),
 
+                dbc.Button(
+                    html.H2("Time Inputs"),
+                    id="collapse-button-t",
+                    className="mb-3",
+                    color="danger",
+                    style={'width':'100%'}
+                ),
                 dbc.Collapse(
                     [html.Div([html.H6('Incubated'),
                                dcc.Slider(id='slider-tinc', min=2.5, max=5, value=3, step=0.1,
@@ -183,15 +181,21 @@ app.layout = html.Div([
                                           )]),
                      ],
                     id="collapse-t",
-                    style = {'width':'33%'}
+                    #style = {'width':'33%'}
                 ),
             ]
-        ),
+        ,style = {'width':'33%', 'display':'inline-block', 'vertical-align':'top'}),
         # 
-        dcc.Graph(id='my-output'),
-        html.Label(html.Strong('Compare Hospital Capacity')),
-        dcc.Slider(id='add_hcap', min=0, max=1, value=0,
-                             marks={0: 'Off', 1: 'On'},vertical=True,verticalHeight=70)
+        html.Div([
+            dcc.Graph(id='my-output'),
+            html.Div([html.Label(html.Strong('Compare Hospital Capacity')),
+                      dcc.Slider(id='add_hcap', min=0, max=1, value=0,
+                                marks={0: 'Off', 1: 'On'},vertical=True,verticalHeight=70)
+                    ], style={'padding':'0% 10%'}),
+            
+        ],
+        style = {'width':'66%', 'display':'inline-block', 'vertical-align':'top'}),
+        
 
     ])
 ])
@@ -211,37 +215,58 @@ def ins_generate(n):
                                 style={'width': '33%', 'display': 'inline-block'})
                     ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(n)]
 
+# @app.callback(
+#     Output("collapse", "is_open"),
+#     [Input("collapse-button", "n_clicks")],
+#     [State("collapse", "is_open")],
+# )
+# def toggle_collapse(n, is_open):
+#     if n:
+#         return not is_open
+#     return is_open
+
+
+# @app.callback(
+#     Output("collapse-p", "is_open"),
+#     [Input("collapse-button-p", "n_clicks")],
+#     [State("collapse-p", "is_open")],
+# )
+# def toggle_collapse(n, is_open):
+#     if n:
+#         return not is_open
+#     return is_open
+
+
+# @app.callback(
+#     Output("collapse-t", "is_open"),
+#     [Input("collapse-button-t", "n_clicks")],
+#     [State("collapse-t", "is_open")],
+# )
+# def toggle_collapse(n, is_open):
+#     if n:
+#         return not is_open
+#     return is_open
+
 @app.callback(
-    Output("collapse", "is_open"),
-    [Input("collapse-button", "n_clicks")],
-    [State("collapse", "is_open")],
+    [Output(f"collapse{i}", "is_open") for i in ['','-p','-t']],
+    [Input(f"collapse-button{i}", "n_clicks") for i in ['','-p','-t']],
+    [State(f"collapse{i}", "is_open") for i in ['','-p','-t']],
 )
-def toggle_collapse(n, is_open):
-    if n:
-        return not is_open
-    return is_open
+def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
+    ctx = dash.callback_context
 
+    if not ctx.triggered:
+        return False, False, False
+    else:
+        button_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
-@app.callback(
-    Output("collapse-p", "is_open"),
-    [Input("collapse-button-p", "n_clicks")],
-    [State("collapse-p", "is_open")],
-)
-def toggle_collapse(n, is_open):
-    if n:
-        return not is_open
-    return is_open
-
-
-@app.callback(
-    Output("collapse-t", "is_open"),
-    [Input("collapse-button-t", "n_clicks")],
-    [State("collapse-t", "is_open")],
-)
-def toggle_collapse(n, is_open):
-    if n:
-        return not is_open
-    return is_open
+    if button_id == "collapse-button" and n1:
+        return not is_open1, False, False
+    elif button_id == "collapse-button-p" and n2:
+        return False, not is_open2, False
+    elif button_id == "collapse-button-t" and n3:
+        return False, False, not is_open3
+    return False, False, False
 
 # @app.callback(
 #     Output('my-output2', 'children'),
