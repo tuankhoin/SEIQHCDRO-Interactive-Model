@@ -29,16 +29,16 @@ styles = {
 
 colors = {
     'background': '#111111',
-    'text': '#7FDBFF'
+    'color': '#7FDBFF'
 }
 
 def generate_inputs():
 
-    num_slider = [html.Label(html.Strong('Number of Stages')),
+    num_slider = [html.H3('Number of Stages'),
                   dcc.Slider(id='num', min=1, max=5, value=4,
                              marks={i: str(i) for i in range(6)})]
     
-    text_boxes = [html.Label(html.Strong('Stage Inputs')),
+    text_boxes = [html.H3('Stage Inputs'),
                   html.Div(id='in-r0')]
 
     input_list = [num_slider, text_boxes]
@@ -62,16 +62,29 @@ app.layout = html.Div([
                     className="mb-3",
                     color="primary",
                 ),
+                dbc.Button(
+                    "Proportion Inputs",
+                    id="collapse-button-p",
+                    className="mb-3",
+                    color="info",
+                ),
+                dbc.Button(
+                    "Time Inputs",
+                    id="collapse-button-t",
+                    className="mb-3",
+                    color="danger",
+                ),
+
                 dbc.Collapse(
-                    [html.Div([html.H6('Population'),
+                    [html.Div([html.H3('Population'),
                                dcc.Slider(id='slider-N', min=100000, max=100000000, value=11000000, step=100000,
                                           tooltip={'always_visible': True}
                                           )]),
 
-                     html.Div(["Hospital Capacity: ",
-                               dcc.Input(id='hcap', value=100000, type='number')]),
+                     html.Div([html.H3("Hospital Capacity: "),
+                               dcc.Input(id='hcap', value=100000, type='number')], style={'margin':'4% 0%'}),
 
-                     html.Div([html.H6('Initial R0'),
+                     html.Div([html.H3('Initial R0'),
                                dcc.Slider(id='slider-r0', min=0, max=20, value=3.9, step=0.1,
                                           tooltip={'always_visible': True}
                                           )]),
@@ -84,12 +97,6 @@ app.layout = html.Div([
                     style = {'width':'33%'}
                 ),
 
-                dbc.Button(
-                    "Proportion Inputs",
-                    id="collapse-button-p",
-                    className="mb-3",
-                    color="primary",
-                ),
                 dbc.Collapse(
                     [# [html.Div([html.H6('Contained'),
                     #            dcc.Slider(id='slider-pcont', min=0, max=1, value=0.1, step=0.05,
@@ -135,12 +142,6 @@ app.layout = html.Div([
                     style = {'width':'33%'}
                 ),
 
-                dbc.Button(
-                    "Time Inputs",
-                    id="collapse-button-t",
-                    className="mb-3",
-                    color="primary",
-                ),
                 dbc.Collapse(
                     [html.Div([html.H6('Incubated'),
                                dcc.Slider(id='slider-tinc', min=2.5, max=5, value=3, step=0.1,
@@ -201,12 +202,14 @@ app.layout = html.Div([
     Output('in-r0', 'children'),
     [Input('num', 'value')])
 def ins_generate(n):
-    return [html.Div([html.Div([html.H6('R0 Reduction'), dcc.Slider(id={'role':'r0', 'index':i}, min=0, max=5, value=1, step=0.1, tooltip={'always_visible': False},marks={0:'0',5:'5'})],
+    return [html.Div([html.H5(f'Stage {i+1}:'),
+                    html.Div([html.H6('Starting Date'), dcc.Slider(id={'role':'day', 'index':i}, min=1, max=100, value=10*i+1, step=1, tooltip={'always_visible': False}, marks={1:'1',100:'100'})],
+                                style={'width': '33%', 'display': 'inline-block'}),
+                    html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=1, step=0.1, type='number')],
                                 style={'width': '33%', 'display': 'inline-block'}),
                     html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=0.15*(i+1), step=0.01, tooltip={'always_visible': False}, marks={0:'0',1:'1'})],
-                                style={'width': '33%', 'display': 'inline-block'}),
-                    html.Div([html.H6('Starting Date'), dcc.Slider(id={'role':'day', 'index':i}, min=1, max=100, value=10*i+1, step=1, tooltip={'always_visible': False}, marks={1:'1',100:'100'})],
-                                style={'width': '33%', 'display': 'inline-block'})]) for i in range(n)]
+                                style={'width': '33%', 'display': 'inline-block'})
+                    ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(n)]
 
 @app.callback(
     Output("collapse", "is_open"),
@@ -331,7 +334,8 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, hcap,
             'y': 0.9,
             'x': 0.5,
             'xanchor': 'center',
-            'yanchor': 'top'}
+            'yanchor': 'top'},
+        paper_bgcolor='rgba(0,0,0,0)'
     )
     return fig
 
