@@ -114,3 +114,7 @@ dmypy.json
 .pyre/
 *.iml
 *.xml
+
+venv
+*.pyc
+.DS_Store
