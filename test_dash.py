@@ -15,11 +15,11 @@ from scipy.integrate import solve_ivp
 from scipy.optimize import minimize
 from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_squared_log_error
 
-# List những cái css m sẽ dùng ở đây vô 1 array
+#
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', dbc.themes.BOOTSTRAP]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-# Này k biết để lm gì, chắc custom css
+#
 styles = {
     'pre': {
         'border': 'thin lightgrey solid',
@@ -50,7 +50,7 @@ def generate_inputs():
 
     return widgets
 
-# Tất cả mọi thứ sẽ nằm trong app.layout, tất cả sub-component của 1 component thì gói vào 1 array. Tên thì cứ như html cơ bản thôi
+#
 app.layout = html.Div([
     html.Div([
 
@@ -186,7 +186,7 @@ app.layout = html.Div([
                 ),
             ]
         ),
-        # Cái output plot nhé
+        # 
         dcc.Graph(id='my-output'),
         html.Label(html.Strong('Compare Hospital Capacity')),
         dcc.Slider(id='add_hcap', min=0, max=1, value=0,
@@ -196,8 +196,7 @@ app.layout = html.Div([
 ])
 
 
-# Mỗi cái callback sẽ lấy 1 số input và show 1 số output. Cái function ngay dưới sẽ đc gọi khi Input có thay đổi
-# Này là call back của cái collapsible, lấy trên mạng
+# 
 @app.callback(
     Output('in-r0', 'children'),
     [Input('num', 'value')])
@@ -250,11 +249,7 @@ def toggle_collapse(n, is_open):
 #     return str(r0)#','.join(r0)
 
 
-# Mỗi cái callback sẽ lấy 1 số input và show 1 số output. Cái function ngay dưới sẽ đc gọi khi Input có thay đổi
-# Ví dụ như callback này lấy 3 cái input và show 1 cái graph
-# Đặt tên function argument t cũng chả biết ntn, mà có vẻ như là lấy theo thứ tự Input.
 @app.callback(
-    # Argument 1 là id của component, Argument 2 là type
     Output('my-output', 'figure'),
     Input('slider-N', component_property='value'),
     Input('num', 'value'),
@@ -281,7 +276,7 @@ def toggle_collapse(n, is_open):
     Input('add_hcap', component_property='value'),
 
 )
-# Function này để m muốn làm gì input để nó ra output thì ghi vô. Nãy type là 'figure' thì m phải trả 1 cái Figure object
+
 def update_graph(N, n_r0, r0, delta_r0, pcont, day, hcap,
                  tinf, tinc, thsp, tcrt,
                  ticu, tqar, tqah, trec,
@@ -315,7 +310,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, hcap,
 
     x = np.linspace(0, 150, 151)
     fig = make_subplots(rows=3, cols=3)
-    # Add nhiều plot vô 1 fig thì fig.add_trace(), argument 'name' là để bỏ tên vô legend
+    
     hsp = np.round((H + C + D + R) * N)
 
     fig.add_trace(go.Scatter(x=x, y=np.round((I + H + C + D + R + O) * N), name='Infected'), row=1, col=1)
@@ -388,7 +383,6 @@ def SEIQHCDRO_model(t, y, R_0,
     return dy_dt
 
 
-# Cái này để chạy sv thôi, k cần sửa gì
 if __name__ == '__main__':
     #app.server.run(port=8000, host='127.0.0.1')
     app.run_server(debug=True)
