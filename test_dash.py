@@ -202,11 +202,11 @@ app.layout = html.Div([
     Output('in-r0', 'children'),
     [Input('num', 'value')])
 def ins_generate(n):
-    return [html.Div([html.Div([html.H6('R0 Reduction'), dcc.Slider(id={'role':'r0', 'index':i}, min=0, max=20, value=1, step=0.1, tooltip={'always_visible': True})],
+    return [html.Div([html.Div([html.H6('R0 Reduction'), dcc.Slider(id={'role':'r0', 'index':i}, min=0, max=5, value=1, step=0.1, tooltip={'always_visible': False},marks={0:'0',5:'5'})],
                                 style={'width': '33%', 'display': 'inline-block'}),
-                    html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=0.15*(i+1), step=0.05, tooltip={'always_visible': True})],
+                    html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=0.15*(i+1), step=0.01, tooltip={'always_visible': False}, marks={0:'0',1:'1'})],
                                 style={'width': '33%', 'display': 'inline-block'}),
-                    html.Div([html.H6('Starting Date'), dcc.Slider(id={'role':'day', 'index':i}, min=1, max=100, value=10*i+1, step=1, tooltip={'always_visible': True})],
+                    html.Div([html.H6('Starting Date'), dcc.Slider(id={'role':'day', 'index':i}, min=1, max=100, value=10*i+1, step=1, tooltip={'always_visible': False}, marks={1:'1',100:'100'})],
                                 style={'width': '33%', 'display': 'inline-block'})]) for i in range(n)]
 
 @app.callback(
