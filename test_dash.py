@@ -38,7 +38,7 @@ def generate_inputs():
                   dcc.Slider(id='num', min=1, max=5, value=1,
                              marks={i: str(i) for i in range(6)})]
     
-    text_boxes = [html.Label(html.Strong('R0 inputs')),
+    text_boxes = [html.Label(html.Strong('Stage Inputs')),
                   html.Div(id='in-r0')]
 
     input_list = [num_slider, text_boxes]
@@ -198,10 +198,12 @@ app.layout = html.Div([
     Output('in-r0', 'children'),
     [Input('num', 'value')])
 def ins_generate(n):
-    return [html.Div([html.H6('R0'),
-            dcc.Slider(id={'role':'r0', 'index':i}, min=0, max=20, value=3.9, step=0.1,
-                        tooltip={'always_visible': True}
-                        )]) for i in range(n)]
+    return [html.Div([html.Div([html.H6('R0'), dcc.Slider(id={'role':'r0', 'index':i}, min=0, max=20, value=3.9, step=0.1, tooltip={'always_visible': True})],
+                                style={'width': '33%', 'display': 'inline-block'}),
+                    html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=0.15*(i+1), step=0.05, tooltip={'always_visible': True})],
+                                style={'width': '33%', 'display': 'inline-block'}),
+                    html.Div([html.H6('Starting Date'), dcc.Slider(id={'role':'day', 'index':i}, min=0, max=100, value=10*i, step=1, tooltip={'always_visible': True})],
+                                style={'width': '33%', 'display': 'inline-block'})]) for i in range(n)]
 
 @app.callback(
     Output("collapse", "is_open"),
