@@ -17,9 +17,9 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_square
 
 #
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', dbc.themes.BOOTSTRAP]
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets, title='Vietnam COVID Modelling')
+#app.title = 'Vietnam COVID Modelling'
 server = app.server
-app.title = 'Vietnam COVID Modelling'
 
 #
 styles = {
@@ -33,6 +33,8 @@ colors = {
     'background': '#111111',
     'color': '#7FDBFF'
 }
+
+tab = {'padding':'1%'}
 
 def generate_inputs():
 
@@ -68,7 +70,8 @@ app.layout = html.Div([
                 dbc.Collapse(
                     [html.Div([html.H3('Population'),
                                dcc.Slider(id='slider-N', min=100000, max=100000000, value=11000000, step=100000,
-                                          tooltip={'always_visible': True}
+                                          tooltip={'always_visible': True, 'placement':'bottom'},
+                                          marks = {i: str(i) for i in [100000, 50000000,100000000]}
                                           )]),
 
                      html.Div([html.H3("Hospital Capacity: "),
@@ -84,7 +87,7 @@ app.layout = html.Div([
 
                      ],
                     id="collapse",
-                    #style = {'width':'33%'}
+                    style = tab
                 ),
 
                 dbc.Button(
@@ -132,7 +135,7 @@ app.layout = html.Div([
                                           )]),
                      ],
                     id="collapse-p",
-                    #style = {'width':'33%'}
+                    style = tab
                 ),
 
                 dbc.Button(
@@ -183,10 +186,10 @@ app.layout = html.Div([
                                           )]),
                      ],
                     id="collapse-t",
-                    #style = {'width':'33%'}
+                    style = tab
                 ),
             ]
-        ,style = {'width':'33%', 'display':'inline-block', 'vertical-align':'top'}),
+        ,style = {'width':'33%', 'display':'inline-block', 'vertical-align':'top', 'padding':'2%'}),
         # 
         html.Div([
             dcc.Graph(id='my-output'),
@@ -196,7 +199,7 @@ app.layout = html.Div([
                     ], style={'padding':'0% 10%'}),
             
         ],
-        style = {'width':'66%', 'display':'inline-block', 'vertical-align':'top'}),
+        style = {'width':'66%', 'display':'inline-block', 'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
         
 
     ])
