@@ -35,7 +35,7 @@ colors = {
 def generate_inputs():
 
     num_slider = [html.Label(html.Strong('Number of Stages')),
-                  dcc.Slider(id='num', min=1, max=5, value=1,
+                  dcc.Slider(id='num', min=1, max=5, value=4,
                              marks={i: str(i) for i in range(6)})]
     
     text_boxes = [html.Label(html.Strong('Stage Inputs')),
@@ -71,11 +71,13 @@ app.layout = html.Div([
                      html.Div(["Hospital Capacity: ",
                                dcc.Input(id='hcap', value=100000, type='number')]),
 
+                     html.Div([html.H6('Initial R0'),
+                               dcc.Slider(id='slider-r0', min=0, max=20, value=3.9, step=0.1,
+                                          tooltip={'always_visible': True}
+                                          )]),
+
                      html.Div(generate_inputs()),
-                    #  html.Div([html.H6('R0'),
-                    #            dcc.Slider(id='slider-r0', min=0, max=20, value=3.9, step=0.1,
-                    #                       tooltip={'always_visible': True}
-                    #                       )]),
+                    
 
                      ],
                     id="collapse",
@@ -89,10 +91,10 @@ app.layout = html.Div([
                     color="primary",
                 ),
                 dbc.Collapse(
-                    [html.Div([html.H6('Contained'),
-                               dcc.Slider(id='slider-pcont', min=0, max=1, value=0.1, step=0.05,
-                                          tooltip={'always_visible': True}
-                                          )]),
+                    [# [html.Div([html.H6('Contained'),
+                    #            dcc.Slider(id='slider-pcont', min=0, max=1, value=0.1, step=0.05,
+                    #                       tooltip={'always_visible': True}
+                    #                       )]),
 
                      html.Div([html.H6('Quarantined'),
                                dcc.Slider(id='slider-pquar', min=0, max=1, value=0.7, step=0.05,
@@ -186,7 +188,9 @@ app.layout = html.Div([
         ),
         # Cái output plot nhé
         dcc.Graph(id='my-output'),
-        html.Div(id='my-output2'),
+        html.Label(html.Strong('Compare Hospital Capacity')),
+        dcc.Slider(id='add_hcap', min=0, max=1, value=0,
+                             marks={0: 'Off', 1: 'On'},vertical=True,verticalHeight=70)
 
     ])
 ])
@@ -198,11 +202,11 @@ app.layout = html.Div([
     Output('in-r0', 'children'),
     [Input('num', 'value')])
 def ins_generate(n):
-    return [html.Div([html.Div([html.H6('R0'), dcc.Slider(id={'role':'r0', 'index':i}, min=0, max=20, value=3.9, step=0.1, tooltip={'always_visible': True})],
+    return [html.Div([html.Div([html.H6('R0 Reduction'), dcc.Slider(id={'role':'r0', 'index':i}, min=0, max=20, value=1, step=0.1, tooltip={'always_visible': True})],
                                 style={'width': '33%', 'display': 'inline-block'}),
                     html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=0.15*(i+1), step=0.05, tooltip={'always_visible': True})],
                                 style={'width': '33%', 'display': 'inline-block'}),
-                    html.Div([html.H6('Starting Date'), dcc.Slider(id={'role':'day', 'index':i}, min=0, max=100, value=10*i, step=1, tooltip={'always_visible': True})],
+                    html.Div([html.H6('Starting Date'), dcc.Slider(id={'role':'day', 'index':i}, min=1, max=100, value=10*i+1, step=1, tooltip={'always_visible': True})],
                                 style={'width': '33%', 'display': 'inline-block'})]) for i in range(n)]
 
 @app.callback(
@@ -254,8 +258,10 @@ def toggle_collapse(n, is_open):
     Output('my-output', 'figure'),
     Input('slider-N', component_property='value'),
     Input('num', 'value'),
-    #Input('slider-r0', component_property='value'),
+    Input('slider-r0', component_property='value'),
     [Input({'role':'r0', 'index':ALL}, component_property='value')],
+    [Input({'role':'pcont', 'index':ALL}, component_property='value')],
+    [Input({'role':'day', 'index':ALL}, component_property='value')],
     Input('hcap', component_property='value'),
     Input('slider-tinc', component_property='value'),
     Input('slider-tinf', component_property='value'),
@@ -265,7 +271,6 @@ def toggle_collapse(n, is_open):
     Input('slider-trec', component_property='value'),
     Input('slider-tqar', component_property='value'),
     Input('slider-tqah', component_property='value'),
-    Input('slider-pcont', component_property='value'),
     Input('slider-pquar', component_property='value'),
     Input('slider-pcross', component_property='value'),
     Input('slider-pqhsp', component_property='value'),
@@ -273,47 +278,32 @@ def toggle_collapse(n, is_open):
     Input('slider-ph', component_property='value'),
     Input('slider-pc', component_property='value'),
     Input('slider-pf', component_property='value'),
+    Input('add_hcap', component_property='value'),
 
 )
 # Function này để m muốn làm gì input để nó ra output thì ghi vô. Nãy type là 'figure' thì m phải trả 1 cái Figure object
-def update_graph(N, n_r0, r0, hcap,
+def update_graph(N, n_r0, r0, delta_r0, pcont, day, hcap,
                  tinf, tinc, thsp, tcrt,
                  ticu, tqar, tqah, trec,
-                 pcont, pquar, pcross, pqhsp,
-                 pj, ph, pc, pf):
+                 pquar, pcross, pqhsp,
+                 pj, ph, pc, pf,
+                 add_hcap):
     def R0_dynamic(t):
-        # R0 = r0
-        # p_1 = 0.1
-        # p_2 = 0.4
-        # p_3 = 0.6
-        # p_4 = 0.7
-        # x = 2
-        # delta_R = 1.5
-
-        # if t <= 5:
-        #     return R0
-        # elif 6 <= t <= 19:
-        #     return R0 * (1 - p_1) - 2 * 1.5 / 30 * (t - 5) * p_1
-        # elif 20 <= t <= 29:
-        #     return R0 * (1 - p_2) - 2 * 1 / 30 * (t - 20) * p_2
-        # elif 30 <= t <= 49:
-        #     return max(R0 * (1 - p_3) - x * 1 / 30 * (t - 30) * p_3, 0)
-        # else:
-        #     return max(R0_dynamic(49) - x * 1 / 30 * (t - 49) * p_4, 0)
-        
-        step = np.round(150/n_r0)
-        if not r0:
+        if not delta_r0 or not pcont or not day:
             return 3.9
-        elif t<step:
-            return r0[0]
-        elif t>=step:
-            return r0[0]
+        else:
+            i = 0
+            while t>day[i]:
+                if i == len(day)-1:
+                    break
+                i+=1
+            return max(r0*pcont[i]-2*(t-day[i])/day[i] * delta_r0[i],0)
 
     args = (R0_dynamic,
             tinf, tinc, thsp, tcrt,
             ticu, tqar, tqah, trec,
-            pj, pquar, pqhsp, pcross,
-            ph, pc, pf, pcont)
+            ph, pc, pf,
+            pj, pquar, pqhsp, pcross)
 
     n_infected = 1
     initial_state = [(N - n_infected) / N, 0, n_infected / N, 0, 0, 0, 0, 0, 0]
@@ -326,7 +316,6 @@ def update_graph(N, n_r0, r0, hcap,
     x = np.linspace(0, 150, 151)
     fig = make_subplots(rows=3, cols=3)
     # Add nhiều plot vô 1 fig thì fig.add_trace(), argument 'name' là để bỏ tên vô legend
-    fig.add_trace(go.Scatter(x=x, y=hcap * np.ones(151), name='Hospital Capacity'), row=1, col=2)
     hsp = np.round((H + C + D + R) * N)
 
     fig.add_trace(go.Scatter(x=x, y=np.round((I + H + C + D + R + O) * N), name='Infected'), row=1, col=1)
@@ -336,11 +325,11 @@ def update_graph(N, n_r0, r0, hcap,
     fig.add_trace(go.Scatter(x=x, y=np.round(D * N), name='Deaths'), row=2, col=2)
     fig.add_trace(go.Scatter(x=x, y=np.round((I + O) * N), name='Undiscovered Cases'), row=2, col=3)
     fig.add_trace(go.Scatter(x=x, y=np.round(Q * N), name='Daily Quarantined'), row=3, col=1)
-    fig.add_trace(
-        go.Scatter(x=x, y=np.array([hsp[i + 1] - hsp[i] for i in range(150)]), name='Daily Hospital Incidence'), row=3,
-        col=2)
+    fig.add_trace(go.Scatter(x=x, y=np.array([hsp[i + 1] - hsp[i] for i in range(150)]), name='Daily Hospital Incidence'), row=3, col=2)
     fig.add_trace(go.Scatter(x=x, y=np.round((E + Q) * N), name='Daily Exposed'), row=3, col=3)
-
+    if add_hcap:
+        fig.add_trace(go.Scatter(x=x, y=hcap * np.ones(151), name='Hospital Capacity'), row=1, col=2)
+        
     fig.update_layout(
         title={
             'text': "Prediction of Different COVID Scenarios in Vietnam",
@@ -353,7 +342,7 @@ def update_graph(N, n_r0, r0, hcap,
 
 def SEIQHCDRO_model(t, y, R_0,
                     T_inf, T_inc, T_hsp, T_crt, T_icu, T_quar, T_quar_hosp, T_rec,
-                    p_h, p_c, p_f, p_cont, p_jrnl, p_quar, p_quar_hosp, p_cross_cont):
+                    p_h, p_c, p_f, p_jrnl, p_quar, p_quar_hosp, p_cross_cont):
     """
     t: time step for solve_ivp
     y: solution of previous timestep (or initial solution)
