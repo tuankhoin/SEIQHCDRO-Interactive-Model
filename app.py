@@ -19,6 +19,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_square
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', dbc.themes.BOOTSTRAP]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
+app.title = 'Vietnam COVID Modelling'
 
 #
 styles = {
