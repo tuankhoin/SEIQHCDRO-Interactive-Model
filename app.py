@@ -385,7 +385,9 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, hcap,
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top'},
-        paper_bgcolor='rgba(0,0,0,0)'
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor = 'rgb(61,61,61)',
+        font=dict(color='rgb(174, 211, 210)')
     )
     return fig
 
