@@ -214,8 +214,8 @@ def ins_generate(n):
     return [html.Div([html.H5(f'Stage {i+1}:'),
                     html.Div([html.H6('Starting Date'), dcc.Slider(id={'role':'day', 'index':i}, min=1, max=100, value=10*i+1, step=1, tooltip={'always_visible': False}, marks={1:'1',100:'100'})],
                                 style={'width': '33%', 'display': 'inline-block'}),
-                    html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=1, step=0.1, type='number')],
-                                style={'width': '33%', 'display': 'inline-block'}),
+                    html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=1, step=0.1, type='number', style={'width':'100%'})],
+                                style={'width': '28%', 'display': 'inline-block', 'margin':'0 5% 0 0'}),
                     html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=0.15*(i+1), step=0.01, tooltip={'always_visible': False}, marks={0:'0',1:'1'})],
                                 style={'width': '33%', 'display': 'inline-block'})
                     ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(n)]
