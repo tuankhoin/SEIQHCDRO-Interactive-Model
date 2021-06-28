@@ -1,5 +1,6 @@
 import dash
 import dash_core_components as dcc
+#import dash_design_kit as ddk
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State, MATCH, ALL
@@ -11,6 +12,7 @@ from plotly.subplots import make_subplots
 
 import pandas as pd
 import numpy as np
+from datetime import date
 from scipy.integrate import solve_ivp
 
 #
@@ -119,6 +121,21 @@ main_page = html.Div([
                                           tooltip={'always_visible': True, 'placement':'bottom'},
                                           marks = {i: str(i) for i in [100000, 50000000,100000000]}
                                           )],id='div-N'),
+
+                    html.Div([html.H3('Outbreak Date'),
+                               dbc.Tooltip(
+                                    "Assumed 1st day of outbreak",
+                                    target="div-date", placement='right'
+                               ),
+                                dcc.DatePickerSingle(
+                                    id='my-date-picker-single',
+                                    min_date_allowed=date(2020, 1, 1),
+                                    max_date_allowed=date(2030, 12, 31),
+                                    initial_visible_month=date(2021, 4, 15),
+                                    date=date(2021, 4, 15),
+                                    display_format = 'DD/MM/YYYY'
+                                ),
+                    ], id = 'div-date'),
 
                      html.Div([html.H3("Hospital Capacity: "),
                                dbc.Tooltip(
@@ -307,11 +324,28 @@ main_page = html.Div([
         # 
         html.Div([
             dcc.Graph(id='my-output'),
-            html.Div([html.Label(html.Strong('Compare Hospital Capacity')),
+            html.Div([
+                      dcc.Checklist(
+                            options=[
+                                {'label': 'Compare Hospital Capacity', 'value': 1},
+                                {'label': 'Show by Date', 'value': 2}
+                            ],
+                            value=[],
+                            labelStyle={'display': 'block'},
+                            id='mods'
+                        ),  
+                      html.Label(html.Strong('Compare Hospital Capacity')),
                       dcc.Slider(id='add_hcap', min=0, max=1, value=0,
                                 marks={0: 'Off', 1: 'On'},vertical=True,verticalHeight=70)
-                    ], style={'padding':'0% 10%'}),
-            
+                    ], style={'padding':'0% 3%','display':'inline-block'}),
+            html.Div(
+                [
+                    html.Button("Download Statistics (.csv)", id="btn_csv", style={'color':'white'}),
+                    dcc.Download(id="download-dataframe-csv"),
+                    html.Button("Download Summary (.csv)", id="btn_sum", style={'color':'white'}),
+                    dcc.Download(id="download-sum"),
+                ], style={'padding':'2% 3%','display':'inline-block', 'vertical-align':'bottom'}
+            ),        
         ],
         style = {'width':'66%', 'display':'inline-block', 'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
         
@@ -357,6 +391,7 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
 
 @app.callback(
     Output('my-output', 'figure'),
+    Output("download-dataframe-csv", "data"),
     Input('slider-N', component_property='value'),
     Input('num', 'value'),
     Input('slider-r0', component_property='value'),
@@ -380,7 +415,9 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
     Input('slider-pc', component_property='value'),
     Input('slider-pf', component_property='value'),
     Input('add_hcap', component_property='value'),
-
+    Input("btn_csv", "n_clicks"),
+    Input('mods', component_property='value'),
+    prevent_initial_call=True,
 )
 
 def update_graph(N, n_r0, r0, delta_r0, pcont, day, hcap,
@@ -388,7 +425,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, hcap,
                  ticu, tqar, tqah, trec,
                  pquar, pcross, pqhsp,
                  pj, ph, pc, pf,
-                 add_hcap):
+                 add_hcap,n_clicks,mod):
     def R0_dynamic(t):
         if not delta_r0 or not pcont or not day:
             return 3.9
@@ -417,13 +454,18 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, hcap,
     x = np.linspace(0, 150, 151)
     fig = make_subplots(rows=3, cols=3, x_title="Days since outbreak", y_title="Cases")
     
+    ift = np.round((I + H + C + D + R + O) * N)
     hsp = np.round((H + C + D + R) * N)
+    crt = np.round((C + D) * N)
+    ded = np.round(D * N)
 
-    fig.add_trace(go.Scatter(x=x, y=np.round((I + H + C + D + R + O) * N), name='Infected'), row=1, col=1)
+    df = pd.DataFrame({"a": [1, 2, 3, 4], "b": [2, 1, 5, 6], "c": ["x", "x", "y", "y"]})
+
+    fig.add_trace(go.Scatter(x=x, y=ift, name='Infected'), row=1, col=1)
     fig.add_trace(go.Scatter(x=x, y=hsp, name='Hospitalised'), row=1, col=2)
     fig.add_trace(go.Scatter(x=x, y=np.round((H + R) * N), name='Non-critical Hospitalised'), row=1, col=3)
-    fig.add_trace(go.Scatter(x=x, y=np.round((C + D) * N), name='Critical'), row=2, col=1)
-    fig.add_trace(go.Scatter(x=x, y=np.round(D * N), name='Deaths'), row=2, col=2)
+    fig.add_trace(go.Scatter(x=x, y=crt, name='Critical'), row=2, col=1)
+    fig.add_trace(go.Scatter(x=x, y=ded, name='Deaths'), row=2, col=2)
     fig.add_trace(go.Scatter(x=x, y=np.round((I + O) * N), name='Undiscovered Cases'), row=2, col=3)
     fig.add_trace(go.Scatter(x=x, y=np.round(Q * N), name='Daily Quarantined'), row=3, col=1)
     fig.add_trace(go.Scatter(x=x, y=np.array([hsp[i + 1] - hsp[i] for i in range(150)]), name='Daily Hospital Incidence'), row=3, col=2)
@@ -442,7 +484,12 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, hcap,
         plot_bgcolor = 'rgb(61,61,61)',
         font=dict(color='rgb(174, 211, 210)')
     )
-    return fig
+    print(mod)
+    ctx = dash.callback_context.triggered
+    if ctx:
+        if ctx[0]['prop_id'].split('.')[0]=='btn_csv':
+            return fig, dcc.send_data_frame(df.to_csv, "mydf.csv")
+    return fig, None
 
 def SEIQHCDRO_model(t, y, R_0,
                     T_inf, T_inc, T_hsp, T_crt, T_icu, T_quar, T_quar_hosp, T_rec,
