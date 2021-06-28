@@ -333,10 +333,7 @@ main_page = html.Div([
                             value=[],
                             labelStyle={'display': 'block'},
                             id='mods'
-                        ),  
-                      html.Label(html.Strong('Compare Hospital Capacity')),
-                      dcc.Slider(id='add_hcap', min=0, max=1, value=0,
-                                marks={0: 'Off', 1: 'On'},vertical=True,verticalHeight=70)
+                        )
                     ], style={'padding':'0% 3%','display':'inline-block'}),
             html.Div(
                 [
@@ -414,7 +411,6 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
     Input('slider-ph', component_property='value'),
     Input('slider-pc', component_property='value'),
     Input('slider-pf', component_property='value'),
-    Input('add_hcap', component_property='value'),
     Input("btn_csv", "n_clicks"),
     Input('mods', component_property='value'),
     prevent_initial_call=True,
@@ -425,7 +421,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, hcap,
                  ticu, tqar, tqah, trec,
                  pquar, pcross, pqhsp,
                  pj, ph, pc, pf,
-                 add_hcap,n_clicks,mod):
+                 n_clicks,mod):
     def R0_dynamic(t):
         if not delta_r0 or not pcont or not day:
             return 3.9
@@ -470,7 +466,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, hcap,
     fig.add_trace(go.Scatter(x=x, y=np.round(Q * N), name='Daily Quarantined'), row=3, col=1)
     fig.add_trace(go.Scatter(x=x, y=np.array([hsp[i + 1] - hsp[i] for i in range(150)]), name='Daily Hospital Incidence'), row=3, col=2)
     fig.add_trace(go.Scatter(x=x, y=np.round((E + Q) * N), name='Daily Exposed'), row=3, col=3)
-    if add_hcap:
+    if 1 in mod:
         fig.add_trace(go.Scatter(x=x, y=hcap * np.ones(151), name='Hospital Capacity'), row=1, col=2)
         
     fig.update_layout(
@@ -484,7 +480,6 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, hcap,
         plot_bgcolor = 'rgb(61,61,61)',
         font=dict(color='rgb(174, 211, 210)')
     )
-    print(mod)
     ctx = dash.callback_context.triggered
     if ctx:
         if ctx[0]['prop_id'].split('.')[0]=='btn_csv':
