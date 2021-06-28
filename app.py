@@ -12,7 +12,7 @@ from plotly.subplots import make_subplots
 
 import pandas as pd
 import numpy as np
-from datetime import date
+from datetime import date, timedelta, datetime
 from scipy.integrate import solve_ivp
 
 #
@@ -128,7 +128,7 @@ main_page = html.Div([
                                     target="div-date", placement='right'
                                ),
                                 dcc.DatePickerSingle(
-                                    id='my-date-picker-single',
+                                    id='date',
                                     min_date_allowed=date(2020, 1, 1),
                                     max_date_allowed=date(2030, 12, 31),
                                     initial_visible_month=date(2021, 4, 15),
@@ -395,6 +395,7 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
     [Input({'role':'r0', 'index':ALL}, component_property='value')],
     [Input({'role':'pcont', 'index':ALL}, component_property='value')],
     [Input({'role':'day', 'index':ALL}, component_property='value')],
+    Input('date', component_property='date'),
     Input('hcap', component_property='value'),
     Input('slider-tinc', component_property='value'),
     Input('slider-tinf', component_property='value'),
@@ -416,7 +417,7 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
     prevent_initial_call=True,
 )
 
-def update_graph(N, n_r0, r0, delta_r0, pcont, day, hcap,
+def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, hcap,
                  tinf, tinc, thsp, tcrt,
                  ticu, tqar, tqah, trec,
                  pquar, pcross, pqhsp,
@@ -447,15 +448,17 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, hcap,
                     t_eval=np.arange(151), method="Radau")
     S, E, I, Q, H, C, D, R, O = sol.y
 
-    x = np.linspace(0, 150, 151)
-    fig = make_subplots(rows=3, cols=3, x_title="Days since outbreak", y_title="Cases")
+    x_day = pd.date_range(date, periods=151).tolist()
+    x = x_day if 2 in mod else np.linspace(0, 150, 151)
+    
+    fig = make_subplots(rows=3, cols=3, x_title="Date" if 2 in mod else "Days since outbreak", y_title="Cases")
     
     ift = np.round((I + H + C + D + R + O) * N)
     hsp = np.round((H + C + D + R) * N)
     crt = np.round((C + D) * N)
     ded = np.round(D * N)
 
-    df = pd.DataFrame({"a": [1, 2, 3, 4], "b": [2, 1, 5, 6], "c": ["x", "x", "y", "y"]})
+    df = pd.DataFrame({"Date": x_day, "Infected": ift, "Hospitalised": hsp, "Critical": crt, "Deaths":ded})
 
     fig.add_trace(go.Scatter(x=x, y=ift, name='Infected'), row=1, col=1)
     fig.add_trace(go.Scatter(x=x, y=hsp, name='Hospitalised'), row=1, col=2)
@@ -480,10 +483,14 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, hcap,
         plot_bgcolor = 'rgb(61,61,61)',
         font=dict(color='rgb(174, 211, 210)')
     )
+
+    if 2 in mod:
+        fig.update_xaxes(dtick="M2", tickformat="%d/%m/%y")
+
     ctx = dash.callback_context.triggered
     if ctx:
         if ctx[0]['prop_id'].split('.')[0]=='btn_csv':
-            return fig, dcc.send_data_frame(df.to_csv, "mydf.csv")
+            return fig, dcc.send_data_frame(df.to_csv, "daily_data.csv")
     return fig, None
 
 def SEIQHCDRO_model(t, y, R_0,
