@@ -119,38 +119,38 @@ main_page = html.Div([
                 ),
                 dbc.Collapse(
                     [
+                     html.Div([html.H6('Hospitalisation'),
+                               dcc.Slider(id='slider-ph', min=0, max=1, value=0.85, step=0.01,
+                                          tooltip={'always_visible': True}
+                                          )]),
+
+                     html.Div([html.H6('Critical'),
+                               dcc.Slider(id='slider-pc', min=0, max=1, value=0.04, step=0.01,
+                                          tooltip={'always_visible': True}
+                                          )]),
+
+                     html.Div([html.H6('Deceased'),
+                               dcc.Slider(id='slider-pf', min=0, max=1, value=0.25, step=0.01,
+                                          tooltip={'always_visible': True}
+                                          )]),
+
+                     html.Div([html.H6('Media Impact'),
+                               dcc.Slider(id='slider-pj', min=0, max=1, value=0.1, step=0.01,
+                                          tooltip={'always_visible': True}
+                                          )]),
+
                      html.Div([html.H6('Quarantined'),
-                               dcc.Slider(id='slider-pquar', min=0, max=1, value=0.7, step=0.05,
+                               dcc.Slider(id='slider-pquar', min=0, max=1, value=0.8, step=0.01,
+                                          tooltip={'always_visible': True}
+                                          )]),
+
+                     html.Div([html.H6('Quarantined & Hospitalised'),
+                               dcc.Slider(id='slider-pqhsp', min=0, max=1, value=0.1, step=0.01,
                                           tooltip={'always_visible': True}
                                           )]),
 
                      html.Div([html.H6('Cross-Contamination'),
                                dcc.Slider(id='slider-pcross', min=0, max=1, value=0.01, step=0.01,
-                                          tooltip={'always_visible': True}
-                                          )]),
-
-                     html.Div([html.H6('Quarantined & Hospitalised'),
-                               dcc.Slider(id='slider-pqhsp', min=0, max=1, value=0.01, step=0.01,
-                                          tooltip={'always_visible': True}
-                                          )]),
-
-                     html.Div([html.H6('Media Impact'),
-                               dcc.Slider(id='slider-pj', min=0, max=1, value=0.1, step=0.05,
-                                          tooltip={'always_visible': True}
-                                          )]),
-
-                     html.Div([html.H6('Hospitalisation'),
-                               dcc.Slider(id='slider-ph', min=0, max=1, value=0.5, step=0.05,
-                                          tooltip={'always_visible': True}
-                                          )]),
-
-                     html.Div([html.H6('Critical'),
-                               dcc.Slider(id='slider-pc', min=0, max=1, value=0.75, step=0.05,
-                                          tooltip={'always_visible': True}
-                                          )]),
-
-                     html.Div([html.H6('Deceased'),
-                               dcc.Slider(id='slider-pf', min=0, max=1, value=0.5, step=0.05,
                                           tooltip={'always_visible': True}
                                           )]),
                      ],
