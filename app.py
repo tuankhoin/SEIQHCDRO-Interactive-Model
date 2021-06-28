@@ -59,11 +59,24 @@ about_page = html.Div(['ABOUT'])
 def generate_inputs():
 
     num_slider = [html.H3('Number of Stages'),
+                  dbc.Tooltip(
+                      "Number of main representative stages during the pandemic",
+                      target="num", placement='right'
+                  ),
                   dcc.Slider(id='num', min=1, max=5, value=4,
                              marks={i: str(i) for i in range(6)})]
     
     text_boxes = [html.H3('Stage Inputs'),
-                  html.Div(id='in-r0')]
+                  html.Div(id='in-r0'),
+                  dbc.Tooltip(
+                      html.Ul([
+                          html.H6("Each stage contains the following:"),
+                          html.Li("Starting date"),
+                          html.Li("R0 Reduction Rate"),
+                          html.Li("Contained proportion")],style={'text-align':'left'}),
+                      target="in-r0", placement='right'
+                  )
+                  ]
 
     input_list = [num_slider, text_boxes]
     widgets = list()    
@@ -89,15 +102,27 @@ main_page = html.Div([
                 ),
                 dbc.Collapse(
                     [html.Div([html.H3('Population'),
+                               dbc.Tooltip(
+                                    "Population",
+                                    target="slider-N", placement='right'
+                               ),
                                dcc.Slider(id='slider-N', min=100000, max=100000000, value=11000000, step=100000,
                                           tooltip={'always_visible': True, 'placement':'bottom'},
                                           marks = {i: str(i) for i in [100000, 50000000,100000000]}
                                           )]),
 
                      html.Div([html.H3("Hospital Capacity: "),
+                               dbc.Tooltip(
+                                    "Hospital Capacity",
+                                    target="hcap", placement='right'
+                               ),
                                dcc.Input(id='hcap', value=100000, type='number')], style={'margin':'4% 0%'}),
 
                      html.Div([html.H3('Initial R0'),
+                               dbc.Tooltip(
+                                    "Initial R0 at 1st day of outbreak",
+                                    target="slider-r0", placement='right'
+                               ),
                                dcc.Slider(id='slider-r0', min=0, max=20, value=3.9, step=0.1,
                                           tooltip={'always_visible': True}
                                           )]),
@@ -120,36 +145,64 @@ main_page = html.Div([
                 dbc.Collapse(
                     [
                      html.Div([html.H6('Hospitalisation'),
+                               dbc.Tooltip(
+                                    "Hospital",
+                                    target="slider-ph", placement='right'
+                               ),
                                dcc.Slider(id='slider-ph', min=0, max=1, value=0.85, step=0.01,
                                           tooltip={'always_visible': True}
                                           )]),
 
                      html.Div([html.H6('Critical'),
+                               dbc.Tooltip(
+                                    "Critical",
+                                    target="slider-pc", placement='right'
+                               ),
                                dcc.Slider(id='slider-pc', min=0, max=1, value=0.04, step=0.01,
                                           tooltip={'always_visible': True}
                                           )]),
 
                      html.Div([html.H6('Deceased'),
+                               dbc.Tooltip(
+                                    "Deceased",
+                                    target="slider-pf", placement='right'
+                               ),
                                dcc.Slider(id='slider-pf', min=0, max=1, value=0.25, step=0.01,
                                           tooltip={'always_visible': True}
                                           )]),
 
                      html.Div([html.H6('Media Impact'),
+                               dbc.Tooltip(
+                                    "Media Impact",
+                                    target="slider-pj", placement='right'
+                               ),
                                dcc.Slider(id='slider-pj', min=0, max=1, value=0.1, step=0.01,
                                           tooltip={'always_visible': True}
                                           )]),
 
                      html.Div([html.H6('Quarantined'),
+                               dbc.Tooltip(
+                                    "Qurantined",
+                                    target="slider-pquar", placement='right'
+                               ),
                                dcc.Slider(id='slider-pquar', min=0, max=1, value=0.8, step=0.01,
                                           tooltip={'always_visible': True}
                                           )]),
 
                      html.Div([html.H6('Quarantined & Hospitalised'),
+                               dbc.Tooltip(
+                                    "Quarantined in Hospital",
+                                    target="slider-pqhsp", placement='right'
+                               ),
                                dcc.Slider(id='slider-pqhsp', min=0, max=1, value=0.1, step=0.01,
                                           tooltip={'always_visible': True}
                                           )]),
 
                      html.Div([html.H6('Cross-Contamination'),
+                               dbc.Tooltip(
+                                    "Cross Contamination",
+                                    target="slider-pcross", placement='right'
+                               ),
                                dcc.Slider(id='slider-pcross', min=0, max=1, value=0.01, step=0.01,
                                           tooltip={'always_visible': True}
                                           )]),
@@ -167,40 +220,72 @@ main_page = html.Div([
                 ),
                 dbc.Collapse(
                     [html.Div([html.H6('Incubated'),
+                               dbc.Tooltip(
+                                    "Incubated",
+                                    target="slider-tinc", placement='right'
+                               ),
                                dcc.Slider(id='slider-tinc', min=2.5, max=5, value=3, step=0.1,
                                           tooltip={'always_visible': True}
                                           )]),
 
                      html.Div([html.H6('Infectious'),
+                               dbc.Tooltip(
+                                    "Infectious",
+                                    target="slider-tinf", placement='right'
+                               ),
                                dcc.Slider(id='slider-tinf', min=5.0, max=7, value=6, step=0.1,
                                           tooltip={'always_visible': True}
                                           )]),
 
                      html.Div([html.H6('Intensive Care'),
+                               dbc.Tooltip(
+                                    "ICU",
+                                    target="slider-ticu", placement='right'
+                               ),
                                dcc.Slider(id='slider-ticu', min=10.0, max=14, value=10, step=0.1,
                                           tooltip={'always_visible': True}
                                           )]),
 
                      html.Div([html.H6('Hospitalised'),
+                               dbc.Tooltip(
+                                    "Hospitalised",
+                                    target="slider-thsp", placement='right'
+                               ),
                                dcc.Slider(id='slider-thsp', min=5.0, max=10, value=6, step=0.1,
                                           tooltip={'always_visible': True}
                                           )]),
                      html.Div([html.H6('Critical'),
+                               dbc.Tooltip(
+                                    "Critical",
+                                    target="slider-tcrt", placement='right'
+                               ),
                                dcc.Slider(id='slider-tcrt', min=10.0, max=14, value=10, step=0.1,
                                           tooltip={'always_visible': True}
                                           )]),
 
                      html.Div([html.H6('Self-Recovery'),
+                               dbc.Tooltip(
+                                    "Self-Recover",
+                                    target="slider-trec", placement='right'
+                               ),
                                dcc.Slider(id='slider-trec', min=12.0, max=14, value=13, step=0.1,
                                           tooltip={'always_visible': True}
                                           )]),
 
                      html.Div([html.H6('Quarantine'),
+                               dbc.Tooltip(
+                                    "Quarantine",
+                                    target="slider-tqar", placement='right'
+                               ),
                                dcc.Slider(id='slider-tqar', min=4, max=21, value=21, step=0.1,
                                           tooltip={'always_visible': True}
                                           )]),
 
                      html.Div([html.H6('Quarantined & Hospitalised'),
+                               dbc.Tooltip(
+                                    "Quarantined in Hospital",
+                                    target="slider-tqah", placement='right'
+                               ),
                                dcc.Slider(id='slider-tqah', min=0, max=5, value=2, step=0.1,
                                           tooltip={'always_visible': True}
                                           )]),
