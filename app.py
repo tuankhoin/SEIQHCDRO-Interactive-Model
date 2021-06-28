@@ -3,6 +3,7 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State, MATCH, ALL
+from dash_html_components.Nav import Nav
 
 import plotly.express as px
 import plotly.graph_objs as go
@@ -10,15 +11,12 @@ from plotly.subplots import make_subplots
 
 import pandas as pd
 import numpy as np
-import math
 from scipy.integrate import solve_ivp
-from scipy.optimize import minimize
-from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_squared_log_error
 
 #
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', dbc.themes.BOOTSTRAP]
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets, title='Vietnam COVID Modelling')
-#app.title = 'Vietnam COVID Modelling'
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets, title='Vietnam COVID Modelling',
+                suppress_callback_exceptions = True)
 server = app.server
 
 #
@@ -35,6 +33,28 @@ colors = {
 }
 
 tab = {'padding':'1%'}
+PLOTLY_LOGO = "https://images.plot.ly/logo/new-branding/plotly-logomark.png"
+
+app.layout = html.Div([
+    dcc.Location(id='url', refresh=False),
+    dbc.Navbar([
+        # Use row and col to control vertical alignment of logo / brand
+        dbc.Row(
+            [
+                dbc.Col(html.Img(src=PLOTLY_LOGO, height="30px")),
+                dbc.Col(dbc.NavbarBrand("Vietnam COVID Modelling", className="ml-2",style={'font-size':'20px', 'vertical-align':'center'})),
+                dbc.Col(dbc.NavLink("Home", href="/",className='text-light font-weight-bold',style={'font-size':'15px', 'vertical-align':'center'})),
+                dbc.Col(dbc.NavLink("About", href="/about",className='text-light font-weight-bold',style={'font-size':'15px', 'vertical-align':'center'}))
+            ],
+            align="center",
+            no_gutters=True,
+        ),
+    ],color="dark",dark=True,
+    style={'text-decoration':'none','color':'white'}),
+    html.Div(id='page-content')
+])
+
+about_page = html.Div(['ABOUT'])
 
 def generate_inputs():
 
@@ -55,7 +75,7 @@ def generate_inputs():
     return widgets
 
 #
-app.layout = html.Div([
+main_page = html.Div([
     html.Div([
 
         html.Div(
@@ -415,6 +435,18 @@ def SEIQHCDRO_model(t, y, R_0,
 
     dy_dt = [dS_dt, dE_dt, dI_dt, dQ_dt, dH_dt, dC_dt, dD_dt, dR_dt, dO_dt]
     return dy_dt
+
+# Update the index
+@app.callback(dash.dependencies.Output('page-content', 'children'),
+              [dash.dependencies.Input('url', 'pathname')])
+def display_page(pathname):
+    if pathname == '/about':
+        return about_page
+    # elif pathname == '/page-2':
+    #     return page_2_layout
+    else:
+        return main_page
+    # You could also return a 404 "URL not found" page here
 
 
 if __name__ == '__main__':
