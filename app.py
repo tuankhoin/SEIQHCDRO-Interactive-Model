@@ -54,7 +54,16 @@ app.layout = html.Div([
     html.Div(id='page-content')
 ])
 
-about_page = html.Div(['ABOUT'])
+about_page = html.Div([dcc.Markdown(
+                    '''
+                    # About us
+                    * Tuan Khoi Nguyen - Data engineer, Main website developer
+                    * Ngo Hoang Anh - Main model developer, Web developer
+                    * Thu Anh Nguyen - Supervisor
+                    '''
+                )],
+                style = {'margin':'5%'})
+
 
 def generate_inputs():
 
@@ -325,38 +334,6 @@ def ins_generate(n):
                                 style={'width': '33%', 'display': 'inline-block'})
                     ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(n)]
 
-# @app.callback(
-#     Output("collapse", "is_open"),
-#     [Input("collapse-button", "n_clicks")],
-#     [State("collapse", "is_open")],
-# )
-# def toggle_collapse(n, is_open):
-#     if n:
-#         return not is_open
-#     return is_open
-
-
-# @app.callback(
-#     Output("collapse-p", "is_open"),
-#     [Input("collapse-button-p", "n_clicks")],
-#     [State("collapse-p", "is_open")],
-# )
-# def toggle_collapse(n, is_open):
-#     if n:
-#         return not is_open
-#     return is_open
-
-
-# @app.callback(
-#     Output("collapse-t", "is_open"),
-#     [Input("collapse-button-t", "n_clicks")],
-#     [State("collapse-t", "is_open")],
-# )
-# def toggle_collapse(n, is_open):
-#     if n:
-#         return not is_open
-#     return is_open
-
 @app.callback(
     [Output(f"collapse{i}", "is_open") for i in ['','-p','-t']],
     [Input(f"collapse-button{i}", "n_clicks") for i in ['','-p','-t']],
@@ -377,15 +354,6 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
     elif button_id == "collapse-button-t" and n3:
         return False, False, not is_open3
     return False, False, False
-
-# @app.callback(
-#     Output('my-output2', 'children'),
-#     Input({'role':'r0', 'index':ALL}, component_property='value'),
-# )
-# def update_output_div(r0):
-#     print(r0 if not r0 else r0[0])#[0]
-#     return str(r0)#','.join(r0)
-
 
 @app.callback(
     Output('my-output', 'figure'),
@@ -447,7 +415,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, hcap,
     S, E, I, Q, H, C, D, R, O = sol.y
 
     x = np.linspace(0, 150, 151)
-    fig = make_subplots(rows=3, cols=3)
+    fig = make_subplots(rows=3, cols=3, x_title="Days since outbreak", y_title="Cases")
     
     hsp = np.round((H + C + D + R) * N)
 
