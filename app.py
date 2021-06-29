@@ -70,13 +70,16 @@ about_page = html.Div([dcc.Markdown(
 
 def generate_inputs():
 
-    num_slider = [html.H3('Number of Stages'),
-                  dcc.Slider(id='num', min=1, max=5, value=4,
+    num_slider = [
+                  html.Div([
+                      html.H3('Number of Stages'),
+                      dcc.Slider(id='num', min=1, max=5, value=4,
                              marks={i: str(i) for i in range(6)}),
-                  dbc.Tooltip(
+                      dbc.Tooltip(
                       "Number of main representative stages during the pandemic",
-                      target="num", placement='right'
-                  )]
+                      target="div-num", placement='right')
+                      ],id='div-num')
+                  ]
     
     text_boxes = [html.H3('Stage Inputs'),
                   html.Div(id='in-r0'),
