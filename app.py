@@ -73,8 +73,8 @@ def generate_inputs():
     num_slider = [
                   html.Div([
                       html.H3('Number of Stages'),
-                      dcc.Slider(id='num', min=1, max=5, value=4,
-                             marks={i: str(i) for i in range(6)}),
+                      dcc.Slider(id='num', min=1, max=10, value=4,
+                             marks={i: str(i) for i in range(11)}),
                       dbc.Tooltip(
                       "Number of main representative stages during the pandemic",
                       target="div-num", placement='right')
@@ -327,7 +327,7 @@ main_page = html.Div([
         ,style = {'width':'33%', 'display':'inline-block', 'vertical-align':'top', 'padding':'2%'}),
         # 
         html.Div([
-            dcc.Graph(id='my-output'),
+            
             html.Div([
                       dcc.Checklist(
                             options=[
@@ -339,16 +339,21 @@ main_page = html.Div([
                             id='mods'
                         )
                     ], style={'padding':'0% 3%','display':'inline-block'}),
-            html.Div(
-                [
-                    html.Button("Download Statistics (.csv)", id="btn_csv", style={'color':'white'}),
-                    dcc.Download(id="download-dataframe-csv"),
-                    html.Button("Download Summary (.txt)", id="btn_sum", style={'color':'white'}),
-                    dcc.Download(id="download-sum"),
-                ], style={'padding':'2% 3%','display':'inline-block', 'vertical-align':'bottom'}
-            ),        
+            html.Div([dcc.Graph(id='overall-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
+            html.Div([dcc.Graph(id='fatal-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
+            html.Div([dcc.Graph(id='r0-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
+            html.Div([html.Div(
+                            [
+                                html.Button("Download Statistics (.csv)", id="btn_csv", style={'color':'white'}),
+                                dcc.Download(id="download-dataframe-csv"),
+                                html.Button("Download Summary (.txt)", id="btn_sum", style={'color':'white'}),
+                                dcc.Download(id="download-sum"),
+                            ], style={'padding':'2% 3%','display':'inline-block', 'vertical-align':'bottom'}
+                        ),    
+            ], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
+                
         ],
-        style = {'width':'66%', 'display':'inline-block', 'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
+        style = {'width':'66%', 'display':'inline-block', 'vertical-align':'top', 'margin':'1% 0%'}),
         
 
     ])
@@ -391,7 +396,9 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
     return False, False, False
 
 @app.callback(
-    Output('my-output', 'figure'),
+    Output('overall-plot', 'figure'),
+    Output('fatal-plot', 'figure'),
+    Output('r0-plot', 'figure'),
     Output("download-dataframe-csv", "data"),
     Output("download-sum", "data"),
     Input('slider-N', component_property='value'),
@@ -469,30 +476,65 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, hcap,
     x_day = pd.date_range(date, periods=151).tolist()
     x = x_day if 2 in mod else np.linspace(0, 150, 151)
     
-    fig = make_subplots(rows=3, cols=3, x_title="Date" if 2 in mod else "Days since outbreak", y_title="Cases")
-    
     ift = np.round((I + H + C + D + R + O) * N)
     hsp = np.round((H + C + D + R) * N)
     crt = np.round((C + D) * N)
     ded = np.round(D * N)
 
-    df = pd.DataFrame({"Date": x_day, "Infected": ift, "Hospitalised": hsp, "Critical": crt, "Deaths":ded})
+    hsp_in = np.array([hsp[i + 1] - hsp[i] if hsp[i+1]>hsp[i] else 0 for i in range(150)])
+    ift_in = np.array([ift[i + 1] - ift[i] if ift[i+1]>ift[i] else 0 for i in range(150)])
 
-    fig.add_trace(go.Scatter(x=x, y=ift, name='Infected'), row=1, col=1)
-    fig.add_trace(go.Scatter(x=x, y=hsp, name='Hospitalised'), row=1, col=2)
-    fig.add_trace(go.Scatter(x=x, y=np.round((H + R) * N), name='Non-critical Hospitalised'), row=1, col=3)
-    fig.add_trace(go.Scatter(x=x, y=crt, name='Critical'), row=2, col=1)
-    fig.add_trace(go.Scatter(x=x, y=ded, name='Deaths'), row=2, col=2)
-    fig.add_trace(go.Scatter(x=x, y=np.round((I + O) * N), name='Undiscovered Cases'), row=2, col=3)
-    fig.add_trace(go.Scatter(x=x, y=np.round(Q * N), name='Daily Quarantined'), row=3, col=1)
-    fig.add_trace(go.Scatter(x=x, y=np.array([hsp[i + 1] - hsp[i] for i in range(150)]), name='Daily Hospital Incidence'), row=3, col=2)
-    fig.add_trace(go.Scatter(x=x, y=np.round((E + Q) * N), name='Daily Exposed'), row=3, col=3)
+    r0_trend = np.array([R0_dynamic(t) for t in np.linspace(0, 150, 151)])
+
+    df = pd.DataFrame({"Date": x_day, "Infected": ift, "Hospitalised": hsp, "Critical": crt, "Deaths":ded})
+    
+    fig = make_subplots(rows=1, cols=2, x_title="Date" if 2 in mod else "Days since outbreak", y_title="Cases")
+
+    fig.add_trace(go.Scatter(x=x, y=ift, name='Total Infected'), row=1, col=2)
+    fig.add_trace(go.Scatter(x=x, y=hsp, name='Total Hospitalised'), row=1, col=2)
+    fig.add_trace(go.Scatter(x=x, y=hsp_in, name='Daily Hospital Incidence'), row=1, col=1)
+    fig.add_trace(go.Scatter(x=x, y=ift_in, name='Daily Infected Incidence'), row=1, col=1)
     if 1 in mod:
         fig.add_trace(go.Scatter(x=x, y=hcap * np.ones(151), name='Hospital Capacity'), row=1, col=2)
         
     fig.update_layout(
         title={
-            'text': "Prediction of Different COVID Scenarios in Vietnam",
+            'text': "Overall Trend of COVID-19 in Vietnam",
+            'y': 0.9,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'},
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor = 'rgb(61,61,61)',
+        font=dict(color='rgb(174, 211, 210)')
+    )
+
+    fig1 = make_subplots(rows=1, cols=3, x_title="Date" if 2 in mod else "Days since outbreak", y_title="Cases")
+    
+    fig1.add_trace(go.Scatter(x=x, y=crt, name='Critical'), row=1, col=1)
+    fig1.add_trace(go.Scatter(x=x, y=ded, name='Deaths'), row=1, col=2)
+    fig1.add_trace(go.Scatter(x=x, y=np.round(Q * N), name='Quarantined'), row=1, col=3)
+
+    fig1.update_layout(
+        title={
+            'text': "Fatality of COVID-19 in Vietnam",
+            'y': 0.9,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'},
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor = 'rgb(61,61,61)',
+        font=dict(color='rgb(174, 211, 210)')
+    )
+
+    fig2 = make_subplots(rows=1, cols=2, x_title="Date" if 2 in mod else "Days since outbreak", y_title="Cases")
+
+    fig2.add_trace(go.Scatter(x=x, y=r0_trend, name='Daily R0'), row=1, col=1)
+    fig2.add_trace(go.Scatter(x=x, y=np.round((E+I+H+C+D+R)*N), name='E+I+H+C+D+R'), row=1, col=2)
+
+    fig2.update_layout(
+        title={
+            'text': "Spread of COVID-19 in Vietnam",
             'y': 0.9,
             'x': 0.5,
             'xanchor': 'center',
@@ -504,12 +546,14 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, hcap,
 
     if 2 in mod:
         fig.update_xaxes(dtick="M2", tickformat="%d/%m/%y")
+        fig1.update_xaxes(dtick="M2", tickformat="%d/%m/%y")
+        fig2.update_xaxes(dtick="M2", tickformat="%d/%m/%y")
 
     ctx = dash.callback_context.triggered
     if ctx:
         current_call = ctx[0]['prop_id'].split('.')[0]
         if current_call=='btn_csv':
-            return fig, dcc.send_data_frame(df.to_csv, "daily_data.csv"), None
+            return fig,fig1,fig2, dcc.send_data_frame(df.to_csv, "daily_data.csv"), None
         elif current_call=='btn_sum':
             text=f'''
 Generated by Vietnam COVID Modelling Team
@@ -553,8 +597,8 @@ _{np.max(crt)} in critical condition
 _{np.max(ded)} died
 
             '''
-            return fig, None, dict(content=text, filename="summary.txt")
-    return fig, None, None
+            return fig,fig1,fig2, None, dict(content=text, filename="summary.txt")
+    return fig,fig1,fig2, None, None
 
 def SEIQHCDRO_model(t, y, R_0,
                     T_inf, T_inc, T_hsp, T_crt, T_icu, T_quar, T_quar_hosp, T_rec,
