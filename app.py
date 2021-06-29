@@ -438,6 +438,10 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, hcap,
                 if i == len(day)-1:
                     break
                 i+=1
+
+            # if i>0:
+            #     if pcont[i]>pcont[i-1]:
+            #         return max(r0*pcont[i]+2*(t-day[i])/day[i] * delta_r0[i],0)
             return max(r0*pcont[i]-2*(t-day[i])/day[i] * delta_r0[i],0)
 
     args = (R0_dynamic,
