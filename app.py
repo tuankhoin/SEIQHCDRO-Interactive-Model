@@ -14,7 +14,10 @@ from scipy.integrate import solve_ivp
 
 #
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', dbc.themes.BOOTSTRAP]
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets, title='Vietnam COVID Modelling',
+app = dash.Dash(__name__, 
+                external_stylesheets=external_stylesheets, 
+                #external_scripts=['https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML'],
+                title='Vietnam COVID Modelling',
                 suppress_callback_exceptions = True)
 server = app.server
 
@@ -59,20 +62,21 @@ about_page = html.Div([dcc.Markdown(
                     * Tuan Khoi Nguyen - Data engineer, Main website developer
                     * Ngo Hoang Anh - Main model developer, Web developer
                     * Thu Anh Nguyen - Supervisor
+
                     '''
-                )],
+                ),],
                 style = {'margin':'5%'})
 
 
 def generate_inputs():
 
     num_slider = [html.H3('Number of Stages'),
+                  dcc.Slider(id='num', min=1, max=5, value=4,
+                             marks={i: str(i) for i in range(6)}),
                   dbc.Tooltip(
                       "Number of main representative stages during the pandemic",
                       target="num", placement='right'
-                  ),
-                  dcc.Slider(id='num', min=1, max=5, value=4,
-                             marks={i: str(i) for i in range(6)})]
+                  )]
     
     text_boxes = [html.H3('Stage Inputs'),
                   html.Div(id='in-r0'),
