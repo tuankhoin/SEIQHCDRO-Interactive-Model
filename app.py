@@ -432,17 +432,25 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, hcap,
     def R0_dynamic(t):
         if not delta_r0 or not pcont or not day:
             return 3.9
+        elif t < day[0]:
+            return r0
         else:
             i = 0
-            while t>day[i]:
-                if i == len(day)-1:
+            while t >= day[i]:
+                if (i == len(day) - 1) or (t < day[i + 1]):
                     break
-                i+=1
+                i += 1
 
-            # if i>0:
-            #     if pcont[i]>pcont[i-1]:
-            #         return max(r0*pcont[i]+2*(t-day[i])/day[i] * delta_r0[i],0)
-            return max(r0*pcont[i]-2*(t-day[i])/day[i] * delta_r0[i],0)
+            if i == 0:
+                return r0 * (1 - pcont[0]) - 2 * delta_r0[0] / 30 * (t - (day[0] - 1)) * pcont[0]
+            else:
+                if pcont[i] >= pcont[i - 1]:
+                    return max(
+                        min(R0_dynamic(day[i] - 1), r0 * (1 - pcont[i])) - 2 * delta_r0[i] / 30 * (t - (day[i] - 1)) *
+                        pcont[i], 0)
+                else:
+                    return min(R0_dynamic(day[i] - 1), r0 * (1 - pcont[i])) + 2 * delta_r0[i] / 30 * (
+                                t - (day[i] - 1)) * (1 - pcont[i])
 
     args = (R0_dynamic,
             tinf, tinc, thsp, tcrt,
