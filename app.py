@@ -347,8 +347,8 @@ main_page = html.Div([
             html.Div([
                       dcc.Checklist(
                             options=[
-                                {'label': 'Compare Hospital Capacity', 'value': 1},
-                                {'label': 'Compare Quarantine Capacity', 'value': 3},
+                                {'label': 'Show Hospital Capacity', 'value': 1},
+                                {'label': 'Show Quarantine Capacity', 'value': 3},
                                 {'label': 'Show by Date', 'value': 2}
                             ],
                             value=[],
