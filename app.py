@@ -53,7 +53,9 @@ app.layout = html.Div([
         ),
     ],color="dark",dark=True,
     style={'text-decoration':'none','color':'white'}),
-    html.Div(id='page-content')
+    html.Div(id='page-content'),
+    html.Footer(['copyright 2020 gì đó by Hoang Anh NGO, Tuan Khoi NGUYEN and Thu Anh NGUYEN'],
+                style={'width':'100%', 'text-align':'center','border-style':'outset'})
 ])
 
 about_page = html.Div([dcc.Markdown(
