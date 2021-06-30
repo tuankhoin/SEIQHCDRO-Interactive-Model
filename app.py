@@ -519,11 +519,12 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
         
     fig.update_layout(
         title={
-            'text': "Overall Trend of infection",
+            'text': "OVERALL TREND OF INFECTION",
             'y': 0.9,
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top'},
+        title_font_size=20,
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor = 'rgb(61,61,61)',
         font=dict(color='rgb(174, 211, 210)')
@@ -536,11 +537,12 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
 
     fig1.update_layout(
         title={
-            'text': "Critical and Fatality",
+            'text': "CRITICAL AND FATAL CASES",
             'y': 0.9,
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top'},
+        title_font_size=20,
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor = 'rgb(61,61,61)',
         font=dict(color='rgb(174, 211, 210)')
@@ -555,11 +557,12 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
 
     fig2.update_layout(
         title={
-            'text': "Spread and Containment",
+            'text': "SPREAD AND CONTAINMENT",
             'y': 0.9,
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top'},
+        title_font_size=20,
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor = 'rgb(61,61,61)',
         font=dict(color='rgb(174, 211, 210)')
