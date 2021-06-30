@@ -17,7 +17,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', dbc.themes
 app = dash.Dash(__name__, 
                 external_stylesheets=external_stylesheets, 
                 #external_scripts=['https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML'],
-                title='Vietnam COVID Modelling',
+                title='COVID-19 Modelling with SEIQHCDRO',
                 suppress_callback_exceptions = True)
 server = app.server
 
@@ -44,7 +44,7 @@ app.layout = html.Div([
         dbc.Row(
             [
                 dbc.Col(html.Img(src=PLOTLY_LOGO, height="30px")),
-                dbc.Col(dbc.NavbarBrand("Vietnam COVID Modelling", className="ml-2",style={'font-size':'20px', 'vertical-align':'center'})),
+                dbc.Col(dbc.NavbarBrand("COVID-19 modelling with SEIQHCDRO", className="ml-2",style={'font-size':'20px', 'vertical-align':'center'})),
                 dbc.Col(dbc.NavLink("Home", href="/",className='text-light font-weight-bold',style={'font-size':'15px', 'vertical-align':'center'})),
                 dbc.Col(dbc.NavLink("About", href="/about",className='text-light font-weight-bold',style={'font-size':'15px', 'vertical-align':'center'}))
             ],
@@ -519,7 +519,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
         
     fig.update_layout(
         title={
-            'text': "Overall Trend of infection of COVID-19 in Vietnam",
+            'text': "Overall Trend of infection",
             'y': 0.9,
             'x': 0.5,
             'xanchor': 'center',
@@ -536,7 +536,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
 
     fig1.update_layout(
         title={
-            'text': "Critical and Fatality of COVID-19 in Vietnam",
+            'text': "Critical and Fatality",
             'y': 0.9,
             'x': 0.5,
             'xanchor': 'center',
@@ -555,7 +555,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
 
     fig2.update_layout(
         title={
-            'text': "Spread and Containment of COVID-19 in Vietnam",
+            'text': "Spread and Containment",
             'y': 0.9,
             'x': 0.5,
             'xanchor': 'center',
