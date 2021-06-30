@@ -64,7 +64,9 @@ about_page = html.Div([dcc.Markdown(
                     * Thu Anh Nguyen - Supervisor
 
                     '''
-                ),],
+                ),
+                html.Div([html.Img(src="http://latex2png.com/pngs/702bf2916199f272082deefd1d364a00.png", style={'width': '5%'})], style={'width': '100%','text-align': 'center'})
+                ],
                 style = {'margin':'5%'})
 
 
@@ -529,8 +531,8 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, hcap,
 
     fig2 = make_subplots(rows=1, cols=2, x_title="Date" if 2 in mod else "Days since outbreak", y_title="Cases")
 
-    fig2.add_trace(go.Scatter(x=x, y=r0_trend, name='Daily R0'), row=1, col=1)
-    fig2.add_trace(go.Scatter(x=x, y=np.round((E+I+H+C+D+R)*N), name='E+I+H+C+D+R'), row=1, col=2)
+    fig2.add_trace(go.Scatter(x=x, y=r0_trend, name='Effective Reproduction number'), row=1, col=1)
+    fig2.add_trace(go.Scatter(x=x, y=np.round((E+I+Q+H+C+D)*N), name='Total quarantined'), row=1, col=2)
 
     fig2.update_layout(
         title={
