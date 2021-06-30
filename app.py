@@ -54,7 +54,7 @@ app.layout = html.Div([
     ],color="dark",dark=True,
     style={'text-decoration':'none','color':'white'}),
     html.Div(id='page-content'),
-    html.Footer(['Copyright 2021 SEIQHCDRO COVID-19 Modelling by Tuan-Khoi NGUYEN, Hoang Anh NGO and Thu-Anh NGUYEN'],
+    html.Footer([u'\u00a9 Copyright 2021 SEIQHCDRO COVID-19 Modelling by Tuan-Khoi NGUYEN, Hoang Anh NGO and Thu-Anh NGUYEN'],
                 style={'width':'100%', 
                        'text-align':'center',
                        #'border-style':'outset',
@@ -685,5 +685,5 @@ def display_page(pathname):
 
 
 if __name__ == '__main__':
-    app.server.run(port=8000, host='127.0.0.1')
-    #app.run_server(debug=True)
+    #app.server.run(port=8000, host='127.0.0.1')
+    app.run_server(debug=True)
