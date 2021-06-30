@@ -107,6 +107,7 @@ def generate_inputs():
 #
 main_page = html.Div([
     html.Div([
+        html.Div([html.H1("COVID-19 Multi-compartment Modelling Result".upper())],style={'width':'100%','text-align':'center','padding':'1%'}),
 
         html.Div(
             [
@@ -149,6 +150,13 @@ main_page = html.Div([
                                     target="div-hcap", placement='right'
                                ),
                                dcc.Input(id='hcap', value=100000, type='number')], style={'margin':'4% 0%'},id='div-hcap'),
+
+                     html.Div([html.H3("Quarantine Capacity: "),
+                               dbc.Tooltip(
+                                    "Quarantine Capacity",
+                                    target="div-qar", placement='right'
+                               ),
+                               dcc.Input(id='hqar', value=10000, type='number')], style={'margin':'4% 0%'},id='div-qar'),
 
                      html.Div([html.H3('Initial R0'),
                                dbc.Tooltip(
@@ -334,6 +342,7 @@ main_page = html.Div([
                       dcc.Checklist(
                             options=[
                                 {'label': 'Compare Hospital Capacity', 'value': 1},
+                                {'label': 'Compare Quarantine Capacity', 'value': 3},
                                 {'label': 'Show by Date', 'value': 2}
                             ],
                             value=[],
@@ -346,11 +355,12 @@ main_page = html.Div([
             html.Div([dcc.Graph(id='r0-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
             html.Div([html.Div(
                             [
-                                html.Button("Download Statistics (.csv)", id="btn_csv", style={'color':'white'}),
+                                html.H2("Download Statistics"),
+                                html.Button("Statistics Data (.csv)", id="btn_csv", style={'color':'white'}),
                                 dcc.Download(id="download-dataframe-csv"),
-                                html.Button("Download Summary (.txt)", id="btn_sum", style={'color':'white'}),
+                                html.Button("Information Summary (.txt)", id="btn_sum", style={'color':'white'}),
                                 dcc.Download(id="download-sum"),
-                            ], style={'padding':'2% 3%','display':'inline-block', 'vertical-align':'bottom'}
+                            ], style={'padding':'2% 3%','display':'inline-block', 'vertical-align':'bottom','text-align':'center', 'width':'100%'}
                         ),    
             ], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
                 
@@ -411,6 +421,7 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
     [Input({'role':'day', 'index':ALL}, component_property='value')],
     Input('date', component_property='date'),
     Input('hcap', component_property='value'),
+    Input('hqar', component_property='value'),
     Input('slider-tinc', component_property='value'),
     Input('slider-tinf', component_property='value'),
     Input('slider-ticu', component_property='value'),
@@ -432,7 +443,8 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
     prevent_initial_call=True,
 )
 
-def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, hcap,
+def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, 
+                 hcap, hqar,
                  tinf, tinc, thsp, tcrt,
                  ticu, tqar, tqah, trec,
                  pquar, pcross, pqhsp,
@@ -511,11 +523,10 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, hcap,
         font=dict(color='rgb(174, 211, 210)')
     )
 
-    fig1 = make_subplots(rows=1, cols=3, x_title="Date" if 2 in mod else "Days since outbreak", y_title="Cases")
+    fig1 = make_subplots(rows=1, cols=2, x_title="Date" if 2 in mod else "Days since outbreak", y_title="Cases")
     
-    fig1.add_trace(go.Scatter(x=x, y=crt, name='Critical'), row=1, col=1)
+    fig1.add_trace(go.Scatter(x=x, y=crt, name='Critical (Including Deaths)'), row=1, col=1)
     fig1.add_trace(go.Scatter(x=x, y=ded, name='Deaths'), row=1, col=2)
-    fig1.add_trace(go.Scatter(x=x, y=np.round(Q * N), name='Quarantined'), row=1, col=3)
 
     fig1.update_layout(
         title={
@@ -533,6 +544,8 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, hcap,
 
     fig2.add_trace(go.Scatter(x=x, y=r0_trend, name='Effective Reproduction number'), row=1, col=1)
     fig2.add_trace(go.Scatter(x=x, y=np.round((E+I+Q+H+C+D)*N), name='Total quarantined'), row=1, col=2)
+    if 3 in mod:
+        fig2.add_trace(go.Scatter(x=x, y=hqar * np.ones(151), name='Quarantine Capacity'), row=1, col=2)
 
     fig2.update_layout(
         title={
