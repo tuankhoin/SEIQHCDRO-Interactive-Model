@@ -54,7 +54,7 @@ app.layout = html.Div([
     ],color="dark",dark=True,
     style={'text-decoration':'none','color':'white'}),
     html.Div(id='page-content'),
-    html.Footer([u'\u00a9 Copyright 2021 SEIQHCDRO COVID-19 Modelling by Tuan-Khoi NGUYEN, Hoang Anh NGO and Thu-Anh NGUYEN'],
+    html.Footer([u'Copyright \u00a92021 SEIQHCDRO COVID-19 Modelling by Tuan-Khoi NGUYEN, Hoang Anh NGO and Thu-Anh NGUYEN'],
                 style={'width':'100%', 
                        'text-align':'center',
                        #'border-style':'outset',
@@ -71,7 +71,28 @@ about_page = html.Div([dcc.Markdown(
 
                     '''
                 ),
-                html.Div([html.Img(src="http://latex2png.com/pngs/702bf2916199f272082deefd1d364a00.png", style={'width': '5%'})], style={'width': '100%','text-align': 'center'})
+                    html.Div([html.Img(src="https://quicklatex.com/cache3/7e/ql_e6d699342116c2a00533eba118bbf57e_l3.png", style={'width': '10%', 'fill':'#000'})], style={'width': '100%','text-align': 'center'}),
+                    dcc.Markdown(
+                    '''
+                    # 💬 Citation
+
+                    If SEIQHCDRO multi-compartment model in general or the interactive modelling website has been useful for your research and policy advocacy, and you would like to cite it in an scientific publication, please refer to our presentation at the **52nd Union World Conference on Lung Health** as follows:
+                    '''
+                    ),
+                    dcc.Markdown(
+                    '''
+                    ```bibtex
+                    @misc{
+                        author = {Hoang Anh NGO and Tuan-Khoi NGUYEN and Thu-Anh NGUYEN},
+                        title = {A novel compartment model for analyzing and predicting COVID-19 outbreaks in Vietnam},
+                        howpublished = {Oral presentation at the 52nd Union World Conference on Lung Health}
+                        year = {2021},
+                        month = {October},
+                        date = {19--22}
+                    }
+                    ```
+                    '''
+                , style={'text-color':'null','background-color':'#6699cc'})
                 ],
                 style = {'margin':'5%'})
 
@@ -685,5 +706,5 @@ def display_page(pathname):
 
 
 if __name__ == '__main__':
-    #app.server.run(port=8000, host='127.0.0.1')
-    app.run_server(debug=True)
+    app.server.run(port=8000, host='127.0.0.1')
+    #app.run_server(debug=True)
