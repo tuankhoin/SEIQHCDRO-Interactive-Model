@@ -62,16 +62,12 @@ app.layout = html.Div([
                        'padding':'2%'})
 ])
 
-about_page = html.Div([dcc.Markdown(
-                    '''
-                    # About us
-                    * Tuan Khoi Nguyen - Data engineer, Main website developer
-                    * Ngo Hoang Anh - Main model developer, Web developer
-                    * Thu Anh Nguyen - Supervisor
-
-                    '''
-                ),
-                    html.Div([html.Img(src="https://quicklatex.com/cache3/7e/ql_e6d699342116c2a00533eba118bbf57e_l3.png", style={'width': '10%', 'fill':'#000'})], style={'width': '100%','text-align': 'center'}),
+about_page = html.Div([
+                    html.Div([html.Img(src="https://quicklatex.com/cache3/2e/ql_5948b14b283613968f0b24fb80533a2e_l3.png", style={'width': '30%', 'fill':'#000'})], style={'width': '100%','text-align': 'center'}),
+                    html.Div([html.Img(src="https://quicklatex.com/cache3/9e/ql_11ac62405647900135857d3b2d429b9e_l3.png",
+                            style={'width': '40%', 'fill': '#000'})], style={'width': '100%', 'text-align': 'center'}),
+                    html.Div([html.Img(src="https://quicklatex.com/cache3/84/ql_1a46c5cd376b5ef2c5fa51f23f675484_l3.png",
+                            style={'width': '40%', 'fill': '#000'})], style={'width': '100%', 'text-align': 'center'}),
                     dcc.Markdown(
                     '''
                     # 💬 Citation
@@ -93,7 +89,17 @@ about_page = html.Div([dcc.Markdown(
                     ```
                     '''
                 ,
-                )
+                ),
+                    dcc.Markdown(
+                        '''
+                        # About the authors
+                
+                        * Tuan Khoi Nguyen - Data engineer, Main website developer
+                        * Ngo Hoang Anh - Main model developer, Web developer
+                        * Thu Anh Nguyen - Supervisor
+                
+                        '''
+                    ),
                 ],
                 style = {'margin':'5%'})
 
