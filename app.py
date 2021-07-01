@@ -81,7 +81,7 @@ about_page = html.Div([dcc.Markdown(
                     ),
                     dcc.Markdown(
                     '''
-                    ```bibtex
+                    ```json
                     @misc{
                         author = {Hoang Anh NGO and Tuan-Khoi NGUYEN and Thu-Anh NGUYEN},
                         title = {A novel compartment model for analyzing and predicting COVID-19 outbreaks in Vietnam},
@@ -92,7 +92,8 @@ about_page = html.Div([dcc.Markdown(
                     }
                     ```
                     '''
-                , style={'text-color':'null','background-color':'#6699cc'})
+                ,
+                )
                 ],
                 style = {'margin':'5%'})
 
@@ -706,5 +707,5 @@ def display_page(pathname):
 
 
 if __name__ == '__main__':
-    app.server.run(port=8000, host='127.0.0.1')
-    #app.run_server(debug=True)
+    #app.server.run(port=8000, host='127.0.0.1')
+    app.run_server(debug=True)

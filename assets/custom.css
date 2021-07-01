@@ -99,3 +99,8 @@ aside,
 		font-size: 18px;
 	}
 }
+
+.hljs {
+    background: rgb(60,60,59);/* #FFFFFF; */
+    color: #a6c4d1;
+}
