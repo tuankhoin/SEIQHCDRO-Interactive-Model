@@ -511,9 +511,9 @@ main_page = html.Div([
     Output('in-r0', 'children'),
     [Input('num', 'value')])
 def ins_generate(n):
-    d = [6,20,30,49,55,60,69,70,80]
-    dr = [1.5,1,1,1,1,1,1,1,1]
-    pco = [0.1, 0.4, 0.6, 0.8,0.85,0.9, 0.9, 0.95, 1]
+    d = [6,20,30,49,55,60,69,70,80,85]
+    dr = [1.5,1,1,1,1,1,1,1,1,1]
+    pco = [0.1, 0.4, 0.6, 0.8,0.8,0.85,0.9, 0.9, 0.95, 1]
     return [html.Div([html.H5(f'Stage {i+1}:'),
                     html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=100, value=d[i], step=1, type='number', style={'width':'80%'})],
                                 style={'width': '33%', 'display': 'inline-block'}),
