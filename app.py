@@ -91,7 +91,8 @@ about_page = html.Div([
                         ## Formulation of the basic reproduction number `R_0`
                         
                         One of the most important aspects of this model is the ability to capture different levels of social distancing/lockdown to the spread
-                        of the disease. As such, we have integrated these impacts onto the function
+                        of the disease. As such, we have integrated these impacts onto the function representing the effective reproduction number `R_t` (i.e the basic reproduction
+                        number `R_0` with respect to time).
                         '''
                     ),
                     html.Div([html.Img(src="https://quicklatex.com/cache3/f7/ql_580fe4eb71ceadb277d725dd86ca49f7_l3.png", style={'width': '15%', 'fill':'#000'})], style={'width': '100%','text-align': 'center'}),
