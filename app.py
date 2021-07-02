@@ -622,11 +622,14 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
     
     ift = np.round((I + H + C + D + R + O) * N)
     hsp = np.round((H + C + D + R) * N)
+    hsp_in = np.array([hsp[i + 1] - hsp[i] if hsp[i+1]>hsp[i] else 0 for i in range(150)])
+    ift_in = np.array([ift[i + 1] - ift[i] if ift[i+1]>ift[i] else 0 for i in range(150)])
+    for i in range(150):
+        hsp[i+1]=hsp[i]+hsp_in[i]
+        ift[i+1]=ift[i]+ift_in[i]
     crt = np.round((C + D) * N)
     ded = np.round(D * N)
 
-    hsp_in = np.array([hsp[i + 1] - hsp[i] if hsp[i+1]>hsp[i] else 0 for i in range(150)])
-    ift_in = np.array([ift[i + 1] - ift[i] if ift[i+1]>ift[i] else 0 for i in range(150)])
 
     r0_trend = np.array([R0_dynamic(t) for t in np.linspace(0, 150, 151)])
 
