@@ -571,8 +571,8 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
 
 def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, 
                  hcap, hqar,
-                 tinf, tinc, thsp, tcrt,
-                 ticu, tqar, tqah, trec,
+                 tinc, tinf, ticu, thsp, tcrt,
+                 trec, tqar, tqah, 
                  pquar, pcross, pqhsp,
                  pj, ph, pc, pf,
                  ligma,sugma,mod):
@@ -805,5 +805,5 @@ def display_page(pathname):
 
 
 if __name__ == '__main__':
-    app.server.run(port=8000, host='127.0.0.1')
-    #app.run_server(debug=True)
+    #app.server.run(port=8000, host='127.0.0.1')
+    app.run_server(debug=True)
