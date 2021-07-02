@@ -94,12 +94,27 @@ about_page = html.Div([
                         '''
                         # About the authors
                 
-                        * Tuan Khoi Nguyen - Data engineer, Main website developer
-                        * Ngo Hoang Anh - Main model developer, Web developer
-                        * Thu Anh Nguyen - Supervisor
+                        * **Hoang Anh NGO** is the main author and model developer of the project. He is about to graduate from École Polytechnique
+                        with a double major in Mathematics and Economics, minor in Computational Economics. His research interests focus on 
+                        Epidemiology, (Online) Machine Learning and its applications in Medicine.
+                        * **Tuan-Khoi Nguyen** is the data engineer and main web developer of this project. He is graduating from The University of
+                        Melbourne with a Bachelor of Science in Mechatronics, and about to continue his Masters within the same field. His research
+                        interest focuses on Machine Learning and its applications in Robotics.
+                        * **Thu-Anh Nguyen** MD PhD is the supervisor and corresponding author of the project. She received her doctoral degree in medical
+                        anthropology at the University of Amsterdam, Netherlands and currently serves as Country Director of Woolcock Institute of 
+                        Medical Research, Vietnam. Dr. Thu Anh is a public health expert with more than 20 years' experience in design and management
+                        of health studies.
                 
                         '''
                     ),
+                    dcc.Markdown(
+                        '''
+                        # License 
+                        
+                        SEIQHCDRO COVID-19 Interactive Modelling Tool (COVID-19 modelling with SEIQHCDRO), excluding the associated research results presented by the authors, 
+                        is free and open-source software licensed under the [3-clause BSD license](https://github.com/online-ml/river/blob/master/LICENSE).
+                        '''
+                    )
                 ],
                 style = {'margin':'5%'})
 
