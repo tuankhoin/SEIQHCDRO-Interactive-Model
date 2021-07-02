@@ -162,10 +162,9 @@ about_page = html.Div([
                         * **Tuan-Khoi Nguyen** is the data engineer and main web developer of this project. He is graduating from The University of
                         Melbourne with a Bachelor of Science in Mechatronics, and about to continue his Masters within the same field. His research
                         interest focuses on Machine Learning and its applications in Robotics.
-                        * **Thu-Anh Nguyen** MD PhD is the supervisor and corresponding author of the project. She received her doctoral degree in medical
-                        anthropology at the University of Amsterdam, Netherlands and currently serves as Country Director of Woolcock Institute of 
-                        Medical Research, Vietnam. Dr. Thu Anh is a public health expert with more than 20 years' experience in design and management
-                        of health studies.
+                        * Dr [**Nguyen Thu Anh**](https://www.researchgate.net/profile/Nguyen-Anh-50) is an epidemiologist and a social scientist by training, with more than 20 years of experience. 
+                        She holds an honorary position as Senior Clinical Lecturer at University of Sydney, and the head of the 
+                        Woolcock Institute of Medical Research in Vietnam.
                 
                         '''
                     ),
@@ -608,8 +607,11 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
                         min(R0_dynamic(day[i] - 1), r0 * (1 - pcont[i])) - 2 * delta_r0[i] / 30 * (t - (day[i] - 1)) *
                         pcont[i], 0)
                 else:
-                    return min(R0_dynamic(day[i] - 1), r0 * (1 - pcont[i])) + 2 * delta_r0[i] / 30 * (
+                    if min(R0_dynamic(day[i] - 1), r0 * (1 - pcont[i])) > 0:
+                        return min(R0_dynamic(day[i] - 1), r0 * (1 - pcont[i])) + 2 * delta_r0[i] / 30 * (
                                 t - (day[i] - 1)) * (1 - pcont[i])
+                    else:
+                        return 0.0
 
     args = (R0_dynamic,
             tinf, tinc, thsp, tcrt,
