@@ -104,3 +104,8 @@ aside,
     background: rgb(60,60,59);/* #FFFFFF; */
     color: #a6c4d1;
 }
+
+.rc-slider-handle {
+	width:18px;
+	height:18px;
+  }
