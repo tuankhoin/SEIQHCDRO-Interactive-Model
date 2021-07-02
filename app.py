@@ -84,6 +84,10 @@ about_page = html.Div([
                     html.Div([html.Img(src="https://quicklatex.com/cache3/2e/ql_5948b14b283613968f0b24fb80533a2e_l3.png", style={'width': '40%', 'fill':'#000'})], style={'width': '100%','text-align': 'center'}),
                     dcc.Markdown(
                         '''
+                        
+                        To obtain the result, this system of ordinary differential equations (ODEs) will be solved using the `solve_ivp` command within the `SciPy` package
+                        in Python. To prevent any stiffness of the system, the `Radau` method, i.e the implicit Runge-Kutta method of the Radau IIA family of order 5.
+                        
                         ## Formulation of the basic reproduction number `R_0`
                         
                         One of the most important aspects of this model is the ability to capture different levels of social distancing/lockdown to the spread
