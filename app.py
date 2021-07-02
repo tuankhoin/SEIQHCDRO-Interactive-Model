@@ -168,6 +168,20 @@ about_page = html.Div([
                         '''
                         # Acknowledgement
                         
+                        We would like to send our sincerest gratitude towards all team members of [5F Team](https://5fteam.com/) for contributing 
+                        valuable insights and data to help us complete out model:
+                        
+                        * BPharm. Duyen T. Duong, Woolcock Institute of Medical Research Vietnam
+                        * MS. Thao Huong Nguyen, Woolcock Institute of Medical Research Vietnam
+                        * PhD. Anh LE, Hanoi University of Public Health
+                        * PhD. Cuong Quoc Nguyen, US CDC
+                        * Phuc Phan, MD PhD, Vietnam National Hospital of Pediatrics 
+                        * Nguyen Huyen Nguyen, MD, National Hospital of Tropical Diseases (NHTD)
+                        
+                        Moreover, we also want to send our warmest thanks to  our fellow 
+                        colleagues and readers for their thoughtful and scholarly evaluation of the model. 
+                        All comments are hugely appreciated.
+                        
                         '''
                     ),
                     dcc.Markdown(
