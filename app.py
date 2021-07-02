@@ -715,9 +715,9 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
     fig2.update_yaxes(zerolinecolor='rgb(110,110,110)', gridwidth=1, gridcolor='rgb(100,100,100)')
 
     if 2 in mod:
-        fig.update_xaxes(dtick="M2", tickformat="%d/%m/%y")
-        fig1.update_xaxes(dtick="M2", tickformat="%d/%m/%y")
-        fig2.update_xaxes(dtick="M2", tickformat="%d/%m/%y")
+        fig.update_xaxes(dtick="M1", tickformat="%d/%m/%y")
+        fig1.update_xaxes(dtick="M1", tickformat="%d/%m/%y")
+        fig2.update_xaxes(dtick="M1", tickformat="%d/%m/%y")
 
     ctx = dash.callback_context.triggered
     if ctx:
