@@ -65,6 +65,8 @@ app.layout = html.Div([
 about_page = html.Div([
                     dcc.Markdown(
                         '''
+                        #### ABOUT US
+                        
                         # Formation of the model
                         
                         ## Flowchart

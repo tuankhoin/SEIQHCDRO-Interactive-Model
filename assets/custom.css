@@ -61,6 +61,14 @@ h3 {
 	padding-bottom: 15px;
 }
 
+h4 {
+	font-size: 56px;
+	line-height: 34px;
+	padding: 2%;
+	text-align: center;
+	border-style: outset;
+}
+
 hr {
 	height: 1px;
 	background-color: #d8d8d8;
