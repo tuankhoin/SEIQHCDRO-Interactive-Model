@@ -294,8 +294,8 @@ main_page = html.Div([
                                     "Initial R0 at 1st day of outbreak",
                                     target="div-r0", placement='right'
                                ),
-                               dcc.Slider(id='slider-r0', min=0, max=20, value=3.9, step=0.1,
-                                          tooltip={'always_visible': True}
+                               dcc.Input(id='slider-r0', min=0, max=20, value=3.9, step=0.1,
+                                          type='number'#tooltip={'always_visible': True}
                                           )],id='div-r0'),
 
                      html.Div(generate_inputs()),
@@ -508,12 +508,15 @@ main_page = html.Div([
     Output('in-r0', 'children'),
     [Input('num', 'value')])
 def ins_generate(n):
+    d = [6,20,30,49,55,60,69,70,80]
+    dr = [1.5,1,1,1,1,1,1,1,1]
+    pco = [0.1, 0.4, 0.6, 0.65,0.7,0.75, 0.8, 0.85, 0.9]
     return [html.Div([html.H5(f'Stage {i+1}:'),
-                    html.Div([html.H6('Starting Date'), dcc.Slider(id={'role':'day', 'index':i}, min=1, max=100, value=15*i+5, step=1, tooltip={'always_visible': False}, marks={1:'1',100:'100'})],
+                    html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=100, value=d[i], step=1, type='number', style={'width':'80%'})],
                                 style={'width': '33%', 'display': 'inline-block'}),
-                    html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=1, step=0.1, type='number', style={'width':'100%'})],
+                    html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=dr[i], step=0.1, type='number', style={'width':'100%'})],
                                 style={'width': '28%', 'display': 'inline-block', 'margin':'0 5% 0 0'}),
-                    html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=0.2*(i+1), step=0.01, tooltip={'always_visible': False}, marks={0:'0',1:'1'})],
+                    html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=pco[i], step=0.01, tooltip={'always_visible': False}, marks={0:'0',1:'1'})],
                                 style={'width': '33%', 'display': 'inline-block'})
                     ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(n)]
 
