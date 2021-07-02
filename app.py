@@ -187,8 +187,8 @@ main_page = html.Div([
                                     id='date',
                                     min_date_allowed=date(2020, 1, 1),
                                     max_date_allowed=date(2030, 12, 31),
-                                    initial_visible_month=date(2021, 4, 15),
-                                    date=date(2021, 4, 15),
+                                    initial_visible_month=date(2021, 5, 1),
+                                    date=date(2021, 5, 1),
                                     display_format = 'DD/MM/YYYY'
                                 ),
                     ], id = 'div-date'),
@@ -238,7 +238,7 @@ main_page = html.Div([
                                     "Hospital",
                                     target="div-ph", placement='right'
                                ),
-                               dcc.Slider(id='slider-ph', min=0, max=1, value=0.85, step=0.01,
+                               dcc.Slider(id='slider-ph', min=0, max=1, value=0.9, step=0.01,
                                           tooltip={'always_visible': True}
                                           )],id='div-ph'),
 
@@ -265,7 +265,7 @@ main_page = html.Div([
                                     "Media Impact",
                                     target="div-pj", placement='right'
                                ),
-                               dcc.Slider(id='slider-pj', min=0, max=1, value=0.1, step=0.01,
+                               dcc.Slider(id='slider-pj', min=0, max=1, value=0.12, step=0.01,
                                           tooltip={'always_visible': True}
                                           )],id='div-pj'),
 
@@ -313,7 +313,7 @@ main_page = html.Div([
                                     "Incubated",
                                     target="div-tinc", placement='right'
                                ),
-                               dcc.Slider(id='slider-tinc', min=2.5, max=5, value=3, step=0.1,
+                               dcc.Slider(id='slider-tinc', min=2.5, max=5, value=4.5, step=0.1,
                                           tooltip={'always_visible': True}
                                           )],id='div-tinc'),
 
@@ -322,7 +322,7 @@ main_page = html.Div([
                                     "Infectious",
                                     target="div-tinf", placement='right'
                                ),
-                               dcc.Slider(id='slider-tinf', min=5.0, max=7, value=6, step=0.1,
+                               dcc.Slider(id='slider-tinf', min=1.0, max=7, value=2.9, step=0.1,
                                           tooltip={'always_visible': True}
                                           )],id='div-tinf'),
 
@@ -331,7 +331,7 @@ main_page = html.Div([
                                     "ICU",
                                     target="div-ticu", placement='right'
                                ),
-                               dcc.Slider(id='slider-ticu', min=10.0, max=14, value=10, step=0.1,
+                               dcc.Slider(id='slider-ticu', min=10.0, max=14, value=11, step=0.1,
                                           tooltip={'always_visible': True}
                                           )],id='div-ticu'),
 
@@ -340,7 +340,7 @@ main_page = html.Div([
                                     "Hospitalised",
                                     target="div-thsp", placement='right'
                                ),
-                               dcc.Slider(id='slider-thsp', min=5.0, max=10, value=6, step=0.1,
+                               dcc.Slider(id='slider-thsp', min=7, max=21, value=21, step=0.1,
                                           tooltip={'always_visible': True}
                                           )],id='div-thsp'),
                      html.Div([html.H6('Critical'),
@@ -348,7 +348,7 @@ main_page = html.Div([
                                     "Critical",
                                     target="div-tcrt", placement='right'
                                ),
-                               dcc.Slider(id='slider-tcrt', min=10.0, max=14, value=10, step=0.1,
+                               dcc.Slider(id='slider-tcrt', min=1, max=14, value=7, step=0.1,
                                           tooltip={'always_visible': True}
                                           )],id='div-tcrt'),
 
@@ -357,7 +357,7 @@ main_page = html.Div([
                                     "Self-Recover",
                                     target="div-trec", placement='right'
                                ),
-                               dcc.Slider(id='slider-trec', min=12.0, max=14, value=13, step=0.1,
+                               dcc.Slider(id='slider-trec', min=7, max=21, value=21, step=0.1,
                                           tooltip={'always_visible': True}
                                           )],id='div-trec'),
 
@@ -427,11 +427,11 @@ main_page = html.Div([
     [Input('num', 'value')])
 def ins_generate(n):
     return [html.Div([html.H5(f'Stage {i+1}:'),
-                    html.Div([html.H6('Starting Date'), dcc.Slider(id={'role':'day', 'index':i}, min=1, max=100, value=10*i+1, step=1, tooltip={'always_visible': False}, marks={1:'1',100:'100'})],
+                    html.Div([html.H6('Starting Date'), dcc.Slider(id={'role':'day', 'index':i}, min=1, max=100, value=15*i+5, step=1, tooltip={'always_visible': False}, marks={1:'1',100:'100'})],
                                 style={'width': '33%', 'display': 'inline-block'}),
                     html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=1, step=0.1, type='number', style={'width':'100%'})],
                                 style={'width': '28%', 'display': 'inline-block', 'margin':'0 5% 0 0'}),
-                    html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=0.15*(i+1), step=0.01, tooltip={'always_visible': False}, marks={0:'0',1:'1'})],
+                    html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=0.2*(i+1), step=0.01, tooltip={'always_visible': False}, marks={0:'0',1:'1'})],
                                 style={'width': '33%', 'display': 'inline-block'})
                     ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(n)]
 
