@@ -635,8 +635,12 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
     for i in range(150):
         hsp[i+1]=hsp[i]+hsp_in[i]
         ift[i+1]=ift[i]+ift_in[i]
+
     crt = np.round((C + D) * N)
     ded = np.round(D * N)
+    crt_in = np.array([crt[i + 1] - crt[i] if crt[i+1]>crt[i] else 0 for i in range(150)])
+    ded_in = np.array([ded[i + 1] - ded[i] if ded[i+1]>ded[i] else 0 for i in range(150)])
+
     qar = np.round((E+I+Q+H+C+D)*N)
 
 
@@ -670,7 +674,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
 
     fig1 = make_subplots(rows=1, cols=2, x_title="Date" if 2 in mod else "Days since the beginning of outbreak", y_title="Cases")
     
-    fig1.add_trace(go.Scatter(x=x, y=crt, name='Critical (Including Deaths)'), row=1, col=1)
+    fig1.add_trace(go.Scatter(x=x, y=crt_in, name='Daily Critical Incidence'), row=1, col=1)
     fig1.add_trace(go.Scatter(x=x, y=ded, name='Deaths'), row=1, col=2)
 
     fig1.update_layout(
