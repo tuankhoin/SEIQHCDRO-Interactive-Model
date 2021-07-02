@@ -63,11 +63,68 @@ app.layout = html.Div([
 ])
 
 about_page = html.Div([
-                    html.Div([html.Img(src="https://quicklatex.com/cache3/2e/ql_5948b14b283613968f0b24fb80533a2e_l3.png", style={'width': '30%', 'fill':'#000'})], style={'width': '100%','text-align': 'center'}),
+                    dcc.Markdown(
+                        '''
+                        # Formation of the model
+                        
+                        ## Flowchart
+                        
+                        As an multi-compartment epidemiological model, there must exist specific relations between each and every single compartment. 
+                        Such relations are expressed though the model flowchart below
+                        '''
+                    ),
+                    html.Div([html.Img(src="https://drive.google.com/uc?export=view&id=1nb9DFzmOBdlbp8eSaMUsKA45owrYauf_", style={'width': '50%', 'fill':'#000'})], style={'width': '100%','text-align': 'center'}),
+                    dcc.Markdown(
+                        '''
+                        ## Formula
+                        
+                        From this, we develop a system of differential equations to simulate the relationship between these compartments. The system reads:
+                        '''
+                    ),
+                    html.Div([html.Img(src="https://quicklatex.com/cache3/2e/ql_5948b14b283613968f0b24fb80533a2e_l3.png", style={'width': '40%', 'fill':'#000'})], style={'width': '100%','text-align': 'center'}),
+                    dcc.Markdown(
+                        '''
+                        ## Formulation of the basic reproduction number `R_0`
+                        
+                        One of the most important aspects of this model is the ability to capture different levels of social distancing/lockdown to the spread
+                        of the disease. As such, we have integrated these impacts onto the function
+                        '''
+                    ),
+                    html.Div([html.Img(src="https://quicklatex.com/cache3/f7/ql_580fe4eb71ceadb277d725dd86ca49f7_l3.png", style={'width': '15%', 'fill':'#000'})], style={'width': '100%','text-align': 'center'}),
+                    dcc.Markdown(
+                        '''
+                        Assume that there exists two consecutive time intervals separated by a policy scheme change at time `T`. Before time `T`, the population
+                        inherits a scheme with change of the basic reproduction number `delta R_0`, contact rate reduction `p_cont` and contact rate reduction due
+                        to journalism `p_jrnl`. After time `T`, the population now inherits a new scheme with a new set of parameters, `delta R'_0`, `p'_cont` and 
+                        `p'_jrnl`, respectively.
+                        
+                        There are two cases that would happen:
+                        
+                        * When `p'_cont >= p_cont` (i.e. the social distancing/lockdown measure tightens), the new function is:
+                        '''
+                    ),
                     html.Div([html.Img(src="https://quicklatex.com/cache3/9e/ql_11ac62405647900135857d3b2d429b9e_l3.png",
                             style={'width': '40%', 'fill': '#000'})], style={'width': '100%', 'text-align': 'center'}),
+                    dcc.Markdown(
+                        '''
+                        * When `p'_cont < p_cont` (i.e. the social distancing/lockdown measure loosens), the function now becomes:
+                        '''
+                    ),
                     html.Div([html.Img(src="https://quicklatex.com/cache3/84/ql_1a46c5cd376b5ef2c5fa51f23f675484_l3.png",
                             style={'width': '40%', 'fill': '#000'})], style={'width': '100%', 'text-align': 'center'}),
+                    dcc.Markdown(
+                        '''
+                        # Tool features
+                        '''
+                    ),
+                    dcc.Markdown(
+                        '''
+                        # Source code
+                        
+                        The source code of this interactive tool, its deployment, license and other related information can
+                        be found at this [Github repository](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model). 
+                        '''
+                    ),
                     dcc.Markdown(
                     '''
                     # 💬 Citation
@@ -105,6 +162,12 @@ about_page = html.Div([
                         Medical Research, Vietnam. Dr. Thu Anh is a public health expert with more than 20 years' experience in design and management
                         of health studies.
                 
+                        '''
+                    ),
+                    dcc.Markdown(
+                        '''
+                        # Acknowledgement
+                        
                         '''
                     ),
                     dcc.Markdown(
@@ -728,5 +791,5 @@ def display_page(pathname):
 
 
 if __name__ == '__main__':
-    #app.server.run(port=8000, host='127.0.0.1')
-    app.run_server(debug=True)
+    app.server.run(port=8000, host='127.0.0.1')
+    #app.run_server(debug=True)
