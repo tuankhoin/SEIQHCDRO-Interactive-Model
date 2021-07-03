@@ -54,7 +54,7 @@ app.layout = html.Div([
     ],color="dark",dark=True,
     style={'text-decoration':'none','color':'white'}),
     html.Div(id='page-content'),
-    html.Footer([u'Copyright \u00a92021 SEIQHCDRO COVID-19 Modelling by Tuan-Khoi NGUYEN, Hoang Anh NGO and Thu-Anh NGUYEN'],
+    html.Footer([u'Copyright \u00a92021 SEIQHCDRO COVID-19 Modelling by Hoang Anh NGO, Tuan-Khoi NGUYEN and Thu-Anh NGUYEN'],
                 style={'width':'100%', 
                        'text-align':'center',
                        #'border-style':'outset',
@@ -64,8 +64,22 @@ app.layout = html.Div([
 
 about_page = html.Div([
                     dcc.Markdown(
-                        '''
-                        #### ABOUT US
+                        u'''
+                        #### SEIQHCDRO COVID-19 INTERACTIVE MODELLING TOOL
+                        
+                        # Introduction
+                        
+                        In the past outbreaks, Vietnam has successfully controlled the COVID-19 pandemic by simultaneously applying numerous strategies,
+                        including aggressive contact tracing, mandatory quarantine, routine testing, etc. To quantify the effectiveness of these measures,
+                        we developed a multi-compartment model that integrates all of these practices to estimate impacts of possible mitigation scenarios
+                        on the COVID-19 outbreak. To do that, we extended the traditional SEIR model into a 9-compartment model SEIQHCDRO with 
+                        S (Susceptible), E (Exposed), I (Infected), Q (Quarantined), H (Hospitalized), C (Critical), D (Death), R (Recovered) 
+                        and O (Other - Recovered). 
+                        
+                        Moreover, in order to turn our research 
+                        into an open-source project so that everyone can have access to, while creating a tool so that policy makers/public health specialists have a
+                        tool to facilitate their policy advocate/policy making process, we decided to create this tool, alongside with publicizing all associated
+                        source code.
                         
                         # Formation of the model
                         
@@ -78,50 +92,28 @@ about_page = html.Div([
                     html.Div([html.Img(src="https://drive.google.com/uc?export=view&id=1nb9DFzmOBdlbp8eSaMUsKA45owrYauf_", style={'width': '50%', 'fill':'#000'})], style={'width': '100%','text-align': 'center'}),
                     dcc.Markdown(
                         '''
-                        ## Formula
+                        ## Formula and the formualtion of the effective reproduction number `R_t`
                         
-                        From this, we develop a system of differential equations to simulate the relationship between these compartments. The system reads:
+                        The complete ordinary differential equation (ODE) system and formulation of the effective reproduction number 
+                        `R_t` based on the basic reproduction number, reduction of contact based on policy schemes and on journalism 
+                        and time `t` can be found [here](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model#formula).
                         '''
                     ),
-                    html.Div([html.Img(src="https://quicklatex.com/cache3/2e/ql_5948b14b283613968f0b24fb80533a2e_l3.png", style={'width': '40%', 'fill':'#000'})], style={'width': '100%','text-align': 'center'}),
-                    dcc.Markdown(
-                        '''
-                        
-                        To obtain the result, this system of ordinary differential equations (ODEs) will be solved using the `solve_ivp` command within the `SciPy` package
-                        in Python. To prevent any stiffness of the system, the `Radau` method, i.e the implicit Runge-Kutta method of the Radau IIA family of order 5.
-                        
-                        ## Formulation of the basic reproduction number `R_0`
-                        
-                        One of the most important aspects of this model is the ability to capture different levels of social distancing/lockdown to the spread
-                        of the disease. As such, we have integrated these impacts onto the function representing the effective reproduction number `R_t` (i.e the basic reproduction
-                        number `R_0` with respect to time).
-                        '''
-                    ),
-                    html.Div([html.Img(src="https://quicklatex.com/cache3/f7/ql_580fe4eb71ceadb277d725dd86ca49f7_l3.png", style={'width': '15%', 'fill':'#000'})], style={'width': '100%','text-align': 'center'}),
-                    dcc.Markdown(
-                        '''
-                        Assume that there exists two consecutive time intervals separated by a policy scheme change at time `T`. Before time `T`, the population
-                        inherits a scheme with change of the basic reproduction number `delta R_0`, contact rate reduction `p_cont` and contact rate reduction due
-                        to journalism `p_jrnl`. After time `T`, the population now inherits a new scheme with a new set of parameters, `delta R'_0`, `p'_cont` and 
-                        `p'_jrnl`, respectively.
-                        
-                        There are two cases that would happen:
-                        
-                        * When `p'_cont >= p_cont` (i.e. the social distancing/lockdown measure tightens), the new function is:
-                        '''
-                    ),
-                    html.Div([html.Img(src="https://quicklatex.com/cache3/9e/ql_11ac62405647900135857d3b2d429b9e_l3.png",
-                            style={'width': '40%', 'fill': '#000'})], style={'width': '100%', 'text-align': 'center'}),
-                    dcc.Markdown(
-                        '''
-                        * When `p'_cont < p_cont` (i.e. the social distancing/lockdown measure loosens), the function now becomes:
-                        '''
-                    ),
-                    html.Div([html.Img(src="https://quicklatex.com/cache3/84/ql_1a46c5cd376b5ef2c5fa51f23f675484_l3.png",
-                            style={'width': '40%', 'fill': '#000'})], style={'width': '100%', 'text-align': 'center'}),
                     dcc.Markdown(
                         '''
                         # Tool features
+                        
+                        In order to create the most interactive and convenient tool possible for COVID-19 modelling, we have decided to opt for 
+                        a number of features that makes it more comfortable for users to interact with this web application, including
+                        * The ability to capture 10 different policy schemes in place, corresponding to 10 consecutive time intervals. This would
+                        be helpful for policy advocates to simulate effects of different policy making processes.
+                        * 3 pairs of plots representing different aspect of the outbreak with built-in gadgets of `Plotly` for generated plots, including:
+                            - **Overall trend of infection**: Incidence and cumulative number of hospitalized/infected COVID-19 cases,
+                            - **Critical and fatal cases**: Number of active critical cases daily and cumulative number of deceased cases,
+                            - **Spread and containment**: Effective reproduction number (Basic reproduction number by day) and total number of quarantined individuals.  
+                        * Ability to export statistical data of total hospitalized/infected/critical/fatal cases in a CSV file and information summary of the 
+                        newly calibrated model with the option to personalize file name and start date. 
+                        * Comparision with the current capacity for the number of quarantined/hospitalized cases
                         '''
                     ),
                     dcc.Markdown(
@@ -134,7 +126,16 @@ about_page = html.Div([
                     ),
                     dcc.Markdown(
                     '''
-                    # 💬 Citation
+                    # Mentions
+                    
+                    Up until now, our research project has been featured at two major conferences in lung health, public health and epidemiology, including:
+                    - [The 52nd World Union Conference on Lung Health](https://theunion.org/our-work/conferences/52nd-union-world-conference-on-lung-health?fbclid=IwAR3DAw1R3eA8L0Jv0cr0aUtoqFJwESIHNvdGCyBKzkPF5KFbsUcXTOOK-ZM);
+                    - [8th Vietnam Lung Association (VILA) Scientific Conference 2021](https://drive.google.com/file/d/10uBQJATgEIVgIAbQdp9n4oWGGYqOiKf-/view?fbclid=IwAR3bNTaz_4UKZxa2TaN5ge6FSJL88vURX7xzFURjkE0J-B4hxuKT_3ZZ3vQ).
+                    
+                    Besides, our research has also been featured on a lot of renowned newspapers in Vietnam, including Tuoi tre, VNExpress, Soha, Viet Nam News, etc. as a major tool 
+                    for our policy advocates to fight against the COVID-19 pandemic in Vietnam.
+                    
+                    # Citation
 
                     If SEIQHCDRO multi-compartment model in general or the interactive modelling website has been useful for your research and policy advocacy, and you would like to cite it in an scientific publication, please refer to our presentation at the **52nd Union World Conference on Lung Health** as follows:
                     '''
@@ -158,10 +159,10 @@ about_page = html.Div([
                         '''
                         # About the authors
                 
-                        * **Hoang Anh NGO** is the main author and model developer of the project. He is about to graduate from École Polytechnique
+                        * [**Hoang Anh NGO**](https://orcid.org/0000-0002-7583-753X) is the main author and model developer of the project. He is about to graduate from École Polytechnique
                         with a double major in Mathematics and Economics, minor in Computational Economics. His research interests focus on 
                         Epidemiology, (Online) Machine Learning and its applications in Medicine.
-                        * **Tuan-Khoi Nguyen** is the data engineer and main web developer of this project. He is graduating from The University of
+                        * [**Tuan-Khoi Nguyen**](https://www.linkedin.com/in/tuankhoin/) is the data engineer and main web developer of this project. He is graduating from The University of
                         Melbourne with a Bachelor of Science in Mechatronics, and about to continue his Masters within the same field. His research
                         interest focuses on Machine Learning and its applications in Robotics.
                         * Dr [**Nguyen Thu Anh**](https://www.researchgate.net/profile/Nguyen-Anh-50) is an epidemiologist and a social scientist by training, with more than 20 years of experience. 
@@ -179,12 +180,12 @@ about_page = html.Div([
                         
                         * BPharm. Duyen T. Duong, Woolcock Institute of Medical Research Vietnam
                         * MS. Thao Huong Nguyen, Woolcock Institute of Medical Research Vietnam
-                        * PhD. Anh LE, Hanoi University of Public Health
-                        * PhD. Cuong Quoc Nguyen, US CDC
+                        * Kim Anh Le, MD PhD, Hanoi University of Public Health
+                        * Cuong Quoc Nguyen, MD PhD, US CDC
                         * Phuc Phan, MD PhD, Vietnam National Hospital of Pediatrics 
                         * Nguyen Huyen Nguyen, MD, National Hospital of Tropical Diseases (NHTD)
                         
-                        Moreover, we also want to send our warmest thanks to  our fellow 
+                        Moreover, we also want to send our warmest thanks to our fellow 
                         colleagues and readers for their thoughtful and scholarly evaluation of the model. 
                         All comments are hugely appreciated.
                         
@@ -195,7 +196,20 @@ about_page = html.Div([
                         # License 
                         
                         SEIQHCDRO COVID-19 Interactive Modelling Tool (COVID-19 modelling with SEIQHCDRO), excluding the associated research results presented by the authors, 
-                        is free and open-source software licensed under the [3-clause BSD license](https://github.com/online-ml/river/blob/master/LICENSE).
+                        is free and open-source software licensed under the [3-clause BSD license](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model/blob/main/LICENSE).
+                        
+                        # Website legal disclaimer
+                        The information contained in this website is for convenience or reference only. The content cannot be considered to be medical advice and is not intended 
+                        to be a substitute for professional medical counselling, diagnosis or treatment. For any concern please consult a trusted specialist in the field.
+
+                        Whilst we endeavor to keep the information up to date and correct, we make no representations or warranties of any kind, express or implied, 
+                        about the completeness, accuracy, timeliness, reliability, suitability or availability with respect to the website or the information, 
+                        products, services, or related graphics, images, text and all other materials contained on the website for any purpose. 
+                        It is not meant to be applicable to any specific individual’s medical condition and any reliance you place on such information is therefore 
+                        strictly at your own risk.
+
+                        In no event will we be liable for any loss or damage including without limitation, indirect or consequential loss or damage, or any loss or damage whatsoever 
+                        arising from loss of data or profits arising out of, or in connection with, the use of this website.
                         '''
                     )
                 ],
@@ -839,5 +853,5 @@ def display_page(pathname):
 
 
 if __name__ == '__main__':
-    #app.server.run(port=8000, host='127.0.0.1')
-    app.run_server(debug=True)
+    app.server.run(port=8000, host='127.0.0.1')
+    #app.run_server(debug=True)

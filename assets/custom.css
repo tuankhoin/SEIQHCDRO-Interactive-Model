@@ -52,7 +52,7 @@ h1 {
 
 h2 {
 	font-size: 20px;
-	line-height: 25px;
+	line-height: 30px;
 }
 
 h3 {
@@ -68,6 +68,7 @@ h4 {
 	padding: 2%;
 	text-align: center;
 	border-style: outset;
+	line-height: 100%
 }
 
 hr {
