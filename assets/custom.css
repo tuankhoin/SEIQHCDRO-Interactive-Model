@@ -119,3 +119,7 @@ aside,
 	width:17px;
 	height:17px;
   }
+
+.tooltip {
+	font-size: 1.5rem;
+}
