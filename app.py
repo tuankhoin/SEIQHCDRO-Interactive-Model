@@ -285,7 +285,7 @@ main_page = html.Div([
                                     "Initial basic reproduction number at first day of outbreak",
                                     target="div-r0", placement='right'
                                ),
-                               dcc.Input(id='slider-r0', min=0, max=20, value=3.9, step=0.1,
+                               dcc.Input(id='slider-r0', min=0, max=20, value=4.1, step=0.1,
                                           type='number'#tooltip={'always_visible': True}
                                           )],id='div-r0'),
 
@@ -311,7 +311,7 @@ main_page = html.Div([
                                     "Proportion of infected people getting hospitalized (For example, if 100 positive cases exist in the community, this proportion of them would be directly sent to a hospital.",
                                     target="div-ph", placement='right'
                                ),
-                               dcc.Slider(id='slider-ph', min=0, max=1, value=0.9, step=0.01,
+                               dcc.Slider(id='slider-ph', min=0, max=1, value=0.85, step=0.01,
                                           tooltip={'always_visible': True}
                                           )],id='div-ph'),
 
@@ -581,7 +581,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
                  ligma,sugma,mod,file):
     def R0_dynamic(t):
         if not delta_r0 or not pcont or not day:
-            return 3.9
+            return 4.1
         elif t < day[0]:
             return r0
         else:
