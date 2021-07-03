@@ -54,7 +54,7 @@ app.layout = html.Div([
     ],color="dark",dark=True,
     style={'text-decoration':'none','color':'white'}),
     html.Div(id='page-content'),
-    html.Footer([u'Copyright \u00a92021 SEIQHCDRO COVID-19 Modelling by Hoang Anh NGO, Tuan-Khoi NGUYEN and Thu-Anh NGUYEN'],
+    html.Footer([u'Copyright \u00a92021 SEIQHCDRO COVID-19 Interactive Modelling Tool by Hoang Anh NGO, Tuan-Khoi NGUYEN and Thu-Anh NGUYEN'],
                 style={'width':'100%', 
                        'text-align':'center',
                        #'border-style':'outset',
@@ -81,24 +81,13 @@ about_page = html.Div([
                         tool to facilitate their policy advocate/policy making process, we decided to create this tool, alongside with publicizing all associated
                         source code.
                         
-                        # Formation of the model
-                        
-                        ## Flowchart
+                        # Model Flowchart
                         
                         As an multi-compartment epidemiological model, there must exist specific relations between each and every single compartment. 
                         Such relations are expressed though the model flowchart below
                         '''
                     ,dangerously_allow_html=True),
                     html.Div([html.Img(src="https://drive.google.com/uc?export=view&id=1nb9DFzmOBdlbp8eSaMUsKA45owrYauf_", style={'width': '50%', 'fill':'#000'})], style={'width': '100%','text-align': 'center'}),
-                    dcc.Markdown(
-                        '''
-                        ## Formula and the formualtion of the effective reproduction number `R_t`
-                        
-                        The complete ordinary differential equation (ODE) system and formulation of the effective reproduction number 
-                        `R_t` based on the basic reproduction number, reduction of contact based on policy schemes and on journalism 
-                        and time `t` can be found [here](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model#formula).
-                        '''
-                    ),
                     dcc.Markdown(
                         '''
                         # Tool features
@@ -114,14 +103,6 @@ about_page = html.Div([
                         * Ability to export statistical data of total hospitalized/infected/critical/fatal cases in a CSV file and information summary of the 
                         newly calibrated model with the option to personalize file name and start date. 
                         * Comparision with the current capacity for the number of quarantined/hospitalized cases
-                        '''
-                    ),
-                    dcc.Markdown(
-                        '''
-                        # Source code
-                        
-                        The source code of this interactive tool, its deployment, license and other related information can
-                        be found at this [Github repository](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model). 
                         '''
                     ),
                     dcc.Markdown(
@@ -193,11 +174,6 @@ about_page = html.Div([
                     ),
                     dcc.Markdown(
                         '''
-                        # License 
-                        
-                        SEIQHCDRO COVID-19 Interactive Modelling Tool (COVID-19 modelling with SEIQHCDRO), excluding the associated research results presented by the authors, 
-                        is free and open-source software licensed under the [3-clause BSD license](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model/blob/main/LICENSE).
-                        
                         # Website legal disclaimer
                         The information contained in this website is for convenience or reference only. The content cannot be considered to be medical advice and is not intended 
                         to be a substitute for professional medical counselling, diagnosis or treatment. For any concern please consult a trusted specialist in the field.
@@ -267,7 +243,7 @@ main_page = html.Div([
                 dbc.Collapse(
                     [html.Div([html.H3('Population'),
                                dbc.Tooltip(
-                                    "Population",
+                                    "Population taken into account",
                                     target="div-N", placement='right'
                                ),
                                dcc.Slider(id='slider-N', min=100000, max=100000000, value=11000000, step=100000,
@@ -277,7 +253,7 @@ main_page = html.Div([
 
                     html.Div([html.H3('Outbreak Date'),
                                dbc.Tooltip(
-                                    "Assumed 1st day of outbreak",
+                                    "Assumed first day of outbreak",
                                     target="div-date", placement='right'
                                ),
                                 dcc.DatePickerSingle(
@@ -306,7 +282,7 @@ main_page = html.Div([
 
                      html.Div([html.H3('Initial R0'),
                                dbc.Tooltip(
-                                    "Initial R0 at 1st day of outbreak",
+                                    "Initial basic reproduction number at first day of outbreak",
                                     target="div-r0", placement='right'
                                ),
                                dcc.Input(id='slider-r0', min=0, max=20, value=3.9, step=0.1,
@@ -332,7 +308,7 @@ main_page = html.Div([
                     [
                      html.Div([html.H6('Hospitalisation'),
                                dbc.Tooltip(
-                                    "Hospital",
+                                    "Proportion of infected people getting hospitalized (For example, if 100 F0s exist in the community, this proportion of them would be directly sent to a hospital.",
                                     target="div-ph", placement='right'
                                ),
                                dcc.Slider(id='slider-ph', min=0, max=1, value=0.9, step=0.01,
@@ -341,7 +317,7 @@ main_page = html.Div([
 
                      html.Div([html.H6('Critical'),
                                dbc.Tooltip(
-                                    "Critical",
+                                    "Proportion of COVID-19 positive hospitalized patients turning critical.",
                                     target="div-pc", placement='right'
                                ),
                                dcc.Slider(id='slider-pc', min=0, max=1, value=0.04, step=0.01,
@@ -350,7 +326,7 @@ main_page = html.Div([
 
                      html.Div([html.H6('Deceased'),
                                dbc.Tooltip(
-                                    "Deceased",
+                                    "Proportion of COVID-19 positive critical patients deceased.",
                                     target="div-pf", placement='right'
                                ),
                                dcc.Slider(id='slider-pf', min=0, max=1, value=0.25, step=0.01,
@@ -359,7 +335,7 @@ main_page = html.Div([
 
                      html.Div([html.H6('Media Impact'),
                                dbc.Tooltip(
-                                    "Media Impact",
+                                    "Media Impact as a contact reduction rate on the reproduction number.",
                                     target="div-pj", placement='right'
                                ),
                                dcc.Slider(id='slider-pj', min=0, max=1, value=0.12, step=0.01,
@@ -368,16 +344,16 @@ main_page = html.Div([
 
                      html.Div([html.H6('Quarantined'),
                                dbc.Tooltip(
-                                    "Qurantined",
+                                    "Proportion of individuals who needs quarantined actually get quarantined upon contact tracing (For example, if 100 Fs needs quarantine, this proportion of them would get quarantined immediately).",
                                     target="div-pquar", placement='right'
                                ),
                                dcc.Slider(id='slider-pquar', min=0, max=1, value=0.8, step=0.01,
                                           tooltip={'always_visible': True}
                                           )],id='div-pquar'),
 
-                     html.Div([html.H6('Quarantined & Hospitalised'),
+                     html.Div([html.H6('Quarantined, then Hospitalised'),
                                dbc.Tooltip(
-                                    "Quarantined in Hospital",
+                                    "Proportion of individuals quarantined for a long duration of time before getting positive result and hospitalized.",
                                     target="div-pqhsp", placement='right'
                                ),
                                dcc.Slider(id='slider-pqhsp', min=0, max=1, value=0.1, step=0.01,
@@ -386,7 +362,7 @@ main_page = html.Div([
 
                      html.Div([html.H6('Cross-Contamination'),
                                dbc.Tooltip(
-                                    "Cross Contamination",
+                                    "Cross-contamination rate in quarantine facilities.",
                                     target="div-pcross", placement='right'
                                ),
                                dcc.Slider(id='slider-pcross', min=0, max=1, value=0.01, step=0.01,
@@ -405,9 +381,9 @@ main_page = html.Div([
                     style={'width':'100%'}
                 ),
                 dbc.Collapse(
-                    [html.Div([html.H6('Incubated'),
+                    [html.Div([html.H6('Incubation'),
                                dbc.Tooltip(
-                                    "Incubated",
+                                    "Incubation period.",
                                     target="div-tinc", placement='right'
                                ),
                                dcc.Slider(id='slider-tinc', min=2.5, max=5, value=4.5, step=0.1,
@@ -416,7 +392,7 @@ main_page = html.Div([
 
                      html.Div([html.H6('Infectious'),
                                dbc.Tooltip(
-                                    "Infectious",
+                                    "Infectious period.",
                                     target="div-tinf", placement='right'
                                ),
                                dcc.Slider(id='slider-tinf', min=1.0, max=7, value=2.9, step=0.1,
@@ -425,7 +401,7 @@ main_page = html.Div([
 
                      html.Div([html.H6('Intensive Care'),
                                dbc.Tooltip(
-                                    "ICU",
+                                    "Time spent within the ICU.",
                                     target="div-ticu", placement='right'
                                ),
                                dcc.Slider(id='slider-ticu', min=10.0, max=14, value=11, step=0.1,
@@ -434,7 +410,7 @@ main_page = html.Div([
 
                      html.Div([html.H6('Hospitalised'),
                                dbc.Tooltip(
-                                    "Hospitalised",
+                                    "Time spent hospitalised for non-critical patients.",
                                     target="div-thsp", placement='right'
                                ),
                                dcc.Slider(id='slider-thsp', min=7, max=21, value=21, step=0.1,
@@ -442,7 +418,7 @@ main_page = html.Div([
                                           )],id='div-thsp'),
                      html.Div([html.H6('Critical'),
                                dbc.Tooltip(
-                                    "Critical",
+                                    "Time spent hospitalized before turning critical.",
                                     target="div-tcrt", placement='right'
                                ),
                                dcc.Slider(id='slider-tcrt', min=1, max=14, value=7, step=0.1,
@@ -451,7 +427,7 @@ main_page = html.Div([
 
                      html.Div([html.H6('Self-Recovery'),
                                dbc.Tooltip(
-                                    "Self-Recover",
+                                    "Self-Recovery time for non-disclosed cases.",
                                     target="div-trec", placement='right'
                                ),
                                dcc.Slider(id='slider-trec', min=7, max=21, value=21, step=0.1,
@@ -460,16 +436,16 @@ main_page = html.Div([
 
                      html.Div([html.H6('Quarantine'),
                                dbc.Tooltip(
-                                    "Quarantine",
+                                    "Quarantine time under regulation.",
                                     target="div-tqar", placement='right'
                                ),
                                dcc.Slider(id='slider-tqar', min=4, max=21, value=21, step=0.1,
                                           tooltip={'always_visible': True}
                                           )],id='div-tqar'),
 
-                     html.Div([html.H6('Quarantined & Hospitalised'),
+                     html.Div([html.H6('Quarantined, then Hospitalised'),
                                dbc.Tooltip(
-                                    "Quarantined in Hospital",
+                                    "Time interval between the last COVID-19 positive result until getting hospitalized.",
                                     target="div-tqah", placement='right'
                                ),
                                dcc.Slider(id='slider-tqah', min=0, max=5, value=2, step=0.1,
