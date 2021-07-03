@@ -162,7 +162,7 @@ about_page = html.Div([
                         * BPharm. Duyen T. Duong, Woolcock Institute of Medical Research Vietnam
                         * MS. Thao Huong Nguyen, Woolcock Institute of Medical Research Vietnam
                         * Kim Anh Le, MD PhD, Hanoi University of Public Health
-                        * Cuong Quoc Nguyen, MD PhD, US CDC
+                        * Cuong Quoc Nguyen, MD PhD, Independent Epidemiologist
                         * Phuc Phan, MD PhD, Vietnam National Hospital of Pediatrics 
                         * Nguyen Huyen Nguyen, MD, National Hospital of Tropical Diseases (NHTD)
                         
