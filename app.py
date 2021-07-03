@@ -65,7 +65,7 @@ app.layout = html.Div([
 about_page = html.Div([
                     dcc.Markdown(
                         u'''
-                        #### SEIQHCDRO COVID-19 INTERACTIVE MODELLING TOOL
+                        #### SEIQHCDRO COVID-19 <br> INTERACTIVE MODELLING TOOL
                         
                         # Introduction
                         
@@ -88,7 +88,7 @@ about_page = html.Div([
                         As an multi-compartment epidemiological model, there must exist specific relations between each and every single compartment. 
                         Such relations are expressed though the model flowchart below
                         '''
-                    ),
+                    ,dangerously_allow_html=True),
                     html.Div([html.Img(src="https://drive.google.com/uc?export=view&id=1nb9DFzmOBdlbp8eSaMUsKA45owrYauf_", style={'width': '50%', 'fill':'#000'})], style={'width': '100%','text-align': 'center'}),
                     dcc.Markdown(
                         '''
@@ -853,5 +853,5 @@ def display_page(pathname):
 
 
 if __name__ == '__main__':
-    app.server.run(port=8000, host='127.0.0.1')
-    #app.run_server(debug=True)
+    #app.server.run(port=8000, host='127.0.0.1')
+    app.run_server(debug=True)
