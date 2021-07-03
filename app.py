@@ -54,8 +54,10 @@ app.layout = html.Div([
     ],color="dark",dark=True,
     style={'text-decoration':'none','color':'white'}),
     html.Div(id='page-content'),
-    html.Footer([u'Copyright \u00a92021 SEIQHCDRO COVID-19 Interactive Modelling Tool by Hoang Anh NGO, Tuan-Khoi NGUYEN and Thu-Anh NGUYEN'],
-                style={'width':'100%', 
+    html.Footer([
+                u'Copyright \u00a92021 SEIQHCDRO COVID-19 Interactive Modelling Tool by Hoang Anh NGO, Tuan-Khoi NGUYEN and Thu-Anh NGUYEN',
+                html.Div(['Visitors: ',html.Img(src="https://counter2.stat.ovh/private/freecounterstat.php?c=xj7lgw2xsbsyk917b5wrbr45ldmx56u6", style={'width':'12%'})], style={'width': '100%','text-align': 'center','margin':'1% 0 0 0'}),
+                ],style={'width':'100%', 
                        'text-align':'center',
                        #'border-style':'outset',
                        'background-color':'#343a40',
