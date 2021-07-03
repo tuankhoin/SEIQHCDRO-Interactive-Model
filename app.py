@@ -640,7 +640,14 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
 
     r0_trend = np.array([R0_dynamic(t) for t in np.linspace(0, 150, 151)])
 
-    df = pd.DataFrame({"Date": x_day, "Infected": ift, "Hospitalised": hsp, "Critical": crt, "Deaths":ded})
+    df = pd.DataFrame({"Date": x_day, 
+                       "Infected": ift, 
+                       "Daily Infected": ift_in, 
+                       "Hospitalised": hsp,
+                       "Daily Hospitalised": hsp_in,  
+                       "Critical": crt, 
+                       "Daily Critical": crt_in, 
+                       "Deaths":ded})
     
     fig = make_subplots(rows=1, cols=2, x_title="Date" if 2 in mod else "Days since the beginning of outbreak", y_title="Cases")
 
