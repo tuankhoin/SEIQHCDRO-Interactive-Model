@@ -141,8 +141,8 @@ about_page = html.Div([
                         # About the authors
                 
                         * [**Hoang Anh NGO**](https://orcid.org/0000-0002-7583-753X) is the main author and model developer of the project. He is about to graduate from École Polytechnique
-                        with a double major in Mathematics and Economics, minor in Computational Economics. His research interests focus on 
-                        Epidemiology, (Online) Machine Learning and its applications in Medicine.
+                        with a double major in Mathematics and Economics, minor in Computational Economics. He is also currently a Research Contractor at Woolcock Institute of Medical Research
+                        Vietnam. His research interests focus on Epidemiology, (Online) Machine Learning and its applications in Medicine.
                         * [**Tuan-Khoi Nguyen**](https://tkhoinguyen.netlify.app/) is the data engineer and main web developer of this project. He is graduating from The University of
                         Melbourne with a Bachelor of Science in Mechatronics, and about to continue his Masters within the same field. His research
                         interest focuses on Machine Learning and its applications in Robotics.
@@ -160,7 +160,7 @@ about_page = html.Div([
                         valuable insights and data to help us complete out model:
                         
                         * BPharm. Duyen T. Duong, Woolcock Institute of Medical Research Vietnam
-                        * MS. Thao Huong Nguyen, Woolcock Institute of Medical Research Vietnam
+                        * MS. Thao Huong Nguyen, Independent Social Researcher
                         * Kim Anh Le, MD PhD, Hanoi University of Public Health
                         * Cuong Quoc Nguyen, MD PhD, Independent Epidemiologist
                         * Phuc Phan, MD PhD, Vietnam National Hospital of Pediatrics 
