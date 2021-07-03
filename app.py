@@ -308,7 +308,7 @@ main_page = html.Div([
                     [
                      html.Div([html.H6('Hospitalisation'),
                                dbc.Tooltip(
-                                    "Proportion of infected people getting hospitalized (For example, if 100 F0s exist in the community, this proportion of them would be directly sent to a hospital.",
+                                    "Proportion of infected people getting hospitalized (For example, if 100 positive cases exist in the community, this proportion of them would be directly sent to a hospital.",
                                     target="div-ph", placement='right'
                                ),
                                dcc.Slider(id='slider-ph', min=0, max=1, value=0.9, step=0.01,
