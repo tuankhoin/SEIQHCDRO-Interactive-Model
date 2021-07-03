@@ -675,7 +675,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
 
     fig1 = make_subplots(rows=1, cols=2, x_title="Date" if 2 in mod else "Days since the beginning of outbreak", y_title="Cases")
     
-    fig1.add_trace(go.Scatter(x=x, y=crt_in, name='Daily Critical Incidence'), row=1, col=1)
+    fig1.add_trace(go.Scatter(x=x, y=crt-ded, name='Active ICU'), row=1, col=1)
     fig1.add_trace(go.Scatter(x=x, y=ded, name='Deaths'), row=1, col=2)
 
     fig1.update_layout(
