@@ -209,10 +209,10 @@ def generate_inputs():
                   html.Div(id='in-r0'),
                   dbc.Tooltip(
                       html.Ul([
-                          html.H6("Each stage contains the following:"),
+                          html.H6("Excluding the default first stage with zero reduction, each stage contains the following:"),
                           html.Li("Starting date"),
-                          html.Li("R0 Reduction Rate"),
-                          html.Li("Contained proportion")],style={'text-align':'left'}),
+                          html.Li("Assumed reduction rate within 15 days when 100% containment scheme is in place "),
+                          html.Li("Contained proportion due to new policy scheme")],style={'text-align':'left'}),
                       target="in-r0", placement='right'
                   )
                   ]
@@ -280,7 +280,7 @@ main_page = html.Div([
                                ),
                                dcc.Input(id='hqar', value=10000, type='number')], style={'margin':'4% 0%'},id='div-qar'),
 
-                     html.Div([html.H3('Initial R0'),
+                     html.Div([html.H3('Initial basic reproduction number (R0):'),
                                dbc.Tooltip(
                                     "Initial basic reproduction number at first day of outbreak",
                                     target="div-r0", placement='right'
@@ -344,7 +344,7 @@ main_page = html.Div([
 
                      html.Div([html.H6('Quarantined'),
                                dbc.Tooltip(
-                                    "Proportion of individuals who needs quarantined actually get quarantined upon contact tracing (For example, if 100 Fs needs quarantine, this proportion of them would get quarantined immediately).",
+                                    "Proportion of contact cases who requires quarantined actually get quarantined upon contact tracing (For example, if 100 contact cases need quarantine, this proportion of them would get quarantined immediately).",
                                     target="div-pquar", placement='right'
                                ),
                                dcc.Slider(id='slider-pquar', min=0, max=1, value=0.8, step=0.01,
@@ -750,19 +750,12 @@ Death rate: {pf*100}%
 Hospital capacity is {hcap}, which is {'not enough' if hcap<np.max(hsp) else 'sufficient'} for the worst day of the outbreak, with {np.max(hsp)} hospital patients.
 Hospital capacity is {hqar}, which is {'not enough' if hqar<np.max(qar) else 'sufficient'} for the worst day of the outbreak, with {np.max(qar)} hospital patients.
 
-On average:
-_{np.mean(ift)} positive cases
-_{np.mean(qar)} quarantined
-_{np.mean(hsp)} hospitalised
-_{np.mean(crt)} in critical condition
-_{np.mean(ded)} died
-
-On the worst days: 
-_{np.max(ift)} positive cases
-_{np.max(qar)} quarantined
-_{np.max(hsp)} hospitalised
+The final outcome of the outbreak is
+_{np.max(ift)} COVID-19 positive cases
+_{np.max(qar)} quarantined individuals 
+_{np.max(hsp)} hospitalised patients
 _{np.max(crt)} in critical condition
-_{np.max(ded)} died
+_{np.max(ded)} deceased
 
             '''
             return fig,fig1,fig2, None, dict(content=text, filename=name+".txt")
