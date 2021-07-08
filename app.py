@@ -458,6 +458,8 @@ main_page = html.Div([
                     id="collapse-t",
                     style = tab
                 ),
+            dcc.Upload(html.Button([u'\f Upload custom .json input file'], style={'color':'white','margin':'2% 0'}),
+                       id='up', style={'padding':'2% 0', 'font-style':'bold'}),
             ]
         ,style = {'width':'33%', 'display':'inline-block', 'vertical-align':'top', 'padding':'2%'}),
         # 
