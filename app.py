@@ -1,4 +1,5 @@
 import json
+import base64
 import dash
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
@@ -553,6 +554,22 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
     elif button_id == "collapse-button-t" and n3:
         return False, False, not is_open3
     return False, False, False
+
+#############################################################################
+@app.callback(
+    Output("dummy", "data"),
+    Input('up', 'contents'),
+    State('up', 'filename'),
+)
+def load_to_input(content,file):
+    if not file:
+        return None # dash.no_update
+    content_type, content_string = content.split(',')
+    decoded = base64.b64decode(content_string)
+    jf = json.loads(decoded)
+    print(jf)
+    return None
+#############################################################################
 
 @app.callback(
     Output('overall-plot', 'figure'),
