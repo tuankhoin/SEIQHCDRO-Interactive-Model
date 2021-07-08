@@ -473,7 +473,19 @@ main_page = html.Div([
                             labelStyle={'display': 'block'},
                             id='mods'
                         )
-                    ], style={'padding':'0% 3%','display':'inline-block'}),
+                    ], style={'padding':'0% 3%','display':'inline-block','width':'35%'}),
+            html.Div([
+                      dcc.Dropdown(
+                            options=[
+                                {'label': 'Ho Chi Minh City, Vietnam', 'value': 1},
+                                {'label': 'Bac Giang, Vietnam', 'value': 2},
+                                {'label': 'Melbourne, Australia', 'value': 3}
+                            ],
+                            #value=[],
+                            placeholder='Select an example region',
+                            id='init'
+                        )
+                    ], style={'padding':'0% 3%','display':'inline-block','width':'55%'}),
             html.Div([dcc.Graph(id='overall-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
             html.Div([dcc.Graph(id='fatal-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
             html.Div([dcc.Graph(id='r0-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
