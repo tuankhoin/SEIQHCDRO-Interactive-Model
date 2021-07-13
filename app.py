@@ -487,9 +487,8 @@ main_page = html.Div([
                                 {'label': 'Bac Giang, Vietnam', 'value': 2},
                                 {'label': 'Melbourne, Australia', 'value': 3}
                             ],
-                            #value=[],
-                            placeholder='Select an example region',
-                            id='init'
+                            placeholder='Select an example region (Coming soon)',
+                            id='init', disabled=True
                         )
                     ], style={'padding':'0% 3%','display':'inline-block','width':'55%'}),
             html.Div([dcc.Graph(id='overall-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
