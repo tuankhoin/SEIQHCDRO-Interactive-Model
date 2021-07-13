@@ -1,8 +1,11 @@
+import json
+import base64
 import dash
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State, ALL
+from dash.exceptions import PreventUpdate
 
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
@@ -248,7 +251,7 @@ main_page = html.Div([
                                     "Population taken into account",
                                     target="div-N", placement='right'
                                ),
-                               dcc.Slider(id='slider-N', min=100000, max=100000000, value=11000000, step=100000,
+                               dcc.Slider(id='slider-N', min=100000, max=100000000, value=11000000, step=1000,
                                           tooltip={'always_visible': True, 'placement':'top'},
                                           marks = {i: str(i) for i in [100000, 50000000,100000000]}
                                           )],id='div-N'),
@@ -457,6 +460,9 @@ main_page = html.Div([
                     id="collapse-t",
                     style = tab
                 ),
+            dcc.Upload(html.Button([u'\f Upload custom .json input file'], style={'color':'white','margin':'2% 0'}),
+                       id='up', style={'padding':'2% 0', 'font-style':'bold'}),
+            html.P(id='err', style={'color': 'red'}),
             ]
         ,style = {'width':'33%', 'display':'inline-block', 'vertical-align':'top', 'padding':'2%'}),
         # 
@@ -473,7 +479,18 @@ main_page = html.Div([
                             labelStyle={'display': 'block'},
                             id='mods'
                         )
-                    ], style={'padding':'0% 3%','display':'inline-block'}),
+                    ], style={'padding':'0% 3%','display':'inline-block','width':'35%'}),
+            html.Div([
+                      dcc.Dropdown(
+                            options=[
+                                {'label': 'Ho Chi Minh City, Vietnam', 'value': 1},
+                                {'label': 'Bac Giang, Vietnam', 'value': 2},
+                                {'label': 'Melbourne, Australia', 'value': 3}
+                            ],
+                            placeholder='Select an example region (Coming soon)',
+                            id='init', disabled=True
+                        )
+                    ], style={'padding':'0% 3%','display':'inline-block','width':'55%'}),
             html.Div([dcc.Graph(id='overall-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
             html.Div([dcc.Graph(id='fatal-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
             html.Div([dcc.Graph(id='r0-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
@@ -487,6 +504,8 @@ main_page = html.Div([
                                 dcc.Download(id="download-dataframe-csv"),
                                 html.Button("Information Summary (.txt)", id="btn_sum", style={'color':'white','margin':'2%'}),
                                 dcc.Download(id="download-sum"),
+                                html.Button("Export Inputs (.json)", id="btn_ipt", style={'color':'white','margin':'2%'}),
+                                dcc.Download(id="download-ipt"),
                             ], style={'padding':'2% 3%','display':'inline-block', 'vertical-align':'bottom','text-align':'center', 'width':'100%'}
                         ),    
             ], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
@@ -502,19 +521,46 @@ main_page = html.Div([
 # 
 @app.callback(
     Output('in-r0', 'children'),
-    [Input('num', 'value')])
-def ins_generate(n):
-    d = [6,20,30,49,55,60,69,70,80,85,90,95,100,105,110,115,120,125,130,135,140,145,145,145,145,145,145,145,145,145]
-    dr = [1.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-    pco = [0.1, 0.4, 0.6, 0.8,0.8,0.85,0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1]
+    [Input('num', 'value')],
+    [Input('up', 'contents')],
+    State('up', 'filename'),
+    )
+def ins_generate(n,content,file):
+    ctx = dash.callback_context.triggered
+    if ctx:
+        current_call = ctx[0]['prop_id'].split('.')[0]
+    if not file or 'up' not in current_call:
+        d = [6,20,30,49,55,60,69,70,80,85,90,95,100,105,110,115,120,125,130,135,140,145,145,145,145,145,145,145,145,145]
+        dr = [1.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        pco = [0.1, 0.4, 0.6, 0.8,0.8,0.85,0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1]
+        return [html.Div([html.H5(f'Stage {i+1}:'),
+                        html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=150, value=d[i], step=1, type='number', style={'width':'80%'})],
+                                    style={'width': '33%', 'display': 'inline-block'}),
+                        html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=dr[i], step=0.1, type='number', style={'width':'100%'})],
+                                    style={'width': '28%', 'display': 'inline-block', 'margin':'0 5% 0 0'}),
+                        html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=pco[i], step=0.01, tooltip={'always_visible': False}, marks={0:'0',1:'1'})],
+                                    style={'width': '33%', 'display': 'inline-block'})
+                        ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(n)]
+
+    json_stage = ['delta_r0', 'pcont', 'day', 'n_r0']
+    content_type, content_string = content.split(',')
+    decoded = base64.b64decode(content_string)
+    jf = json.loads(decoded)
+
+    for i in json_stage:
+        if i not in jf:
+            return dash.no_update
+    if len(jf['day']) != len(jf['delta_r0']) or len(jf['day']) != len(jf['pcont']):
+        return dash.no_update
+
     return [html.Div([html.H5(f'Stage {i+1}:'),
-                    html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=150, value=d[i], step=1, type='number', style={'width':'80%'})],
-                                style={'width': '33%', 'display': 'inline-block'}),
-                    html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=dr[i], step=0.1, type='number', style={'width':'100%'})],
-                                style={'width': '28%', 'display': 'inline-block', 'margin':'0 5% 0 0'}),
-                    html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=pco[i], step=0.01, tooltip={'always_visible': False}, marks={0:'0',1:'1'})],
-                                style={'width': '33%', 'display': 'inline-block'})
-                    ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(n)]
+                        html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=150, value=jf['day'][i], step=1, type='number', style={'width':'80%'})],
+                                    style={'width': '33%', 'display': 'inline-block'}),
+                        html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=jf['delta_r0'][i], step=0.1, type='number', style={'width':'100%'})],
+                                    style={'width': '28%', 'display': 'inline-block', 'margin':'0 5% 0 0'}),
+                        html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=jf['pcont'][i], step=0.01, tooltip={'always_visible': False}, marks={0:'0',1:'1'})],
+                                    style={'width': '33%', 'display': 'inline-block'})
+                        ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(jf['n_r0'])]
 
 @app.callback(
     [Output(f"collapse{i}", "is_open") for i in ['','-p','-t']],
@@ -543,6 +589,7 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
     Output('r0-plot', 'figure'),
     Output("download-dataframe-csv", "data"),
     Output("download-sum", "data"),
+    Output("download-ipt", "data"),
     Input('slider-N', component_property='value'),
     Input('num', 'value'),
     Input('slider-r0', component_property='value'),
@@ -569,6 +616,7 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
     Input('slider-pf', component_property='value'),
     Input("btn_csv", "n_clicks"),
     Input("btn_sum", "n_clicks"),
+    Input("btn_ipt", "n_clicks"),
     Input('mods', component_property='value'),
     Input('file', component_property='value'),
     prevent_initial_call=True,
@@ -580,7 +628,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
                  trec, tqar, tqah, 
                  pquar, pcross, pqhsp,
                  pj, ph, pc, pf,
-                 ligma,sugma,mod,file):
+                 ligma,sugma,sigma_duck,mod,file):
     def R0_dynamic(t):
         if not delta_r0 or not pcont or not day:
             return 4.1
@@ -727,7 +775,18 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
         name = 'exported_stats' if not file else file
         current_call = ctx[0]['prop_id'].split('.')[0]
         if current_call=='btn_csv':
-            return fig,fig1,fig2, dcc.send_data_frame(df.to_csv, name+".csv"), None
+            return fig,fig1,fig2, dcc.send_data_frame(df.to_csv, name+".csv"), None, None
+        elif current_call=='btn_ipt':
+            json_out = json.dumps(
+                {"N":N, "n_r0":n_r0, "r0":r0, "delta_r0":delta_r0, "pcont":pcont, "day":day, "date":date, 
+                 "hcap":hcap, "hqar":hqar,
+                 "tinc":tinc, "tinf":tinf, "ticu":ticu, "thsp":thsp, "tcrt":tcrt,
+                 "trec":trec, "tqar":tqar, "tqah":tqah, 
+                 "pquar":pquar, "pcross":pcross, "pqhsp":pqhsp,
+                 "pj":pj, "ph":ph, "pc":pc, "pf":pf},
+                indent=4
+            )
+            return fig,fig1,fig2, None, None, dict(content=json_out, filename=name+".json")
         elif current_call=='btn_sum':
             text=f'''
 Generated by SEIQHCDRO COVID-19 Modelling Team for Vietnam: Hoang-Anh NGO, Tuan Khoi NGUYEN and Thu-Anh NGUYEN
@@ -767,8 +826,73 @@ _{np.max(crt)} in critical condition
 _{np.max(ded)} deceased
 
             '''
-            return fig,fig1,fig2, None, dict(content=text, filename=name+".txt")
-    return fig,fig1,fig2, None, None
+            return fig,fig1,fig2, None, dict(content=text, filename=name+".txt"),None
+    return fig,fig1,fig2, None, None, None
+
+#############################################################################
+@app.callback(
+    Output('slider-N', component_property='value'),
+    Output('num', 'value'),
+    Output('slider-r0', component_property='value'),
+    Output('date', component_property='date'),
+    Output('hcap', component_property='value'),
+    Output('hqar', component_property='value'),
+    Output('slider-tinc', component_property='value'),
+    Output('slider-tinf', component_property='value'),
+    Output('slider-ticu', component_property='value'),
+    Output('slider-thsp', component_property='value'),
+    Output('slider-tcrt', component_property='value'),
+    Output('slider-trec', component_property='value'),
+    Output('slider-tqar', component_property='value'),
+    Output('slider-tqah', component_property='value'),
+    Output('slider-pquar', component_property='value'),
+    Output('slider-pcross', component_property='value'),
+    Output('slider-pqhsp', component_property='value'),
+    Output('slider-pj', component_property='value'),
+    Output('slider-ph', component_property='value'),
+    Output('slider-pc', component_property='value'),
+    Output('slider-pf', component_property='value'),
+    Output('err', 'children'),
+    Input('up', 'contents'),
+    State('up', 'filename'),
+    prevent_initial_call=True
+)
+def load_to_input(content,file):
+    components = [  'slider-N',
+                    'n_r0',
+                    'slider-r0',
+                    'date',
+                    'hcap',
+                    'hqar',
+                    'slider-tinc',
+                    'slider-tinf',
+                    'slider-ticu',
+                    'slider-thsp',
+                    'slider-tcrt',
+                    'slider-trec',
+                    'slider-tqar',
+                    'slider-tqah',
+                    'slider-pquar',
+                    'slider-pcross',
+                    'slider-pqhsp',
+                    'slider-pj',
+                    'slider-ph',
+                    'slider-pc',
+                    'slider-pf',]
+    json_attrib = [w.replace('slider-','') if 'slider-' in w else w for w in components]
+    json_stage = ['delta_r0', 'pcont', 'day']
+    if not file:
+        return [dash.no_update for i in components] + ['Error: File not found!']
+    content_type, content_string = content.split(',')
+    decoded = base64.b64decode(content_string)
+    jf = json.loads(decoded)
+    for i in json_attrib+json_stage:
+        if i not in jf:
+            return [dash.no_update for i in components] + [f'Error: Input "{i}" not found!']
+    if len(jf['day']) != len(jf['delta_r0']) or len(jf['day']) != len(jf['pcont']):
+        return[dash.no_update for i in components] + [f'Error: Number of stage inputs not consistent!']
+    return [jf[i] for i in json_attrib] + [html.P(f'Updated inputs from "{file}"!',style={'color':'chartreuse'})]
+#############################################################################
 
 def SEIQHCDRO_model(t, y, R_0,
                     T_inf, T_inc, T_hsp, T_crt, T_icu, T_quar, T_quar_hosp, T_rec,
