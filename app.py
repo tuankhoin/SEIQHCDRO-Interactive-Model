@@ -251,7 +251,7 @@ main_page = html.Div([
                                     "Population taken into account",
                                     target="div-N", placement='right'
                                ),
-                               dcc.Slider(id='slider-N', min=100000, max=100000000, value=11000000, step=100000,
+                               dcc.Slider(id='slider-N', min=100000, max=100000000, value=11000000, step=1000,
                                           tooltip={'always_visible': True, 'placement':'top'},
                                           marks = {i: str(i) for i in [100000, 50000000,100000000]}
                                           )],id='div-N'),
