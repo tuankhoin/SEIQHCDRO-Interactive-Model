@@ -463,7 +463,6 @@ main_page = html.Div([
             dcc.Upload(html.Button([u'\f Upload custom .json input file'], style={'color':'white','margin':'2% 0'}),
                        id='up', style={'padding':'2% 0', 'font-style':'bold'}),
             html.P(id='err', style={'color': 'red'}),
-            html.P(id='err2', style={'color': 'red'}),
             ]
         ,style = {'width':'33%', 'display':'inline-block', 'vertical-align':'top', 'padding':'2%'}),
         # 
@@ -523,7 +522,6 @@ main_page = html.Div([
 # 
 @app.callback(
     Output('in-r0', 'children'),
-    #Output('err2', 'children'),
     [Input('num', 'value')],
     [Input('up', 'contents')],
     State('up', 'filename'),
@@ -543,7 +541,7 @@ def ins_generate(n,content,file):
                                     style={'width': '28%', 'display': 'inline-block', 'margin':'0 5% 0 0'}),
                         html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=pco[i], step=0.01, tooltip={'always_visible': False}, marks={0:'0',1:'1'})],
                                     style={'width': '33%', 'display': 'inline-block'})
-                        ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(n)] #+ ['']
+                        ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(n)]
 
     json_stage = ['delta_r0', 'pcont', 'day', 'n_r0']
     content_type, content_string = content.split(',')
@@ -552,9 +550,9 @@ def ins_generate(n,content,file):
 
     for i in json_stage:
         if i not in jf:
-            return dash.no_update#, f'Error: Input "{i}" not found!'
+            return dash.no_update
     if len(jf['day']) != len(jf['delta_r0']) or len(jf['day']) != len(jf['pcont']):
-        return dash.no_update#, f'Error: Number of stage inputs not consistent!'
+        return dash.no_update
 
     return [html.Div([html.H5(f'Stage {i+1}:'),
                         html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=150, value=jf['day'][i], step=1, type='number', style={'width':'80%'})],
@@ -883,15 +881,18 @@ def load_to_input(content,file):
                     'slider-pc',
                     'slider-pf',]
     json_attrib = [w.replace('slider-','') if 'slider-' in w else w for w in components]
+    json_stage = ['delta_r0', 'pcont', 'day']
     if not file:
         return [dash.no_update for i in components] + ['Error: File not found!']
     content_type, content_string = content.split(',')
     decoded = base64.b64decode(content_string)
     jf = json.loads(decoded)
-    for i in json_attrib:
+    for i in json_attrib+json_stage:
         if i not in jf:
             return [dash.no_update for i in components] + [f'Error: Input "{i}" not found!']
-    return [jf[i] for i in json_attrib] + ['Inputs updated!']
+    if len(jf['day']) != len(jf['delta_r0']) or len(jf['day']) != len(jf['pcont']):
+        return[dash.no_update for i in components] + [f'Error: Number of stage inputs not consistent!']
+    return [jf[i] for i in json_attrib] + [html.P(f'Updated inputs from "{file}"!',style={'color':'chartreuse'})]
 #############################################################################
 
 def SEIQHCDRO_model(t, y, R_0,
