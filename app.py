@@ -1,11 +1,11 @@
 import json
 import base64
+import io
 import dash
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State, ALL
-from dash.exceptions import PreventUpdate
 
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
@@ -19,7 +19,6 @@ from scipy.integrate import solve_ivp
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', dbc.themes.BOOTSTRAP]
 app = dash.Dash(__name__, 
                 external_stylesheets=external_stylesheets, 
-                #external_scripts=['https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML'],
                 title='COVID-19 Modelling with SEIQHCDRO',
                 suppress_callback_exceptions = True)
 server = app.server
@@ -460,9 +459,28 @@ main_page = html.Div([
                     id="collapse-t",
                     style = tab
                 ),
-            dcc.Upload(html.Button([u'\f Upload custom .json input file'], style={'color':'white','margin':'2% 0'}),
-                       id='up', style={'padding':'2% 0', 'font-style':'bold'}),
-            html.P(id='err', style={'color': 'red'}),
+            html.Div([
+                dcc.Upload(html.Button([u'\f Upload custom .json input file'], style={'color':'white','margin':'2% 0', 'width':'100%'}),
+                        id='up', style={'padding':'2% 0', 'font-style':'bold'}),
+                dcc.Upload(html.Button([u'\f Upload .csv stats for comparing'], style={'color':'white','margin':'2% 0', 'width':'100%'}),
+                        id='up_stat', style={'padding':'0% 0', 'font-style':'bold'}),
+                dbc.Tooltip(
+                        "You can import your json file that you have exported previously, rather than having to readjust inputs all over again",
+                        target="up", placement='right'
+                    ),
+                dbc.Tooltip(
+                        html.Ul([
+                            html.H6("You can upload a csv file of real statistics to compare. The device will find any matching columns and add them to the plot for comparison (assuming 1st row is 1st day of outbreak). The following column names can be selected:"),
+                            html.Li("infected"),
+                            html.Li("daily_infected"),
+                            html.Li("hospitalised"),
+                            html.Li("daily_hospitalised"),
+                            html.Li("deaths"),
+                            ],style={'text-align':'left'}),
+                        target="up_stat", placement='right'
+                    ),
+                html.P(id='err', style={'color': 'red'}),
+            ])
             ]
         ,style = {'width':'33%', 'display':'inline-block', 'vertical-align':'top', 'padding':'2%'}),
         # 
@@ -619,6 +637,8 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
     Input("btn_ipt", "n_clicks"),
     Input('mods', component_property='value'),
     Input('file', component_property='value'),
+    Input('up_stat', 'contents'),
+    State('up_stat', 'filename'),
     prevent_initial_call=True,
 )
 
@@ -628,7 +648,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
                  trec, tqar, tqah, 
                  pquar, pcross, pqhsp,
                  pj, ph, pc, pf,
-                 ligma,sugma,sigma_duck,mod,file):
+                 ligma,sugma,sigma_duck,mod,file,contents,filename):
     def R0_dynamic(t):
         if not delta_r0 or not pcont or not day:
             return 4.1
@@ -654,6 +674,18 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
                                 t - (day[i] - 1)) * (1 - pcont[i])
                     else:
                         return 0.0
+
+    compare = False
+    if contents:
+        _, content_string = contents.split(',')
+        decoded = base64.b64decode(content_string)
+        try:
+            if 'csv' in filename:
+                df_compare = pd.read_csv(
+                    io.StringIO(decoded.decode('utf-8')))
+                compare = True
+        except Exception as e:
+            print(e)
 
     args = (R0_dynamic,
             tinf, tinc, thsp, tcrt,
@@ -769,6 +801,18 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
         fig.update_xaxes(dtick="M1", tickformat="%d/%m/%y")
         fig1.update_xaxes(dtick="M1", tickformat="%d/%m/%y")
         fig2.update_xaxes(dtick="M1", tickformat="%d/%m/%y")
+
+    if compare:
+        if 'infected' in df_compare.columns:
+            fig.add_trace(go.Scatter(x=x, y=df_compare['infected'], name='Actual Infected'), row=1, col=2)
+        if 'daily_infected' in df_compare.columns:
+            fig.add_trace(go.Scatter(x=x, y=df_compare['daily_infected'], name='Actual Daily Infected'), row=1, col=1)
+        if 'hospitalised' in df_compare.columns:
+            fig.add_trace(go.Scatter(x=x, y=df_compare['hospitalised'], name='Actual Hospitalised'), row=1, col=2)
+        if 'daily_hospitalised' in df_compare.columns:
+            fig.add_trace(go.Scatter(x=x, y=df_compare['daily_hospitalised'], name='Actual Daily Hospitalised'), row=1, col=1)
+        if 'deaths' in df_compare.columns:
+            fig1.add_trace(go.Scatter(x=x, y=df_compare['deaths'], name='Actual Deaths'), row=1, col=2)
 
     ctx = dash.callback_context.triggered
     if ctx:
