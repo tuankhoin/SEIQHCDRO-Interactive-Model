@@ -462,12 +462,14 @@ main_page = html.Div([
             html.Div([
                 dcc.Upload(html.Button([u'\f Upload custom .json input file'], style={'color':'white','margin':'2% 0', 'width':'100%'}),
                         id='up', style={'padding':'2% 0', 'font-style':'bold'}),
-                dcc.Upload(html.Button([u'\f Upload .csv stats for comparing'], style={'color':'white','margin':'2% 0', 'width':'100%'}),
-                        id='up_stat', style={'padding':'0% 0', 'font-style':'bold'}),
                 dbc.Tooltip(
                         "You can import your json file that you have exported previously, rather than having to readjust inputs all over again",
-                        target="up", placement='right'
+                        target="div-up", placement='right'
                     ),
+            ],id='div-up'),
+            html.Div([
+                dcc.Upload(html.Button([u'\f Upload .csv stats for comparing'], style={'color':'white','margin':'2% 0', 'width':'100%'}),
+                        id='up_stat', style={'padding':'0% 0', 'font-style':'bold'}),
                 dbc.Tooltip(
                         html.Ul([
                             html.H6("You can upload a csv file of real statistics to compare. The device will find any matching columns and add them to the plot for comparison (assuming 1st row is 1st day of outbreak). The following column names can be selected:"),
@@ -477,10 +479,10 @@ main_page = html.Div([
                             html.Li("daily_hospitalised"),
                             html.Li("deaths"),
                             ],style={'text-align':'left'}),
-                        target="up_stat", placement='right'
+                        target="div-up-stat", placement='right'
                     ),
                 html.P(id='err', style={'color': 'red'}),
-            ])
+            ],id='div-up-stat')
             ]
         ,style = {'width':'33%', 'display':'inline-block', 'vertical-align':'top', 'padding':'2%'}),
         # 
