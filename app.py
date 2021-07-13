@@ -463,6 +463,7 @@ main_page = html.Div([
             dcc.Upload(html.Button([u'\f Upload custom .json input file'], style={'color':'white','margin':'2% 0'}),
                        id='up', style={'padding':'2% 0', 'font-style':'bold'}),
             html.P(id='err', style={'color': 'red'}),
+            html.P(id='err2', style={'color': 'red'}),
             ]
         ,style = {'width':'33%', 'display':'inline-block', 'vertical-align':'top', 'padding':'2%'}),
         # 
@@ -522,19 +523,47 @@ main_page = html.Div([
 # 
 @app.callback(
     Output('in-r0', 'children'),
-    [Input('num', 'value')])
-def ins_generate(n):
-    d = [6,20,30,49,55,60,69,70,80,85,90,95,100,105,110,115,120,125,130,135,140,145,145,145,145,145,145,145,145,145]
-    dr = [1.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-    pco = [0.1, 0.4, 0.6, 0.8,0.8,0.85,0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1]
+    #Output('err2', 'children'),
+    [Input('num', 'value')],
+    [Input('up', 'contents')],
+    State('up', 'filename'),
+    )
+def ins_generate(n,content,file):
+    ctx = dash.callback_context.triggered
+    if ctx:
+        current_call = ctx[0]['prop_id'].split('.')[0]
+    if not file or 'up' not in current_call:
+        d = [6,20,30,49,55,60,69,70,80,85,90,95,100,105,110,115,120,125,130,135,140,145,145,145,145,145,145,145,145,145]
+        dr = [1.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        pco = [0.1, 0.4, 0.6, 0.8,0.8,0.85,0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1]
+        return [html.Div([html.H5(f'Stage {i+1}:'),
+                        html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=150, value=d[i], step=1, type='number', style={'width':'80%'})],
+                                    style={'width': '33%', 'display': 'inline-block'}),
+                        html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=dr[i], step=0.1, type='number', style={'width':'100%'})],
+                                    style={'width': '28%', 'display': 'inline-block', 'margin':'0 5% 0 0'}),
+                        html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=pco[i], step=0.01, tooltip={'always_visible': False}, marks={0:'0',1:'1'})],
+                                    style={'width': '33%', 'display': 'inline-block'})
+                        ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(n)] #+ ['']
+
+    json_stage = ['delta_r0', 'pcont', 'day', 'n_r0']
+    content_type, content_string = content.split(',')
+    decoded = base64.b64decode(content_string)
+    jf = json.loads(decoded)
+
+    for i in json_stage:
+        if i not in jf:
+            return dash.no_update#, f'Error: Input "{i}" not found!'
+    if len(jf['day']) != len(jf['delta_r0']) or len(jf['day']) != len(jf['pcont']):
+        return dash.no_update#, f'Error: Number of stage inputs not consistent!'
+
     return [html.Div([html.H5(f'Stage {i+1}:'),
-                    html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=150, value=d[i], step=1, type='number', style={'width':'80%'})],
-                                style={'width': '33%', 'display': 'inline-block'}),
-                    html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=dr[i], step=0.1, type='number', style={'width':'100%'})],
-                                style={'width': '28%', 'display': 'inline-block', 'margin':'0 5% 0 0'}),
-                    html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=pco[i], step=0.01, tooltip={'always_visible': False}, marks={0:'0',1:'1'})],
-                                style={'width': '33%', 'display': 'inline-block'})
-                    ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(n)]
+                        html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=150, value=jf['day'][i], step=1, type='number', style={'width':'80%'})],
+                                    style={'width': '33%', 'display': 'inline-block'}),
+                        html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=jf['delta_r0'][i], step=0.1, type='number', style={'width':'100%'})],
+                                    style={'width': '28%', 'display': 'inline-block', 'margin':'0 5% 0 0'}),
+                        html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=jf['pcont'][i], step=0.01, tooltip={'always_visible': False}, marks={0:'0',1:'1'})],
+                                    style={'width': '33%', 'display': 'inline-block'})
+                        ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(jf['n_r0'])]
 
 @app.callback(
     [Output(f"collapse{i}", "is_open") for i in ['','-p','-t']],
@@ -854,13 +883,12 @@ def load_to_input(content,file):
                     'slider-pc',
                     'slider-pf',]
     json_attrib = [w.replace('slider-','') if 'slider-' in w else w for w in components]
-    json_stage = ['delta_r0', 'pcont', 'day']
     if not file:
         return [dash.no_update for i in components] + ['Error: File not found!']
     content_type, content_string = content.split(',')
     decoded = base64.b64decode(content_string)
     jf = json.loads(decoded)
-    for i in json_attrib + json_stage:
+    for i in json_attrib:
         if i not in jf:
             return [dash.no_update for i in components] + [f'Error: Input "{i}" not found!']
     return [jf[i] for i in json_attrib] + ['Inputs updated!']
