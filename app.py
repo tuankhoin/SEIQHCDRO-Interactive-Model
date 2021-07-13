@@ -5,6 +5,7 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State, ALL
+from dash.exceptions import PreventUpdate
 
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
@@ -555,22 +556,6 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
         return False, False, not is_open3
     return False, False, False
 
-#############################################################################
-@app.callback(
-    Output("dummy", "data"),
-    Input('up', 'contents'),
-    State('up', 'filename'),
-)
-def load_to_input(content,file):
-    if not file:
-        return None # dash.no_update
-    content_type, content_string = content.split(',')
-    decoded = base64.b64decode(content_string)
-    jf = json.loads(decoded)
-    print(jf)
-    return None
-#############################################################################
-
 @app.callback(
     Output('overall-plot', 'figure'),
     Output('fatal-plot', 'figure'),
@@ -816,6 +801,67 @@ _{np.max(ded)} deceased
             '''
             return fig,fig1,fig2, None, dict(content=text, filename=name+".txt"),None
     return fig,fig1,fig2, None, None, None
+
+#############################################################################
+@app.callback(
+    Output('slider-N', component_property='value'),
+    Output('num', 'value'),
+    Output('slider-r0', component_property='value'),
+    Output('date', component_property='date'),
+    Output('hcap', component_property='value'),
+    Output('hqar', component_property='value'),
+    Output('slider-tinc', component_property='value'),
+    Output('slider-tinf', component_property='value'),
+    Output('slider-ticu', component_property='value'),
+    Output('slider-thsp', component_property='value'),
+    Output('slider-tcrt', component_property='value'),
+    Output('slider-trec', component_property='value'),
+    Output('slider-tqar', component_property='value'),
+    Output('slider-tqah', component_property='value'),
+    Output('slider-pquar', component_property='value'),
+    Output('slider-pcross', component_property='value'),
+    Output('slider-pqhsp', component_property='value'),
+    Output('slider-pj', component_property='value'),
+    Output('slider-ph', component_property='value'),
+    Output('slider-pc', component_property='value'),
+    Output('slider-pf', component_property='value'),
+    # [Output({'role':'r0', 'index':ALL}, component_property='value')],
+    # [Output({'role':'pcont', 'index':ALL}, component_property='value')],
+    # [Output({'role':'day', 'index':ALL}, component_property='value')],
+    Input('up', 'contents'),
+    State('up', 'filename'),
+    prevent_initial_call=True
+)
+def load_to_input(content,file):
+    components = [  'slider-N',
+                    'n_r0',
+                    'slider-r0',
+                    'date',
+                    'hcap',
+                    'hqar',
+                    'slider-tinc',
+                    'slider-tinf',
+                    'slider-ticu',
+                    'slider-thsp',
+                    'slider-tcrt',
+                    'slider-trec',
+                    'slider-tqar',
+                    'slider-tqah',
+                    'slider-pquar',
+                    'slider-pcross',
+                    'slider-pqhsp',
+                    'slider-pj',
+                    'slider-ph',
+                    'slider-pc',
+                    'slider-pf',]
+    json_attrib = [w.replace('slider-','') if 'slider-' in w else w for w in components]
+    if not file:
+        raise PreventUpdate
+    content_type, content_string = content.split(',')
+    decoded = base64.b64decode(content_string)
+    jf = json.loads(decoded)
+    return [jf[i] for i in json_attrib]
+#############################################################################
 
 def SEIQHCDRO_model(t, y, R_0,
                     T_inf, T_inc, T_hsp, T_crt, T_icu, T_quar, T_quar_hosp, T_rec,
