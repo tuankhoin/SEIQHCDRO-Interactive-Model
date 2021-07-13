@@ -462,6 +462,7 @@ main_page = html.Div([
                 ),
             dcc.Upload(html.Button([u'\f Upload custom .json input file'], style={'color':'white','margin':'2% 0'}),
                        id='up', style={'padding':'2% 0', 'font-style':'bold'}),
+            html.P(id='err', style={'color': 'red'}),
             ]
         ,style = {'width':'33%', 'display':'inline-block', 'vertical-align':'top', 'padding':'2%'}),
         # 
@@ -825,9 +826,7 @@ _{np.max(ded)} deceased
     Output('slider-ph', component_property='value'),
     Output('slider-pc', component_property='value'),
     Output('slider-pf', component_property='value'),
-    # [Output({'role':'r0', 'index':ALL}, component_property='value')],
-    # [Output({'role':'pcont', 'index':ALL}, component_property='value')],
-    # [Output({'role':'day', 'index':ALL}, component_property='value')],
+    Output('err', 'children'),
     Input('up', 'contents'),
     State('up', 'filename'),
     prevent_initial_call=True
@@ -855,12 +854,16 @@ def load_to_input(content,file):
                     'slider-pc',
                     'slider-pf',]
     json_attrib = [w.replace('slider-','') if 'slider-' in w else w for w in components]
+    json_stage = ['delta_r0', 'pcont', 'day']
     if not file:
-        raise PreventUpdate
+        return [dash.no_update for i in components] + ['Error: File not found!']
     content_type, content_string = content.split(',')
     decoded = base64.b64decode(content_string)
     jf = json.loads(decoded)
-    return [jf[i] for i in json_attrib]
+    for i in json_attrib + json_stage:
+        if i not in jf:
+            return [dash.no_update for i in components] + [f'Error: Input "{i}" not found!']
+    return [jf[i] for i in json_attrib] + ['Inputs updated!']
 #############################################################################
 
 def SEIQHCDRO_model(t, y, R_0,
