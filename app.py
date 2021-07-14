@@ -810,9 +810,9 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
         if 'daily_infected' in df_compare.columns:
             fig.add_trace(go.Scatter(x=x, y=df_compare['daily_infected'], name='Actual Daily Infected'), row=1, col=1)
         if 'active_critical' in df_compare.columns:
-            fig.add_trace(go.Scatter(x=x, y=df_compare['active_critical'], name='Actual ICU'), row=1, col=2)
+            fig.add_trace(go.Scatter(x=x, y=df_compare['active_critical'], name='Actual ICU'), row=2, col=1)
         if 'active_quarantined' in df_compare.columns:
-            fig.add_trace(go.Scatter(x=x, y=df_compare['active_quarantined'], name='Actual On Quarantine'), row=1, col=1)
+            fig.add_trace(go.Scatter(x=x, y=df_compare['active_quarantined'], name='Actual On Quarantine'), row=3, col=2)
         if 'deaths' in df_compare.columns:
             fig1.add_trace(go.Scatter(x=x, y=df_compare['deaths'], name='Actual Deaths'), row=1, col=2)
 
