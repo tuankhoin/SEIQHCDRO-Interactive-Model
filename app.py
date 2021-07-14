@@ -475,8 +475,8 @@ main_page = html.Div([
                             html.H6("You can upload a csv file of real statistics to compare. The device will find any matching columns and add them to the plot for comparison (assuming 1st row is 1st day of outbreak). The following column names can be selected:"),
                             html.Li("infected"),
                             html.Li("daily_infected"),
-                            html.Li("hospitalised"),
-                            html.Li("daily_hospitalised"),
+                            html.Li("active_critical"),
+                            html.Li("active_quarantined"),
                             html.Li("deaths"),
                             ],style={'text-align':'left'}),
                         target="div-up-stat", placement='right'
@@ -779,7 +779,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
 
     fig2 = make_subplots(rows=1, cols=2, x_title="Date" if 2 in mod else "Days since the beginning of outbreak", y_title="Cases")
 
-    fig2.add_trace(go.Scatter(x=x, y=r0_trend, name='Effective Reproduction Number Rt'), row=1, col=1)
+    fig2.add_trace(go.Scatter(x=x, y=r0_trend, name='Effective Reproduction Number'), row=1, col=1)
     fig2.add_trace(go.Scatter(x=x, y=qar, name='Total quarantined'), row=1, col=2)
     if 3 in mod:
         fig2.add_trace(go.Scatter(x=x, y=hqar * np.ones(151), name='Quarantine Capacity'), row=1, col=2)
@@ -809,10 +809,10 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
             fig.add_trace(go.Scatter(x=x, y=df_compare['infected'], name='Actual Infected'), row=1, col=2)
         if 'daily_infected' in df_compare.columns:
             fig.add_trace(go.Scatter(x=x, y=df_compare['daily_infected'], name='Actual Daily Infected'), row=1, col=1)
-        if 'hospitalised' in df_compare.columns:
-            fig.add_trace(go.Scatter(x=x, y=df_compare['hospitalised'], name='Actual Hospitalised'), row=1, col=2)
-        if 'daily_hospitalised' in df_compare.columns:
-            fig.add_trace(go.Scatter(x=x, y=df_compare['daily_hospitalised'], name='Actual Daily Hospitalised'), row=1, col=1)
+        if 'active_critical' in df_compare.columns:
+            fig.add_trace(go.Scatter(x=x, y=df_compare['active_critical'], name='Actual ICU'), row=1, col=2)
+        if 'active_quarantined' in df_compare.columns:
+            fig.add_trace(go.Scatter(x=x, y=df_compare['active_quarantined'], name='Actual On Quarantine'), row=1, col=1)
         if 'deaths' in df_compare.columns:
             fig1.add_trace(go.Scatter(x=x, y=df_compare['deaths'], name='Actual Deaths'), row=1, col=2)
 
