@@ -85,16 +85,74 @@ about_page = html.Div([
                         tool to facilitate their policy advocate/policy making process, we decided to create this tool, alongside with publicizing all associated
                         source code.
                         
-                        # Model Flowchart
+                        # Formation of the model 
+                        
+                        ## Model Flowchart
                         
                         As an multi-compartment epidemiological model, there must exist specific relations between each and every single compartment. 
                         Such relations are expressed though the model flowchart below
+                        
+                        
                         '''
                     ,dangerously_allow_html=True),
                     html.Div([html.Img(src="https://drive.google.com/uc?export=view&id=1nb9DFzmOBdlbp8eSaMUsKA45owrYauf_", style={'width': '50%', 'fill':'#000'})], style={'width': '100%','text-align': 'center'}),
-                    dcc.Markdown(
+            dcc.Markdown(
                         '''
+                        ## Formula
+    
+                        From this, we develop a system of differential equations to simulate the relationship between these compartments. The system reads:
+                        '''
+            ),
+             html.Div([html.Img(src="https://quicklatex.com/cache3/2e/ql_5948b14b283613968f0b24fb80533a2e_l3.png",
+                                style={'width': '40%', 'fill': '#000'})],
+                      style={'width': '100%', 'text-align': 'center'}),
+             dcc.Markdown(
+                 '''
+                 with two main types of hyper-parameters
+                 * Proportion-related hyper-parameters `p`;
+                 * Time interval related hyperparameters `T`.
+
+                 To obtain the result, this system of ordinary differential equations (ODEs) will be solved using the `solve_ivp` command within the `SciPy` package
+                 in Python. To prevent any stiffness of the system, the `Radau` method, i.e the implicit Runge-Kutta method of the Radau IIA family of order 5.
+
+                 ## Formulation of the basic reproduction number `R_0`
+
+                 One of the most important aspects of this model is the ability to capture different levels of social distancing/lockdown to the spread
+                 of the disease. As such, we have integrated these impacts onto the function representing the effective reproduction number `R_t` (i.e the basic reproduction
+                 number `R_0` with respect to time).
+                 '''
+             ),
+             html.Div([html.Img(src="https://quicklatex.com/cache3/f7/ql_580fe4eb71ceadb277d725dd86ca49f7_l3.png",
+                                style={'width': '15%', 'fill': '#000'})],
+                      style={'width': '100%', 'text-align': 'center'}),
+             dcc.Markdown(
+                 '''
+                 Assume that there exists two consecutive time intervals separated by a policy scheme change at time `T`. Before time `T`, the population
+                 inherits a scheme with change of the basic reproduction number `delta R_0`, contact rate reduction `p_cont` and contact rate reduction due
+                 to journalism `p_jrnl`. After time `T`, the population now inherits a new scheme with a new set of parameters, `delta R'_0`, `p'_cont` and 
+                 `p'_jrnl`, respectively.
+
+                 There are two cases that would happen:
+
+                 * When `p'_cont >= p_cont` (i.e. the social distancing/lockdown measure tightens), the new function is:
+                 '''
+             ),
+             html.Div([html.Img(src="https://quicklatex.com/cache3/9e/ql_11ac62405647900135857d3b2d429b9e_l3.png",
+                                style={'width': '40%', 'fill': '#000'})],
+                      style={'width': '100%', 'text-align': 'center'}),
+             dcc.Markdown(
+                 '''
+                 * When `p'_cont < p_cont` (i.e. the social distancing/lockdown measure loosens), the function now becomes:
+                 '''
+             ),
+             html.Div([html.Img(src="https://quicklatex.com/cache3/84/ql_1a46c5cd376b5ef2c5fa51f23f675484_l3.png",
+                                style={'width': '40%', 'fill': '#000'})],
+                      style={'width': '100%', 'text-align': 'center'}),
+             dcc.Markdown(
+                 '''
                         # Tool features
+                        
+                        ## Modelling features
                         
                         In order to create the most interactive and convenient tool possible for COVID-19 modelling, we have decided to opt for 
                         a number of features that makes it more comfortable for users to interact with this web application, including
@@ -104,9 +162,28 @@ about_page = html.Div([
                             - **Overall trend of infection**: Incidence and cumulative number of hospitalized/infected COVID-19 cases,
                             - **Critical and fatal cases**: Number of active critical cases daily and cumulative number of deceased cases,
                             - **Spread and containment**: Effective reproduction number (Basic reproduction number by day) and total number of quarantined individuals.  
-                        * Ability to export statistical data of total hospitalized/infected/critical/fatal cases in a CSV file and information summary of the 
-                        newly calibrated model with the option to personalize file name and start date. 
+                        * Ability to export all statistical data of a newly calibrated model in a personalized file name, including
+                            - Information summary of the model (in either a .txt file or a .json file for further uploading and re-calibration); 
+                            - Total hospitalized/infected/critical/fatal cases in a single CSV file.
                         * Comparision with the current capacity for the number of quarantined/hospitalized cases
+                        
+                        ## Cross-checking and testing features
+                        
+                        To facilitate the validation and cross-checking of models between users, we provide the following additional features:
+                        * Samples .json files of the previous outbreaks in Vietnam, including the outbreaks in 
+                            - Danang (07-08/2020);
+                            - Hai Duong (01-03/2021); and 
+                            - Bac Giang (05-07/2021).
+                        * Import (Upload) a .json file that includes all information of the previously calibrated model to continue further moedification 
+                            without having to restart the whole process from the beginning;
+                        * Upload a csv file of the actual situation and illustrate it alongside with the prediction model. The uploaded csv file can include 
+                            up to 5 following fields:   
+                            - Number of new (incidence) cases per day (`daily_infected`);
+                            - Total (cumulative) number of cases (`cumulative_infected`);
+                            - Number of active critical cases (`active_critical`);
+                            - Total (cumulative) number of deaths (`cumulative_deaths`);
+                            - Number of active quarantined individuals (`active_quarantined`). 
+                            
                         '''
                     ),
                     dcc.Markdown(
@@ -178,6 +255,10 @@ about_page = html.Div([
                     ),
                     dcc.Markdown(
                         '''
+                        # License 
+                        SEIQHCDRO COVID-19 Interactive Modelling Tool is a free and open-source web application/software licensed under the 
+                        [3-clause BSD license](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model/blob/main/LICENSE).
+                        
                         # Website legal disclaimer
                         The information contained in this website is for convenience or reference only. The content cannot be considered to be medical advice and is not intended 
                         to be a substitute for professional medical counselling, diagnosis or treatment. For any concern please consult a trusted specialist in the field.
@@ -1001,5 +1082,5 @@ def display_page(pathname):
 
 
 if __name__ == '__main__':
-    #app.server.run(port=8000, host='127.0.0.1')
-    app.run_server(debug=True)
+    app.server.run(port=8000, host='127.0.0.1')
+    #app.run_server(debug=True)
