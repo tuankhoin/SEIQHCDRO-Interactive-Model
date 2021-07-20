@@ -1,7 +1,33 @@
 # SEIQHCDRO COVID-19 INTERACTIVE MODELLING TOOL
  Interactive website that takes different scenarios to predict COVID outcomes in Vietnam
+- [SEIQHCDRO COVID-19 INTERACTIVE MODELLING TOOL](#seiqhcdro-covid-19-interactive-modelling-tool)
+  - [Deployment Instructions](#deployment-instructions)
+  - [Introduction](#introduction)
+  - [Formation of the model](#formation-of-the-model)
+    - [Model Flowchart](#model-flowchart)
+  - [Formula](#formula)
+  - [Formulation of the basic reproduction number `R_0`](#formulation-of-the-basic-reproduction-number-r_0)
+  - [Tech Specifications](#tech-specifications)
+  - [Tool features](#tool-features)
+    - [Modelling features](#modelling-features)
+    - [Cross-checking and testing features](#cross-checking-and-testing-features)
+  - [Mentions](#mentions)
+  - [Citation](#citation)
+  - [About the authors](#about-the-authors)
+  - [Acknowledgement](#acknowledgement)
+  - [License](#license)
+  - [Website legal disclaimer](#website-legal-disclaimer)
 
-                        
+## Deployment Instructions
+
+Requirements:
+* Python 3 (best working with Python 3.6)
+  
+Steps:
+1. Clone the repo: `git clone https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model`
+2. Install all dependencies: `pip install requirements.txt`
+3. Run `app.py`
+
 ## Introduction
 
 In the past outbreaks, Vietnam has successfully controlled the COVID-19 pandemic by simultaneously applying numerous strategies,
@@ -60,6 +86,15 @@ There are two cases that would happen:
 * When `p'_cont < p_cont` (i.e. the social distancing/lockdown measure loosens), the function now becomes:
 
     ![case2](https://quicklatex.com/cache3/84/ql_1a46c5cd376b5ef2c5fa51f23f675484_l3.png)
+
+## Tech Specifications
+
+This tool is built on Python 3.6, using the following tools:
+* Dash/Flask
+* Plotly
+* Heroku
+
+For all installed Python libraries, refer to `requirements.txt`.
 
 ## Tool features
 
