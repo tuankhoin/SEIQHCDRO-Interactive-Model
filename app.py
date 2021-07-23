@@ -351,6 +351,14 @@ main_page = html.Div([
                                 ),
                     ], id = 'div-date'),
 
+                    html.Div([html.H3('Number of Days'),
+                               dbc.Tooltip(
+                                    "Length of outbreak",
+                                    target="div-ndate", placement='right'
+                               ),
+                                dcc.Input(id='ndate', value=300, min=10, max=1000, type='number')
+                    ], id = 'div-ndate'),
+
                      html.Div([html.H3("Hospital Capacity: "),
                                dbc.Tooltip(
                                     "Hospital Capacity",
@@ -624,9 +632,10 @@ main_page = html.Div([
     Output('in-r0', 'children'),
     [Input('num', 'value')],
     [Input('up', 'contents')],
+    Input('ndate', 'value'),
     State('up', 'filename'),
     )
-def ins_generate(n,content,file):
+def ins_generate(n,content,ndate,file):
     ctx = dash.callback_context.triggered
     if ctx:
         current_call = ctx[0]['prop_id'].split('.')[0]
@@ -635,7 +644,7 @@ def ins_generate(n,content,file):
         dr = [1.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
         pco = [0.1, 0.4, 0.6, 0.8,0.8,0.85,0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1]
         return [html.Div([html.H5(f'Stage {i+1}:'),
-                        html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=150, value=d[i], step=1, type='number', style={'width':'80%'})],
+                        html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=ndate, value=d[i], step=1, type='number', style={'width':'80%'})],
                                     style={'width': '33%', 'display': 'inline-block'}),
                         html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=dr[i], step=0.1, type='number', style={'width':'100%'})],
                                     style={'width': '28%', 'display': 'inline-block', 'margin':'0 5% 0 0'}),
@@ -655,7 +664,7 @@ def ins_generate(n,content,file):
         return dash.no_update
 
     return [html.Div([html.H5(f'Stage {i+1}:'),
-                        html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=150, value=jf['day'][i], step=1, type='number', style={'width':'80%'})],
+                        html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=ndate, value=jf['day'][i], step=1, type='number', style={'width':'80%'})],
                                     style={'width': '33%', 'display': 'inline-block'}),
                         html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=jf['delta_r0'][i], step=0.1, type='number', style={'width':'100%'})],
                                     style={'width': '28%', 'display': 'inline-block', 'margin':'0 5% 0 0'}),
@@ -698,6 +707,7 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
     [Input({'role':'pcont', 'index':ALL}, component_property='value')],
     [Input({'role':'day', 'index':ALL}, component_property='value')],
     Input('date', component_property='date'),
+    Input('ndate', 'value'),
     Input('hcap', component_property='value'),
     Input('hqar', component_property='value'),
     Input('slider-tinc', component_property='value'),
@@ -725,7 +735,7 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
     prevent_initial_call=True,
 )
 
-def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, 
+def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
                  hcap, hqar,
                  tinc, tinf, ticu, thsp, tcrt,
                  trec, tqar, tqah, 
@@ -779,31 +789,31 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
     n_infected = 1
     initial_state = [(N - n_infected) / N, 0, n_infected / N, 0, 0, 0, 0, 0, 0]
 
-    sol = solve_ivp(SEIQHCDRO_model, [0, 150],
+    sol = solve_ivp(SEIQHCDRO_model, [0, ndate],
                     initial_state, args=args,
-                    t_eval=np.arange(151), method="Radau")
+                    t_eval=np.arange(ndate+1), method="Radau")
     S, E, I, Q, H, C, D, R, O = sol.y
 
-    x_day = pd.date_range(date, periods=151).tolist()
-    x = x_day if 2 in mod else np.linspace(0, 150, 151)
+    x_day = pd.date_range(date, periods=ndate+1).tolist()
+    x = x_day if 2 in mod else np.linspace(0, ndate, ndate+1)
     
     ift = np.round((I + H + C + D + R + O) * N)
     hsp = np.round((H + C + D + R) * N)
-    hsp_in = np.append([0],[hsp[i + 1] - hsp[i] if hsp[i+1]>hsp[i] else 0 for i in range(150)])
-    ift_in = np.append([0],[ift[i + 1] - ift[i] if ift[i+1]>ift[i] else 0 for i in range(150)])
-    for i in range(150):
+    hsp_in = np.append([0],[hsp[i + 1] - hsp[i] if hsp[i+1]>hsp[i] else 0 for i in range(ndate)])
+    ift_in = np.append([0],[ift[i + 1] - ift[i] if ift[i+1]>ift[i] else 0 for i in range(ndate)])
+    for i in range(ndate):
         hsp[i+1]=hsp[i]+hsp_in[i]
         ift[i+1]=ift[i]+ift_in[i]
 
     crt = np.round((C + D) * N)
     ded = np.round(D * N)
-    crt_in = np.append([0],[crt[i + 1] - crt[i] if crt[i+1]>crt[i] else 0 for i in range(150)])
-    ded_in = np.append([0],[ded[i + 1] - ded[i] if ded[i+1]>ded[i] else 0 for i in range(150)])
+    crt_in = np.append([0],[crt[i + 1] - crt[i] if crt[i+1]>crt[i] else 0 for i in range(ndate)])
+    ded_in = np.append([0],[ded[i + 1] - ded[i] if ded[i+1]>ded[i] else 0 for i in range(ndate)])
 
     qar = np.round((E+I+Q+H+C+D)*N)
 
 
-    r0_trend = np.array([R0_dynamic(t) for t in np.linspace(0, 150, 151)])
+    r0_trend = np.array([R0_dynamic(t) for t in np.linspace(0, ndate, ndate+1)])
 
     df = pd.DataFrame({"Date": x_day, 
                        "Infected": ift, 
@@ -821,7 +831,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
     fig.add_trace(go.Scatter(x=x, y=hsp_in, name='Daily Hospital Incidence'), row=1, col=1)
     fig.add_trace(go.Scatter(x=x, y=ift_in, name='Daily Infected Incidence'), row=1, col=1)
     if 1 in mod:
-        fig.add_trace(go.Scatter(x=x, y=hcap * np.ones(151), name='Hospital Capacity'), row=1, col=2)
+        fig.add_trace(go.Scatter(x=x, y=hcap * np.ones(ndate+1), name='Hospital Capacity'), row=1, col=2)
         
     fig.update_layout(
         title={
@@ -863,7 +873,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date,
     fig2.add_trace(go.Scatter(x=x, y=r0_trend, name='Effective Reproduction Number'), row=1, col=1)
     fig2.add_trace(go.Scatter(x=x, y=qar, name='Total quarantined'), row=1, col=2)
     if 3 in mod:
-        fig2.add_trace(go.Scatter(x=x, y=hqar * np.ones(151), name='Quarantine Capacity'), row=1, col=2)
+        fig2.add_trace(go.Scatter(x=x, y=hqar * np.ones(ndate+1), name='Quarantine Capacity'), row=1, col=2)
 
     fig2.update_layout(
         title={
