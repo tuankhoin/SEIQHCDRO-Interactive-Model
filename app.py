@@ -820,8 +820,9 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
                        "Daily Infected": ift_in, 
                        "Hospitalised": hsp,
                        "Daily Hospitalised": hsp_in,  
-                       "Critical": crt, 
-                       "Daily Critical": crt_in, 
+                       "Active ICU": crt-ded,
+                       #"Critical": crt, 
+                       #"Daily Critical": crt_in, 
                        "Deaths":ded})
     
     fig = make_subplots(rows=1, cols=2, x_title="Date" if 2 in mod else "Days since the beginning of outbreak", y_title="Cases")
