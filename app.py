@@ -1,6 +1,7 @@
 import json
 import base64
 import io
+import sample
 import dash
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
@@ -592,12 +593,12 @@ main_page = html.Div([
             html.Div([
                       dcc.Dropdown(
                             options=[
-                                {'label': 'Ho Chi Minh City, Vietnam', 'value': 1},
+                                {'label': 'Ho Chi Minh City, Vietnam', 'value': 'hcmc'},
                                 {'label': 'Bac Giang, Vietnam', 'value': 2},
                                 {'label': 'Melbourne, Australia', 'value': 3}
                             ],
                             placeholder='Select an example region (Coming soon)',
-                            id='init', disabled=True
+                            id='init'#, disabled=True
                         )
                     ], style={'padding':'0% 3%','display':'inline-block','width':'55%'}),
             html.Div([dcc.Graph(id='overall-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
@@ -630,15 +631,15 @@ main_page = html.Div([
 # 
 @app.callback(
     Output('in-r0', 'children'),
+    Input('init', 'value'),
     [Input('num', 'value')],
     [Input('up', 'contents')],
     State('up', 'filename'),
     )
-def ins_generate(n,content,file):
+def ins_generate(init,n,content,file):
     ctx = dash.callback_context.triggered
-    if ctx:
-        current_call = ctx[0]['prop_id'].split('.')[0]
-    if not file or 'up' not in current_call:
+    current_call = [] if not ctx else ctx[0]['prop_id'].split('.')[0]
+    if (not file or 'up' not in current_call) and 'init' not in current_call:
         d = [6,20,30,49,55,60,69,70,80,85,90,95,100,105,110,115,120,125,130,135,140,145,145,145,145,145,145,145,145,145]
         dr = [1.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
         pco = [0.1, 0.4, 0.6, 0.8,0.8,0.85,0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1]
@@ -652,15 +653,21 @@ def ins_generate(n,content,file):
                         ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(n)]
 
     json_stage = ['delta_r0', 'pcont', 'day', 'n_r0']
-    content_type, content_string = content.split(',')
-    decoded = base64.b64decode(content_string)
-    jf = json.loads(decoded)
+    ctx = dash.callback_context.triggered
+    if ctx:
+        current_call = ctx[0]['prop_id'].split('.')[0]
+        if current_call=='init':
+            jf = json.loads(sample.loc[init])
+        else:
+            content_type, content_string = content.split(',')
+            decoded = base64.b64decode(content_string)
+            jf = json.loads(decoded)
 
-    for i in json_stage:
-        if i not in jf:
-            return dash.no_update
-    if len(jf['day']) != len(jf['delta_r0']) or len(jf['day']) != len(jf['pcont']):
-        return dash.no_update
+            for i in json_stage:
+                if i not in jf:
+                    return dash.no_update
+            if len(jf['day']) != len(jf['delta_r0']) or len(jf['day']) != len(jf['pcont']):
+                return dash.no_update
 
     return [html.Div([html.H5(f'Stage {i+1}:'),
                         html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=1000, value=jf['day'][i], step=1, type='number', style={'width':'80%'})],
@@ -990,11 +997,12 @@ _{np.max(ded)} deceased
     Output('slider-pc', component_property='value'),
     Output('slider-pf', component_property='value'),
     Output('err', 'children'),
+    Input('init', 'value'),
     Input('up', 'contents'),
     State('up', 'filename'),
     prevent_initial_call=True
 )
-def load_to_input(content,file):
+def load_to_input(init,content,file):
     components = [  'slider-N',
                     'n_r0',
                     'slider-r0',
@@ -1016,19 +1024,30 @@ def load_to_input(content,file):
                     'slider-ph',
                     'slider-pc',
                     'slider-pf',]
+
     json_attrib = [w.replace('slider-','') if 'slider-' in w else w for w in components]
     json_stage = ['delta_r0', 'pcont', 'day']
-    if not file:
-        return [dash.no_update for i in components] + ['Error: File not found!']
-    content_type, content_string = content.split(',')
-    decoded = base64.b64decode(content_string)
-    jf = json.loads(decoded)
-    for i in json_attrib+json_stage:
-        if i not in jf:
-            return [dash.no_update for i in components] + [f'Error: Input "{i}" not found!']
-    if len(jf['day']) != len(jf['delta_r0']) or len(jf['day']) != len(jf['pcont']):
-        return[dash.no_update for i in components] + [f'Error: Number of stage inputs not consistent!']
-    return [jf[i] for i in json_attrib] + [html.P(f'Updated inputs from "{file}"!',style={'color':'chartreuse'})]
+    
+    ctx = dash.callback_context.triggered
+    if ctx:
+        current_call = ctx[0]['prop_id'].split('.')[0]
+        if current_call=='init':
+            jf = json.loads(sample.loc[init])
+            updated_name = sample.name[init]
+        else:
+            if not file:
+                return [dash.no_update for i in components] + ['Error: File not found!']
+            _, content_string = content.split(',')
+            decoded = base64.b64decode(content_string)
+            jf = json.loads(decoded)
+            for i in json_attrib+json_stage:
+                if i not in jf:
+                    return [dash.no_update for i in components] + [f'Error: Input "{i}" not found!']
+            if len(jf['day']) != len(jf['delta_r0']) or len(jf['day']) != len(jf['pcont']):
+                return[dash.no_update for i in components] + [f'Error: Number of stage inputs not consistent!']
+            updated_name = file
+
+    return [jf[i] for i in json_attrib] + [html.P(f'Updated inputs from {updated_name}!',style={'color':'chartreuse'})]
 #############################################################################
 
 def SEIQHCDRO_model(t, y, R_0,
