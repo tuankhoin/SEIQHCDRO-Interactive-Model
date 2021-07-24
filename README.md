@@ -1,13 +1,15 @@
 # SEIQHCDRO COVID-19 INTERACTIVE MODELLING TOOL
+![Heroku](https://pyheroku-badge.herokuapp.com/?app=vn-covid-modelling&style=flat)
+
  Interactive website that takes different scenarios to predict COVID outcomes in Vietnam
 - [SEIQHCDRO COVID-19 INTERACTIVE MODELLING TOOL](#seiqhcdro-covid-19-interactive-modelling-tool)
-  - [Deployment Instructions](#deployment-instructions)
   - [Introduction](#introduction)
+  - [Deployment Instructions](#deployment-instructions)
+  - [Technical Specifications](#technical-specifications)
   - [Formation of the model](#formation-of-the-model)
     - [Model Flowchart](#model-flowchart)
   - [Formula](#formula)
   - [Formulation of the basic reproduction number `R_0`](#formulation-of-the-basic-reproduction-number-r_0)
-  - [Tech Specifications](#tech-specifications)
   - [Tool features](#tool-features)
     - [Modelling features](#modelling-features)
     - [Cross-checking and testing features](#cross-checking-and-testing-features)
@@ -18,41 +20,44 @@
   - [License](#license)
   - [Website legal disclaimer](#website-legal-disclaimer)
 
+## Introduction
+
+In the past outbreaks, Vietnam has successfully controlled the COVID-19 pandemic by simultaneously applying numerous strategies, including aggressive contact tracing, mandatory quarantine, routine testing, etc. Taken inspiration from our own hometown, to quantify the effectiveness of social governance measures, we have developed a multi-compartment model that integrates all of these practices to estimate impacts of possible mitigation scenarios on the COVID-19 outbreak for any given location, using the SEIQHCDRO model, a multi-variable data modelling/machine learning model. 
+
+In order to turn our research into an open-source web-app that everyone can access and use with ease, as well as creating a tool for policy makers/public health specialists to facilitate their policy advocate/policy making process, this modelling tool is created as a result. **Through this website, anyone can predict their own COVID outcome within any region, only through adjusting common social inputs.**
+
 ## Deployment Instructions
 
 Requirements:
-* Python 3 (best working with Python 3.6)
+* Python 3 (work best with Python 3.6)
   
 Steps:
 1. Clone the repo: `git clone https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model`
 2. Install all dependencies: `pip install requirements.txt`
 3. Run `app.py`
 
-## Introduction
+## Technical Specifications
 
-In the past outbreaks, Vietnam has successfully controlled the COVID-19 pandemic by simultaneously applying numerous strategies,
-including aggressive contact tracing, mandatory quarantine, routine testing, etc. To quantify the effectiveness of these measures,
-we developed a multi-compartment model that integrates all of these practices to estimate impacts of possible mitigation scenarios
-on the COVID-19 outbreak. To do that, we extended the traditional SEIR model into a 9-compartment model SEIQHCDRO with 
-S (Susceptible), E (Exposed), I (Infected), Q (Quarantined), H (Hospitalized), C (Critical), D (Death), R (Recovered) 
-and O (Other - Recovered). 
+This tool is built on Python 3.6, using the following tools:
+* **Dash/Flask**: Framework
+* **Plotly**: Plotting and framework
+* **Heroku**: CI & Deployment platform
 
-Moreover, in order to turn our research 
-into an open-source project so that everyone can have access to, while creating a tool so that policy makers/public health specialists have a
-tool to facilitate their policy advocate/policy making process, we decided to create this tool, alongside with publicizing all associated
-source code.
+For all installed Python libraries, refer to `requirements.txt`.
 
 ## Formation of the model 
 
 ### Model Flowchart
 
-As an multi-compartment epidemiological model, there must exist specific relations between each and every single compartment. 
-Such relations are expressed though the model flowchart below
+As an multi-compartment epidemiological model, there must exist specific relations between each and every single compartment. Such relations are expressed though the model flowchart below
 
 ![Flowchart](https://drive.google.com/uc?export=view&id=1nb9DFzmOBdlbp8eSaMUsKA45owrYauf_)                  
 
 ## Formula
-    
+
+<details>
+<summary>Expand!</summary>
+
 From this, we develop a system of differential equations to simulate the relationship between these compartments. The system reads:
 
 ![Formula](https://quicklatex.com/cache3/2e/ql_5948b14b283613968f0b24fb80533a2e_l3.png)
@@ -61,21 +66,15 @@ with two main types of hyper-parameters
 * Proportion-related hyper-parameters `p`;
 * Time interval related hyperparameters `T`.
 
-To obtain the result, this system of ordinary differential equations (ODEs) will be solved using the `solve_ivp` command within the `SciPy` package
-in Python. To prevent any stiffness of the system, the `Radau` method, i.e the implicit Runge-Kutta method of the Radau IIA family of order 5.
+To obtain the result, this system of ordinary differential equations (ODEs) will be solved using the `solve_ivp` command within the `SciPy` package in Python. To prevent any stiffness of the system, the `Radau` method, i.e the implicit Runge-Kutta method of the Radau IIA family of order 5.
 
 ## Formulation of the basic reproduction number `R_0`
 
-One of the most important aspects of this model is the ability to capture different levels of social distancing/lockdown to the spread
-of the disease. As such, we have integrated these impacts onto the function representing the effective reproduction number `R_t` (i.e the basic reproduction
-number `R_0` with respect to time).
+One of the most important aspects of this model is the ability to capture different levels of social distancing/lockdown to the spread of the disease. As such, we have integrated these impacts onto the function representing the effective reproduction number `R_t` (i.e the basic reproduction number `R_0` with respect to time).
 
 ![r0_formula](https://quicklatex.com/cache3/f7/ql_580fe4eb71ceadb277d725dd86ca49f7_l3.png)
 
-Assume that there exists two consecutive time intervals separated by a policy scheme change at time `T`. Before time `T`, the population
-inherits a scheme with change of the basic reproduction number `delta R_0`, contact rate reduction `p_cont` and contact rate reduction due
-to journalism `p_jrnl`. After time `T`, the population now inherits a new scheme with a new set of parameters, `delta R'_0`, `p'_cont` and 
-`p'_jrnl`, respectively.
+Assume that there exists two consecutive time intervals separated by a policy scheme change at time `T`. Before time `T`, the population inherits a scheme with change of the basic reproduction number `delta R_0`, contact rate reduction `p_cont` and contact rate reduction due to journalism `p_jrnl`. After time `T`, the population now inherits a new scheme with a new set of parameters, `delta R'_0`, `p'_cont` and `p'_jrnl`, respectively.
 
 There are two cases that would happen:
 
@@ -86,17 +85,12 @@ There are two cases that would happen:
 * When `p'_cont < p_cont` (i.e. the social distancing/lockdown measure loosens), the function now becomes:
 
     ![case2](https://quicklatex.com/cache3/84/ql_1a46c5cd376b5ef2c5fa51f23f675484_l3.png)
-
-## Tech Specifications
-
-This tool is built on Python 3.6, using the following tools:
-* Dash/Flask
-* Plotly
-* Heroku
-
-For all installed Python libraries, refer to `requirements.txt`.
+</details>
 
 ## Tool features
+
+<details>
+<summary>Expand!</summary>
 
 ### Modelling features
 
@@ -129,6 +123,7 @@ To facilitate the validation and cross-checking of models between users, we prov
     - Number of active critical cases (`active_critical`);
     - Total (cumulative) number of deaths (`cumulative_deaths`);
     - Number of active quarantined individuals (`active_quarantined`).
+</details>
 
 ## Mentions
 
@@ -136,8 +131,7 @@ Up until now, our research project has been featured at two major conferences in
 - [The 52nd World Union Conference on Lung Health](https://theunion.org/our-work/conferences/52nd-union-world-conference-on-lung-health?fbclid=IwAR3DAw1R3eA8L0Jv0cr0aUtoqFJwESIHNvdGCyBKzkPF5KFbsUcXTOOK-ZM);
 - [8th Vietnam Lung Association (VILA) Scientific Conference 2021](https://drive.google.com/file/d/10uBQJATgEIVgIAbQdp9n4oWGGYqOiKf-/view?fbclid=IwAR3bNTaz_4UKZxa2TaN5ge6FSJL88vURX7xzFURjkE0J-B4hxuKT_3ZZ3vQ).
 
-Besides, our research has also been featured on a lot of renowned newspapers in Vietnam, including Tuoi tre, VNExpress, Soha, Viet Nam News, etc. as a major tool 
-for our policy advocates to fight against the COVID-19 pandemic in Vietnam.
+Besides, our research has also been featured on a lot of renowned newspapers in Vietnam, including Tuoi tre, VNExpress, Soha, Viet Nam News, etc. as a major tool for our policy advocates to fight against the COVID-19 pandemic in Vietnam.
 
 ## Citation
 
@@ -155,20 +149,14 @@ date = {19--22}
 ```
 ## About the authors
 
-* [**Hoang Anh NGO**](https://orcid.org/0000-0002-7583-753X) is the main author and model developer of the project. He is about to graduate from École Polytechnique
-with a double major in Mathematics and Economics, minor in Computational Economics. He is also currently a Research Contractor at Woolcock Institute of Medical Research
+* [**Tuan-Khoi Nguyen**](https://tkhoinguyen.netlify.app/) is the data engineer and tool developer of this project. He is graduating from The University of Melbourne with a Bachelor of Science in Mechatronics, and about to continue his Masters within the same field. His research interest focuses on Machine Learning and its autonomous applications in Robotics and real life problems.
+* [**Hoang Anh NGO**](https://orcid.org/0000-0002-7583-753X) is the main author of the SEIQHCDRO model. He is about to graduate from École Polytechnique with a double major in Mathematics and Economics, minor in Computational Economics. He is also currently a Research Contractor at Woolcock Institute of Medical Research
 Vietnam. His research interests focus on Epidemiology, (Online) Machine Learning and its applications in Medicine.
-* [**Tuan-Khoi Nguyen**](https://tkhoinguyen.netlify.app/) is the data engineer and main web developer of this project. He is graduating from The University of
-Melbourne with a Bachelor of Science in Mechatronics, and about to continue his Masters within the same field. His research
-interest focuses on Machine Learning and its applications in Robotics.
-* Dr [**Nguyen Thu Anh**](https://www.researchgate.net/profile/Nguyen-Anh-50) is an epidemiologist and a social scientist by training, with more than 20 years of experience. 
-She holds an honorary position as Senior Clinical Lecturer at University of Sydney, and the head of the 
-Woolcock Institute of Medical Research in Vietnam.
+* Dr [**Nguyen Thu Anh**](https://www.researchgate.net/profile/Nguyen-Anh-50) is the epidemiological supervisor of this project. She is an epidemiologist and a social scientist by training, with more than 20 years of experience. She holds an honorary position as Senior Clinical Lecturer at University of Sydney, and the head of the Woolcock Institute of Medical Research in Vietnam.
 
 ## Acknowledgement
 
-We would like to send our sincerest gratitude towards all team members of [5F Team](https://5fteam.com/) for contributing 
-valuable insights and data to help us complete out model:
+We would like to send our sincerest gratitude towards all team members of [5F Team](https://5fteam.com/) for contributing valuable insights and data to help us complete out model:
 
 * BPharm. Duyen T. Duong, Woolcock Institute of Medical Research Vietnam
 * MS. Thao Huong Nguyen, Independent Social Researcher
@@ -177,26 +165,17 @@ valuable insights and data to help us complete out model:
 * Phuc Phan, MD PhD, Vietnam National Hospital of Pediatrics 
 * Nguyen Huyen Nguyen, MD, National Hospital of Tropical Diseases (NHTD)
 
-Moreover, we also want to send our warmest thanks to our fellow 
-colleagues and readers for their thoughtful and scholarly evaluation of the model. 
-All comments are hugely appreciated.
+Moreover, we also want to send our warmest thanks to our fellow colleagues and readers for their thoughtful and scholarly evaluation of the model. All comments are hugely appreciated.
 
 ## License 
-SEIQHCDRO COVID-19 Interactive Modelling Tool is a free and open-source web application/software licensed under the 
-[3-clause BSD license](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model/blob/main/LICENSE).
+SEIQHCDRO COVID-19 Interactive Modelling Tool is a free and open-source web application/software licensed under the [3-clause BSD license](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model/blob/main/LICENSE).
 
 ## Website legal disclaimer
-The information contained in this website is for convenience or reference only. The content cannot be considered to be medical advice and is not intended 
-to be a substitute for professional medical counselling, diagnosis or treatment. For any concern please consult a trusted specialist in the field.
+The information contained in this website is for convenience or reference only. The content cannot be considered to be medical advice and is not intended to be a substitute for professional medical counselling, diagnosis or treatment. For any concern please consult a trusted specialist in the field.
 
-Whilst we endeavor to keep the information up to date and correct, we make no representations or warranties of any kind, express or implied, 
-about the completeness, accuracy, timeliness, reliability, suitability or availability with respect to the website or the information, 
-products, services, or related graphics, images, text and all other materials contained on the website for any purpose. 
-It is not meant to be applicable to any specific individual’s medical condition and any reliance you place on such information is therefore 
-strictly at your own risk.
+Whilst we endeavor to keep the information up to date and correct, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, timeliness, reliability, suitability or availability with respect to the website or the information, products, services, or related graphics, images, text and all other materials contained on the website for any purpose. It is not meant to be applicable to any specific individual’s medical condition and any reliance you place on such information is therefore strictly at your own risk.
 
-In no event will we be liable for any loss or damage including without limitation, indirect or consequential loss or damage, or any loss or damage whatsoever 
-arising from loss of data or profits arising out of, or in connection with, the use of this website.
+In no event will we be liable for any loss or damage including without limitation, indirect or consequential loss or damage, or any loss or damage whatsoever arising from loss of data or profits arising out of, or in connection with, the use of this website.
                         
                  
                  
