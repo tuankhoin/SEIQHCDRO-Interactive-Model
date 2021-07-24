@@ -593,11 +593,9 @@ main_page = html.Div([
             html.Div([
                       dcc.Dropdown(
                             options=[
-                                {'label': 'Ho Chi Minh City, Vietnam', 'value': 'hcmc'},
-                                {'label': 'Bac Giang, Vietnam', 'value': 2},
-                                {'label': 'Melbourne, Australia', 'value': 3}
+                                {'label': sample.name[n], 'value': n} for n in sample.name.keys()
                             ],
-                            placeholder='Select an example region (Coming soon)',
+                            placeholder='Select an example region (More to come soon)',
                             id='init'#, disabled=True
                         )
                     ], style={'padding':'0% 3%','display':'inline-block','width':'55%'}),
