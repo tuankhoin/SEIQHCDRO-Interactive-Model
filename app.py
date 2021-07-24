@@ -632,10 +632,9 @@ main_page = html.Div([
     Output('in-r0', 'children'),
     [Input('num', 'value')],
     [Input('up', 'contents')],
-    Input('ndate', 'value'),
     State('up', 'filename'),
     )
-def ins_generate(n,content,ndate,file):
+def ins_generate(n,content,file):
     ctx = dash.callback_context.triggered
     if ctx:
         current_call = ctx[0]['prop_id'].split('.')[0]
@@ -644,7 +643,7 @@ def ins_generate(n,content,ndate,file):
         dr = [1.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
         pco = [0.1, 0.4, 0.6, 0.8,0.8,0.85,0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1]
         return [html.Div([html.H5(f'Stage {i+1}:'),
-                        html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=ndate, value=d[i], step=1, type='number', style={'width':'80%'})],
+                        html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=1000, value=d[i], step=1, type='number', style={'width':'80%'})],
                                     style={'width': '33%', 'display': 'inline-block'}),
                         html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=dr[i], step=0.1, type='number', style={'width':'100%'})],
                                     style={'width': '28%', 'display': 'inline-block', 'margin':'0 5% 0 0'}),
@@ -664,7 +663,7 @@ def ins_generate(n,content,ndate,file):
         return dash.no_update
 
     return [html.Div([html.H5(f'Stage {i+1}:'),
-                        html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=ndate, value=jf['day'][i], step=1, type='number', style={'width':'80%'})],
+                        html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=1000, value=jf['day'][i], step=1, type='number', style={'width':'80%'})],
                                     style={'width': '33%', 'display': 'inline-block'}),
                         html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=jf['delta_r0'][i], step=0.1, type='number', style={'width':'100%'})],
                                     style={'width': '28%', 'display': 'inline-block', 'margin':'0 5% 0 0'}),
