@@ -49,7 +49,7 @@ loc['hcmc'] = '''
     "pf": 0.22
 }
 '''
-name['hcmc'] = 'Ho Chi Minh City, Vietnam'
+name['hcmc'] = 'Ho Chi Minh City, Vietnam (Moderate Scenario)'
 
 loc['hcmc_worst'] = '''
 {
@@ -97,7 +97,7 @@ loc['hcmc_worst'] = '''
     "pf": 0.22
 }
 '''
-name['hcmc_worst'] = 'Ho Chi Minh City, Vietnam (Worst case)'
+name['hcmc_worst'] = 'Ho Chi Minh City, Vietnam (Worst Scenario)'
 
 loc['hcmc_best'] = '''
 {
@@ -145,4 +145,4 @@ loc['hcmc_best'] = '''
     "pf": 0.22
 }
 '''
-name['hcmc_best'] = 'Ho Chi Minh City, Vietnam (Best case)'
+name['hcmc_best'] = 'Ho Chi Minh City, Vietnam (Best Scenario)'
