@@ -31,7 +31,7 @@ affiliations:
 
 # Summary
 
-COVID-19 SEIQHCDRO Modelling is a web application that lets users model the COVID-19 outcome of an area, using a system of multiple inputs. Using the extended SEIQHCDRO model, this website provides prediction results on positive case counts, deaths, intensive cares, and where applicable, quarantine. The website will automate the process of running the model, letting users without statistics knowledge to easily define customised inputs, and extend the usage to policy-making or social governance. Source code is stored as open source on [GitHub](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model) and Zenodo.
+COVID-19 SEIQHCDRO Modelling is a web application that lets users model the COVID-19 outcome of an area, using a system of multiple inputs. Using the extended SEIQHCDRO model, this website provides prediction results on positive case counts, deaths, intensive cares, and where applicable, quarantine. The website will automate the process of running the model, letting users without statistics knowledge to easily define customised inputs, and extend the usage to policy-making or social governance. Source code is stored as open source on [GitHub](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model) and [Zenodo](https://doi.org/10.5281/zenodo.5136441).
 
 # Statement of need
 

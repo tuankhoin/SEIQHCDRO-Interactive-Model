@@ -132,6 +132,8 @@ To facilitate the validation and cross-checking of models between users, we prov
 
 ## Mentions
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5136441.svg)](https://doi.org/10.5281/zenodo.5136441)
+
 Up until now, our research project will be featured at two major conferences in lung health, public health and epidemiology, including:
 - [The 52nd World Union Conference on Lung Health](https://theunion.org/our-work/conferences/52nd-union-world-conference-on-lung-health?fbclid=IwAR3DAw1R3eA8L0Jv0cr0aUtoqFJwESIHNvdGCyBKzkPF5KFbsUcXTOOK-ZM);
 - [8th Vietnam Lung Association (VILA) Scientific Conference 2021](https://drive.google.com/file/d/10uBQJATgEIVgIAbQdp9n4oWGGYqOiKf-/view?fbclid=IwAR3bNTaz_4UKZxa2TaN5ge6FSJL88vURX7xzFURjkE0J-B4hxuKT_3ZZ3vQ).
