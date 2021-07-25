@@ -274,11 +274,12 @@ about_page = html.Div([
                         SEIQHCDRO COVID-19 Interactive Modelling Tool is a free and open-source web application/software licensed under the 
                         [3-clause BSD license](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model/blob/main/LICENSE).
                         
-                        ## Authorship & Contribution
-                            - Based on the license, this is a free software/web application released by the authors. There is no relation between the application and authors' affiliations.
-                            - Source code is stored as open source on [GitHub](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model) and [Zenodo](https://doi.org/10.5281/zenodo.5136441).
-                            - For support, please write an issue in the [issue tracker of this project](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model/issues).
-                            - For contribution, please fork and make a pull request.
+                        # Authorship & Contribution
+                        
+                        * Based on the license, this is a free software/web application released by the authors. There is no relation between the application and authors' affiliations.
+                        * Source code is stored as open source on [GitHub](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model) and [Zenodo](https://doi.org/10.5281/zenodo.5136441).
+                        * For support, please write an issue in the [issue tracker of this project](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model/issues).
+                        * For contribution, please fork and make a pull request.
                             
                         # Website legal disclaimer
                         The information contained in this website is for convenience or reference only. The content cannot be considered to be medical advice and is not intended 
