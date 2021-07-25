@@ -743,14 +743,14 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
 
     Parameters
     ----------
-    n1,n2,n3 : `int`
+    n1, n2, n3 : `int`
         Number of clicks made on a specified button.
     is_open1, is_open2, is_open3 : `bool`
         Boolean indicating ff collapsible in any group is open.
 
     Returns
     -------
-    stage1,stage2,stage3 : :class:`bool`
+    stage1, stage2, stage3 : :class:`bool`
         Corresponding responsive open state for each collapsible group.
     """
     ctx = dash.callback_context
@@ -845,7 +845,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
 
         Returns
         -------
-        r0 : `double`
+        r0 : `float`
             Corresponding reproductive number.
         """
         # Default stage when created initially
@@ -1133,11 +1133,8 @@ def load_to_input(init,content,file):
 
     Returns
     -------
-    output : `List(numbers)`
-        The modified outputs.
-
-    status : `str`
-        Upload status, for informing or debugging
+    output : `(Any | List)`
+        The modified outputs and upload status, for informing or debugging
     """
     components = [  'slider-N',
                     'n_r0',
@@ -1263,8 +1260,8 @@ def display_page(pathname):
 
     Returns
     ---
-    content : `List`
-        List of HTML Elements for the specified route.
+    content : `dash_html_components.Div`
+        A Div of HTML Elements for the specified route.
     """
     if pathname == '/about':
         return about_page
