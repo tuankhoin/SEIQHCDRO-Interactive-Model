@@ -24,6 +24,10 @@
 
 ## Introduction
 
+<figure class="video_container">
+  <iframe src="https://drive.google.com/file/d/1ELeCV8V0IlCNoNbZrZG2WyehvGIMjSir/view" frameborder="0" allowfullscreen="true"> </iframe>
+</figure>
+
 In the past outbreaks, Vietnam has successfully controlled the COVID-19 pandemic by simultaneously applying numerous strategies, including aggressive contact tracing, mandatory quarantine, routine testing, etc. Taken inspiration from our own hometown, to quantify the effectiveness of social governance measures, we have developed a multi-compartment model that integrates all of these practices to estimate impacts of possible mitigation scenarios on the COVID-19 outbreak for any given location, using the SEIQHCDRO model, a multi-variable data modelling/machine learning model. 
 
 In order to turn our research into an open-source web-app that everyone can access and use with ease, as well as creating a tool for policy makers/public health specialists to facilitate their policy advocate/policy making process, this modelling tool is created as a result. **Through this website, anyone can predict their own COVID outcome within any region, only through adjusting common social inputs.**
