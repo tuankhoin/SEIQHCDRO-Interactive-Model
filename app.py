@@ -619,7 +619,7 @@ main_page = html.Div([
                             options=[
                                 {'label': sample.name[n], 'value': n} for n in sample.name.keys()
                             ],
-                            placeholder='Select an example region (More to come soon)',
+                            placeholder='Select an example region',
                             id='init'
                         )
                     ], style={'padding':'0% 3%','display':'inline-block','width':'55%'}),

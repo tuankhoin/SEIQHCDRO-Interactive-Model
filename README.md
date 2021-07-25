@@ -5,7 +5,7 @@
  Interactive website that takes different scenarios to predict COVID outcomes in Vietnam
 - [SEIQHCDRO COVID-19 INTERACTIVE MODELLING TOOL](#seiqhcdro-covid-19-interactive-modelling-tool)
   - [Introduction](#introduction)
-  - [Deployment Instructions](#deployment-instructions)
+  - [Install Instructions](#install-instructions)
   - [Technical Specifications](#technical-specifications)
   - [Formation of the model](#formation-of-the-model)
     - [Model Flowchart](#model-flowchart)
@@ -28,7 +28,7 @@ In the past outbreaks, Vietnam has successfully controlled the COVID-19 pandemic
 
 In order to turn our research into an open-source web-app that everyone can access and use with ease, as well as creating a tool for policy makers/public health specialists to facilitate their policy advocate/policy making process, this modelling tool is created as a result. **Through this website, anyone can predict their own COVID outcome within any region, only through adjusting common social inputs.**
 
-## Deployment Instructions
+## Install Instructions
 
 Requirements:
 * Python 3 (work best with Python 3.6)
