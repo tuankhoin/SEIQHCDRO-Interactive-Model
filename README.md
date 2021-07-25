@@ -1,6 +1,7 @@
 # SEIQHCDRO COVID-19 INTERACTIVE MODELLING TOOL
 ![Heroku](https://pyheroku-badge.herokuapp.com/?app=vn-covid-modelling&style=flat)
-![ver](https://img.shields.io/badge/version-2.0-blue)
+![ver](https://img.shields.io/badge/version-v2.0-blue)
+![issues](https://img.shields.io/github/issues/tuankhoin/SEIQHCDRO-Interactive-Model)
 
  Interactive website that takes different scenarios to predict COVID outcomes in Vietnam
 - [SEIQHCDRO COVID-19 INTERACTIVE MODELLING TOOL](#seiqhcdro-covid-19-interactive-modelling-tool)
@@ -172,7 +173,7 @@ We would like to send our sincerest gratitude towards all team members of [5F Te
 Moreover, we also want to send our warmest thanks to our fellow colleagues and readers for their thoughtful and scholarly evaluation of the model. All comments are hugely appreciated.
 
 ## License 
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![License](https://img.shields.io/github/license/tuankhoin/SEIQHCDRO-Interactive-Model)](https://opensource.org/licenses/BSD-3-Clause)
 
 SEIQHCDRO COVID-19 Interactive Modelling Tool is a free and open-source web application/software licensed under the [3-clause BSD license](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model/blob/main/LICENSE).
 
