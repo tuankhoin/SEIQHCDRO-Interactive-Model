@@ -1034,7 +1034,8 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
             return fig,fig1,fig2, dcc.send_data_frame(df.to_csv, name+".csv"), None, None
         elif current_call=='btn_ipt':
             json_out = json.dumps(
-                {"N":N, "n_r0":n_r0, "r0":r0, "delta_r0":delta_r0, "pcont":pcont, "day":day, "date":date, 
+                {"N":N, "n_r0":n_r0, "r0":r0, "delta_r0":delta_r0, 
+                 "pcont":pcont, "day":day, "date":date, "ndate": ndate,
                  "hcap":hcap, "hqar":hqar,
                  "tinc":tinc, "tinf":tinf, "ticu":ticu, "thsp":thsp, "tcrt":tcrt,
                  "trec":trec, "tqar":tqar, "tqah":tqah, 
@@ -1091,6 +1092,7 @@ _{np.max(ded)} deceased
     Output('num', 'value'),
     Output('slider-r0', component_property='value'),
     Output('date', component_property='date'),
+    Output('ndate', component_property='value'),
     Output('hcap', component_property='value'),
     Output('hqar', component_property='value'),
     Output('slider-tinc', component_property='value'),
@@ -1141,6 +1143,7 @@ def load_to_input(init,content,file):
                     'n_r0',
                     'slider-r0',
                     'date',
+                    'ndate',
                     'hcap',
                     'hqar',
                     'slider-tinc',

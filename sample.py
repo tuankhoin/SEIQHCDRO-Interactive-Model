@@ -155,3 +155,52 @@ loc['hcmc_best'] = '''
 }
 '''
 name['hcmc_best'] = 'Ho Chi Minh City, Vietnam (Best Scenario)'
+
+loc['hd'] = '''
+{
+    "N": 1900000,
+    "n_r0": 5,
+    "r0": 3.5,
+    "delta_r0": [
+        1.5,
+        1.5,
+        1,
+        1.5,
+        2
+    ],
+    "pcont": [
+        0.5,
+        0.6,
+        0.8,
+        0.6,
+        0.2
+    ],
+    "day": [
+        21,
+        35,
+        43,
+        54,
+        83
+    ],
+    "date": "2021-01-07",
+    "ndate": 150,
+    "hcap": 1000,
+    "hqar": 10000,
+    "tinc": 5.2,
+    "tinf": 3.0,
+    "ticu": 11,
+    "thsp": 21,
+    "tcrt": 7,
+    "trec": 14,
+    "tqar": 14,
+    "tqah": 2,
+    "pquar": 0.75,
+    "pcross": 0.01,
+    "pqhsp": 0.1,
+    "pj": 0.12,
+    "ph": 0.75,
+    "pc": 0.04,
+    "pf": 0
+}
+'''
+name['hd'] = 'Hai Duong, Viet Nam'
