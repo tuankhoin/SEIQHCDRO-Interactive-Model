@@ -168,6 +168,8 @@ We would like to send our sincerest gratitude towards all team members of [5F Te
 Moreover, we also want to send our warmest thanks to our fellow colleagues and readers for their thoughtful and scholarly evaluation of the model. All comments are hugely appreciated.
 
 ## License 
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
 SEIQHCDRO COVID-19 Interactive Modelling Tool is a free and open-source web application/software licensed under the [3-clause BSD license](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model/blob/main/LICENSE).
 
 ## Website legal disclaimer

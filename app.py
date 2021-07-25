@@ -1,7 +1,14 @@
+"""
+Main application script.
+"""
+
+# Local Library
+import sample
+
+# 3rd-party
 import json
 import base64
 import io
-import sample
 import dash
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
@@ -16,7 +23,7 @@ import numpy as np
 from datetime import date
 from scipy.integrate import solve_ivp
 
-#
+# Header
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', dbc.themes.BOOTSTRAP]
 app = dash.Dash(__name__, 
                 external_stylesheets=external_stylesheets, 
@@ -24,7 +31,7 @@ app = dash.Dash(__name__,
                 suppress_callback_exceptions = True)
 server = app.server
 
-#
+# Some frequently used CSS across different HTML elements
 styles = {
     'pre': {
         'border': 'thin lightgrey solid',
@@ -38,8 +45,10 @@ colors = {
 }
 
 tab = {'padding':'1%'}
+
 PLOTLY_LOGO = "https://images.plot.ly/logo/new-branding/plotly-logomark.png"
 
+# Overall page layout
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     dbc.Navbar([
@@ -67,6 +76,7 @@ app.layout = html.Div([
                        'padding':'2%'})
 ])
 
+# About page
 about_page = html.Div([
                     dcc.Markdown(
                         u'''
@@ -279,7 +289,14 @@ about_page = html.Div([
 
 
 def generate_inputs():
+    r"""
+    Generate the basic input slots and stages for the main page.
 
+    Returns
+    -------
+    widgets : :class:`list`
+        A list of HTML Elements for the basic stage inputs.
+    """
     num_slider = [
                     html.Div([html.H3('Number of Stages:'),
                             dbc.Tooltip(
@@ -312,13 +329,15 @@ def generate_inputs():
 
     return widgets
 
-#
+# Main page
 main_page = html.Div([
     html.Div([
         html.Div([html.H1("COVID-19 Multi-compartment Modelling Result".upper())],style={'width':'100%','text-align':'center','padding':'1%'}),
 
+        # Inputs
         html.Div(
             [
+                # Basic inputs
                 dbc.Button(
                     html.H2("Basic Inputs"),
                     id="collapse-button",
@@ -391,6 +410,7 @@ main_page = html.Div([
                     style = tab
                 ),
 
+                # Proportional inputs
                 dbc.Button(
                     html.H2("Proportion Inputs"),
                     id="collapse-button-p",
@@ -467,6 +487,7 @@ main_page = html.Div([
                     style = tab
                 ),
 
+                # Timing inputs
                 dbc.Button(
                     html.H2("Time Inputs"),
                     id="collapse-button-t",
@@ -480,7 +501,7 @@ main_page = html.Div([
                                     "Incubation period.",
                                     target="div-tinc", placement='right'
                                ),
-                               dcc.Slider(id='slider-tinc', min=2.5, max=5, value=4.5, step=0.1,
+                               dcc.Slider(id='slider-tinc', min=2.5, max=7, value=4.5, step=0.1,
                                           tooltip={'always_visible': True}
                                           )],id='div-tinc'),
 
@@ -549,6 +570,8 @@ main_page = html.Div([
                     id="collapse-t",
                     style = tab
                 ),
+
+            # Input uploader
             html.Div([
                 dcc.Upload(html.Button([u'\f Upload custom .json input file'], style={'color':'white','margin':'2% 0', 'width':'100%'}),
                         id='up', style={'padding':'2% 0', 'font-style':'bold'}),
@@ -575,9 +598,10 @@ main_page = html.Div([
             ],id='div-up-stat')
             ]
         ,style = {'width':'33%', 'display':'inline-block', 'vertical-align':'top', 'padding':'2%'}),
-        # 
+        
+        # Output
         html.Div([
-            
+            # Modes and sample picker
             html.Div([
                       dcc.Checklist(
                             options=[
@@ -596,12 +620,16 @@ main_page = html.Div([
                                 {'label': sample.name[n], 'value': n} for n in sample.name.keys()
                             ],
                             placeholder='Select an example region (More to come soon)',
-                            id='init'#, disabled=True
+                            id='init'
                         )
                     ], style={'padding':'0% 3%','display':'inline-block','width':'55%'}),
+            
+            # Plots
             html.Div([dcc.Graph(id='overall-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
             html.Div([dcc.Graph(id='fatal-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
             html.Div([dcc.Graph(id='r0-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
+            
+            # File downloader
             html.Div([html.Div(
                             [
                                 html.H2("Download Statistics"),
@@ -626,7 +654,7 @@ main_page = html.Div([
 ])
 
 
-# 
+# Dynamically creating stage inputs 
 @app.callback(
     Output('in-r0', 'children'),
     Input('init', 'value'),
@@ -635,9 +663,33 @@ main_page = html.Div([
     State('up', 'filename'),
     )
 def ins_generate(init,n,content,file):
+    r"""
+    Generate dynamic stage inputs based on number of stages, either from file or from input.
+    Triggered when there is change in at least 1 variable.
+
+    Parameters
+    ----------
+    init : `str`
+        Chosen sample region.
+    n : `int`
+        Number of stages.
+    content : `base64`
+        File content, encoded to base64.
+    file : `str`
+        File name.
+
+    Returns
+    -------
+    stages : :class:`list`
+        A list of HTML Elements with pre-defined values for the stage inputs.
+    """
+    # Check which input is changing
     ctx = dash.callback_context.triggered
     current_call = [] if not ctx else ctx[0]['prop_id'].split('.')[0]
+
+    # If it's only changing in irrelevant variables, set to default
     if (not file or 'up' not in current_call) and 'init' not in current_call:
+        # Default values for up to 30 stages
         d = [6,20,30,49,55,60,69,70,80,85,90,95,100,105,110,115,120,125,130,135,140,145,145,145,145,145,145,145,145,145]
         dr = [1.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
         pco = [0.1, 0.4, 0.6, 0.8,0.8,0.85,0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1]
@@ -650,22 +702,26 @@ def ins_generate(init,n,content,file):
                                     style={'width': '33%', 'display': 'inline-block'})
                         ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(n)]
 
+    # Choosing which to change the stage inputs, by finding out the triggered component
     json_stage = ['delta_r0', 'pcont', 'day', 'n_r0']
-    ctx = dash.callback_context.triggered
-    if ctx:
-        current_call = ctx[0]['prop_id'].split('.')[0]
-        if current_call=='init':
-            jf = json.loads(sample.loc[init])
-        else:
-            content_type, content_string = content.split(',')
-            decoded = base64.b64decode(content_string)
-            jf = json.loads(decoded)
+    # If it's sample that is looked for, use the inputs from sample file
+    if current_call=='init':
+        jf = json.loads(sample.loc[init])
+    # If it's a file, use the inputs from it
+    else:
+        _, content_string = content.split(',')
+        decoded = base64.b64decode(content_string)
+        jf = json.loads(decoded)
 
-            for i in json_stage:
-                if i not in jf:
-                    return dash.no_update
-            if len(jf['day']) != len(jf['delta_r0']) or len(jf['day']) != len(jf['pcont']):
+        # Handling wrong formatting cases
+
+        # Irrelevant attributes
+        for i in json_stage:
+            if i not in jf:
                 return dash.no_update
+        # Inconsistent number of stage variables
+        if len(jf['day']) != len(jf['delta_r0']) or len(jf['day']) != len(jf['pcont']):
+            return dash.no_update
 
     return [html.Div([html.H5(f'Stage {i+1}:'),
                         html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=1000, value=jf['day'][i], step=1, type='number', style={'width':'80%'})],
@@ -682,13 +738,30 @@ def ins_generate(init,n,content,file):
     [State(f"collapse{i}", "is_open") for i in ['','-p','-t']],
 )
 def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
+    r"""
+    Toggle Open/Close of input groups.
+
+    Parameters
+    ----------
+    n1,n2,n3 : `int`
+        Number of clicks made on a specified button.
+    is_open1, is_open2, is_open3 : `bool`
+        Boolean indicating ff collapsible in any group is open.
+
+    Returns
+    -------
+    stage1,stage2,stage3 : :class:`bool`
+        Corresponding responsive open state for each collapsible group.
+    """
     ctx = dash.callback_context
 
+    # Check if any group is being clicked on first, by detecting change in number of clicks
     if not ctx.triggered:
         return False, False, False
     else:
         button_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
+    # When a group is clicked, toggle its stage and close the others
     if button_id == "collapse-button" and n1:
         return not is_open1, False, False
     elif button_id == "collapse-button-p" and n2:
@@ -738,7 +811,6 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
     State('up_stat', 'filename'),
     prevent_initial_call=True,
 )
-
 def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
                  hcap, hqar,
                  tinc, tinf, ticu, thsp, tcrt,
@@ -746,25 +818,60 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
                  pquar, pcross, pqhsp,
                  pj, ph, pc, pf,
                  ligma,sugma,sigma_duck,mod,file,contents,filename):
+    r"""
+    Produce/change output plot. Triggered on open, or when any variable changes.
+
+    Parameters
+    ----------
+    **kwargs : `numbers`
+        Inputs that are shown on the website.
+
+    Returns
+    -------
+    plot1, plot2, plot3 : `plotly.graph_objects.Figure`
+        Output plots to be demonstrated.
+
+    download1, download2, download3: `file`
+        Exported file for download, if requested
+    """
     def R0_dynamic(t):
+        r"""
+        Get R0 based on day and stage inputs.
+
+        Parameters
+        ----------
+        t : `int`
+            Number of days passed since initial outbreak.
+
+        Returns
+        -------
+        r0 : `double`
+            Corresponding reproductive number.
+        """
+        # Default stage when created initially
         if not delta_r0 or not pcont or not day:
             return 4.1
+        # No change yet: Keep to default
         elif t < day[0]:
             return r0
         else:
             i = 0
+            # Check which stage t is in
             while t >= day[i]:
                 if (i == len(day) - 1) or (t < day[i + 1]):
                     break
                 i += 1
-
+            # Initial stage
             if i == 0:
                 return r0 * (1 - pcont[0]) - 2 * delta_r0[0] / 30 * (t - (day[0] - 1)) * pcont[0]
             else:
+                # Recursively call the function, as R0 works in a similar fashion to Hidden Markov Model
+                # If there is increase in proportion contamination (See formula for details)
                 if pcont[i] >= pcont[i - 1]:
                     return max(
                         min(R0_dynamic(day[i] - 1), r0 * (1 - pcont[i])) - 2 * delta_r0[i] / 30 * (t - (day[i] - 1)) *
                         pcont[i], 0)
+                # If there is decrease in proportion contamination (See formula for details)
                 else:
                     if min(R0_dynamic(day[i] - 1), r0 * (1 - pcont[i])) > 0:
                         return min(R0_dynamic(day[i] - 1), r0 * (1 - pcont[i])) + 2 * delta_r0[i] / 30 * (
@@ -772,6 +879,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
                     else:
                         return 0.0
 
+    # Open up comparison csv file, if there is one
     compare = False
     if contents:
         _, content_string = contents.split(',')
@@ -784,6 +892,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
         except Exception as e:
             print(e)
 
+    # Solve for output variables
     args = (R0_dynamic,
             tinf, tinc, thsp, tcrt,
             ticu, tqar, tqah, trec,
@@ -798,9 +907,11 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
                     t_eval=np.arange(ndate+1), method="Radau")
     S, E, I, Q, H, C, D, R, O = sol.y
 
+    # Show by days passed pr date?
     x_day = pd.date_range(date, periods=ndate+1).tolist()
     x = x_day if 2 in mod else np.linspace(0, ndate, ndate+1)
     
+    # Infected, Hospitalised
     ift = np.round((I + H + C + D + R + O) * N)
     hsp = np.round((H + C + D + R) * N)
     hsp_in = np.append([0],[hsp[i + 1] - hsp[i] if hsp[i+1]>hsp[i] else 0 for i in range(ndate)])
@@ -809,14 +920,16 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
         hsp[i+1]=hsp[i]+hsp_in[i]
         ift[i+1]=ift[i]+ift_in[i]
 
+    # Critical, Dead
     crt = np.round((C + D) * N)
     ded = np.round(D * N)
     crt_in = np.append([0],[crt[i + 1] - crt[i] if crt[i+1]>crt[i] else 0 for i in range(ndate)])
     ded_in = np.append([0],[ded[i + 1] - ded[i] if ded[i+1]>ded[i] else 0 for i in range(ndate)])
 
+    # Quarantine
     qar = np.round((E+I+Q+H+C+D)*N)
 
-
+    # R0
     r0_trend = np.array([R0_dynamic(t) for t in np.linspace(0, ndate, ndate+1)])
 
     df = pd.DataFrame({"Date": x_day, 
@@ -825,10 +938,9 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
                        "Hospitalised": hsp,
                        "Daily Hospitalised": hsp_in,  
                        "Active ICU": crt-ded,
-                       #"Critical": crt, 
-                       #"Daily Critical": crt_in, 
                        "Deaths":ded})
     
+    # Plotting
     fig = make_subplots(rows=1, cols=2, x_title="Date" if 2 in mod else "Days since the beginning of outbreak", y_title="Cases")
 
     fig.add_trace(go.Scatter(x=x, y=ift, name='Total Infected'), row=1, col=2)
@@ -900,6 +1012,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
         fig1.update_xaxes(dtick="M1", tickformat="%d/%m/%y")
         fig2.update_xaxes(dtick="M1", tickformat="%d/%m/%y")
 
+    # Add comparison lines if there is any
     if compare:
         if 'infected' in df_compare.columns:
             fig.add_trace(go.Scatter(x=x, y=df_compare['infected'], name='Actual Infected'), row=1, col=2)
@@ -912,6 +1025,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
         if 'deaths' in df_compare.columns:
             fig1.add_trace(go.Scatter(x=x, y=df_compare['deaths'], name='Actual Deaths'), row=1, col=2)
 
+    # Check if there is any download triggered. If there is, send a file, depending on the specified format
     ctx = dash.callback_context.triggered
     if ctx:
         name = 'exported_stats' if not file else file
@@ -971,7 +1085,7 @@ _{np.max(ded)} deceased
             return fig,fig1,fig2, None, dict(content=text, filename=name+".txt"),None
     return fig,fig1,fig2, None, None, None
 
-#############################################################################
+# Change input from uploaded files or sample files
 @app.callback(
     Output('slider-N', component_property='value'),
     Output('num', 'value'),
@@ -1001,6 +1115,28 @@ _{np.max(ded)} deceased
     prevent_initial_call=True
 )
 def load_to_input(init,content,file):
+    r"""
+    Load json file content to inputs.
+
+    Parameters
+    ----------
+    init : `str`
+        Sample file to be used.
+
+    content : `base64`
+        File content, base64 encoded.
+
+    file : `str`
+        File name.
+
+    Returns
+    -------
+    output : `List(numbers)`
+        The modified outputs.
+
+    status : `str`
+        Upload status, for informing or debugging
+    """
     components = [  'slider-N',
                     'n_r0',
                     'slider-r0',
@@ -1026,32 +1162,41 @@ def load_to_input(init,content,file):
     json_attrib = [w.replace('slider-','') if 'slider-' in w else w for w in components]
     json_stage = ['delta_r0', 'pcont', 'day']
     
+    # Check which file to be used from
     ctx = dash.callback_context.triggered
     if ctx:
         current_call = ctx[0]['prop_id'].split('.')[0]
+        # Sample file to be used
         if current_call=='init':
             jf = json.loads(sample.loc[init])
             updated_name = sample.name[init]
+        # Uploaded file to be used
         else:
             if not file:
                 return [dash.no_update for i in components] + ['Error: File not found!']
             _, content_string = content.split(',')
             decoded = base64.b64decode(content_string)
             jf = json.loads(decoded)
+            # Irrelevant attribute handling
             for i in json_attrib+json_stage:
                 if i not in jf:
                     return [dash.no_update for i in components] + [f'Error: Input "{i}" not found!']
+            # Inconsistent input handling
             if len(jf['day']) != len(jf['delta_r0']) or len(jf['day']) != len(jf['pcont']):
                 return[dash.no_update for i in components] + [f'Error: Number of stage inputs not consistent!']
             updated_name = file
 
     return [jf[i] for i in json_attrib] + [html.P(f'Updated inputs from {updated_name}!',style={'color':'chartreuse'})]
-#############################################################################
+
 
 def SEIQHCDRO_model(t, y, R_0,
                     T_inf, T_inc, T_hsp, T_crt, T_icu, T_quar, T_quar_hosp, T_rec,
                     p_h, p_c, p_f, p_jrnl, p_quar, p_quar_hosp, p_cross_cont):
     """
+    Main function of SEIQHCDRO model.
+
+    Parameters:
+    ---
     t: time step for solve_ivp
     y: solution of previous timestep (or initial solution)
     R_0: basic reproduction number. This can be a constant, or a function with respect to time. These two cases are handled using an if condition of the callability of R_0.
@@ -1070,8 +1215,14 @@ def SEIQHCDRO_model(t, y, R_0,
     p_quar: proportion of exposed individual who are quarantined, either at home or at a facility under the supervision of local authority
     p_quar_hosp: proportion of quarantined individuals who are infected with COVID-19 and hospitalised
     p_cross_cont: cross contamination ratio within quarantined facility under the supervision of local authority
+
+    Returns
+    ---
+    dy_dt: `list`
+        List of numerical derivatives calculated.
     """
 
+    # Check if R is constant or not
     if callable(R_0):
         def R0_dynamic(t):
             return R_0(t)
@@ -1099,15 +1250,26 @@ def SEIQHCDRO_model(t, y, R_0,
 @app.callback(dash.dependencies.Output('page-content', 'children'),
               [dash.dependencies.Input('url', 'pathname')])
 def display_page(pathname):
+    r"""
+    Routing the content to display.
+
+    Parameters
+    ----------
+    pathname : `str`
+        Picked route.
+
+    Returns
+    ---
+    content : `List`
+        List of HTML Elements for the specified route.
+    """
     if pathname == '/about':
         return about_page
-    # elif pathname == '/page-2':
-    #     return page_2_layout
     else:
         return main_page
-    # You could also return a 404 "URL not found" page here
 
 
 if __name__ == '__main__':
+    # If Mac, uncomment the next line, comment out the 2nd line
     #app.server.run(port=8000, host='127.0.0.1')
     app.run_server(debug=True)

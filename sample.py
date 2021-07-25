@@ -1,3 +1,12 @@
+"""
+Local collection of past prediction inputs for specific regions.
+Used as a guidance example for users.
+
+Each location comes with the following information:
+* Input specifications, in form of json string
+* Name
+"""
+
 from collections import defaultdict
 
 loc = defaultdict()
