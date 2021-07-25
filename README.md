@@ -24,9 +24,7 @@
 
 ## Introduction
 
-<figure class="video_container">
-  <iframe src="https://drive.google.com/file/d/1ELeCV8V0IlCNoNbZrZG2WyehvGIMjSir/view" frameborder="0" allowfullscreen="true"> </iframe>
-</figure>
+[![](https://res.cloudinary.com/marcomontalbano/image/upload/v1627212353/video_to_markdown/images/google-drive--1ELeCV8V0IlCNoNbZrZG2WyehvGIMjSir-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://drive.google.com/file/d/1ELeCV8V0IlCNoNbZrZG2WyehvGIMjSir/view "")
 
 In the past outbreaks, Vietnam has successfully controlled the COVID-19 pandemic by simultaneously applying numerous strategies, including aggressive contact tracing, mandatory quarantine, routine testing, etc. Taken inspiration from our own hometown, to quantify the effectiveness of social governance measures, we have developed a multi-compartment model that integrates all of these practices to estimate impacts of possible mitigation scenarios on the COVID-19 outbreak for any given location, using the SEIQHCDRO model, a multi-variable data modelling/machine learning model. 
 
