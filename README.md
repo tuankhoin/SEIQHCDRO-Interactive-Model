@@ -10,7 +10,7 @@
   - [Formation of the model](#formation-of-the-model)
     - [Model Flowchart](#model-flowchart)
   - [Formula](#formula)
-  - [Formulation of the basic reproduction number `R_0`](#formulation-of-the-basic-reproduction-number-r_0)
+    - [Formulation of the basic reproduction number `R_0`](#formulation-of-the-basic-reproduction-number-r_0)
   - [Tool features](#tool-features)
     - [Modelling features](#modelling-features)
     - [Cross-checking and testing features](#cross-checking-and-testing-features)
@@ -70,7 +70,7 @@ with two main types of hyper-parameters
 
 To obtain the result, this system of ordinary differential equations (ODEs) will be solved using the `solve_ivp` command within the `SciPy` package in Python. To prevent any stiffness of the system, the `Radau` method, i.e the implicit Runge-Kutta method of the Radau IIA family of order 5.
 
-## Formulation of the basic reproduction number `R_0`
+### Formulation of the basic reproduction number `R_0`
 
 One of the most important aspects of this model is the ability to capture different levels of social distancing/lockdown to the spread of the disease. As such, we have integrated these impacts onto the function representing the effective reproduction number `R_t` (i.e the basic reproduction number `R_0` with respect to time).
 
@@ -129,7 +129,7 @@ To facilitate the validation and cross-checking of models between users, we prov
 
 ## Mentions
 
-Up until now, our research project has been featured at two major conferences in lung health, public health and epidemiology, including:
+Up until now, our research project will be featured at two major conferences in lung health, public health and epidemiology, including:
 - [The 52nd World Union Conference on Lung Health](https://theunion.org/our-work/conferences/52nd-union-world-conference-on-lung-health?fbclid=IwAR3DAw1R3eA8L0Jv0cr0aUtoqFJwESIHNvdGCyBKzkPF5KFbsUcXTOOK-ZM);
 - [8th Vietnam Lung Association (VILA) Scientific Conference 2021](https://drive.google.com/file/d/10uBQJATgEIVgIAbQdp9n4oWGGYqOiKf-/view?fbclid=IwAR3bNTaz_4UKZxa2TaN5ge6FSJL88vURX7xzFURjkE0J-B4hxuKT_3ZZ3vQ).
 
