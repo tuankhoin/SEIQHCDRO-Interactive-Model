@@ -183,8 +183,9 @@ about_page = html.Div([
                         To facilitate the validation and cross-checking of models between users, we provide the following additional features:
                         * Samples .json files of the previous outbreaks in Vietnam, including the outbreaks in 
                             - Danang (07-08/2020);
-                            - Hai Duong (01-03/2021); and 
-                            - Bac Giang (05-07/2021).
+                            - Hai Duong (01-03/2021); 
+                            - Bac Giang (05-07/2021); and 
+                            - Ho Chi Minh (05/2021 onwards) with 3 scenarios: best, moderate and worst.
                         * Import (Upload) a .json file that includes all information of the previously calibrated model to continue further moedification 
                             without having to restart the whole process from the beginning;
                         * Upload a csv file of the actual situation and illustrate it alongside with the prediction model. The uploaded csv file can include 
@@ -204,6 +205,9 @@ about_page = html.Div([
                     Up until now, our research project has been featured at two major conferences in lung health, public health and epidemiology, including:
                     - [The 52nd World Union Conference on Lung Health](https://theunion.org/our-work/conferences/52nd-union-world-conference-on-lung-health?fbclid=IwAR3DAw1R3eA8L0Jv0cr0aUtoqFJwESIHNvdGCyBKzkPF5KFbsUcXTOOK-ZM);
                     - [8th Vietnam Lung Association (VILA) Scientific Conference 2021](https://drive.google.com/file/d/10uBQJATgEIVgIAbQdp9n4oWGGYqOiKf-/view?fbclid=IwAR3bNTaz_4UKZxa2TaN5ge6FSJL88vURX7xzFURjkE0J-B4hxuKT_3ZZ3vQ).
+                    
+                    Moreover, we also have a Markdown version ready for submission to Journal of Open Source Software. This can be found at the associated 
+                    [paper.md](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model/blob/main/paper.md) file within this repository.
                     
                     Besides, our research has also been featured on a lot of renowned newspapers in Vietnam, including Tuoi tre, VNExpress, Soha, Viet Nam News, etc. as a major tool 
                     for our policy advocates to fight against the COVID-19 pandemic in Vietnam.
@@ -269,6 +273,11 @@ about_page = html.Div([
                         # License 
                         SEIQHCDRO COVID-19 Interactive Modelling Tool is a free and open-source web application/software licensed under the 
                         [3-clause BSD license](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model/blob/main/LICENSE).
+                        
+                        ## Authorship & Contribution
+                            - Based on the license, this is a free software/web application released by the authors. There is no relation between the application and authors' affiliations.
+                            - For support, please write an issue in the [issue tracker of this project](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model/issues).
+                            - For contribution, please fork and make a pull request.
                         
                         # Website legal disclaimer
                         The information contained in this website is for convenience or reference only. The content cannot be considered to be medical advice and is not intended 
