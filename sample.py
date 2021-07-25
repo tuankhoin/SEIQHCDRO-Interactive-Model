@@ -58,7 +58,7 @@ loc['hcmc'] = '''
     "pf": 0.22
 }
 '''
-name['hcmc'] = 'Ho Chi Minh City, Vietnam (Moderate Scenario)'
+name['hcmc'] = 'Ho Chi Minh City, Vietnam (Moderate Scenario - 5/2021)'
 
 loc['hcmc_worst'] = '''
 {
@@ -106,7 +106,7 @@ loc['hcmc_worst'] = '''
     "pf": 0.22
 }
 '''
-name['hcmc_worst'] = 'Ho Chi Minh City, Vietnam (Worst Scenario)'
+name['hcmc_worst'] = 'Ho Chi Minh City, Vietnam (Worst Scenario - 5/2021)'
 
 loc['hcmc_best'] = '''
 {
@@ -154,7 +154,7 @@ loc['hcmc_best'] = '''
     "pf": 0.22
 }
 '''
-name['hcmc_best'] = 'Ho Chi Minh City, Vietnam (Best Scenario)'
+name['hcmc_best'] = 'Ho Chi Minh City, Vietnam (Best Scenario - 5/2021)'
 
 loc['hd'] = '''
 {
@@ -203,4 +203,47 @@ loc['hd'] = '''
     "pf": 0
 }
 '''
-name['hd'] = 'Hai Duong, Viet Nam'
+name['hd'] = 'Hai Duong, Vietnam (1/2021-3/2021)'
+
+loc['dn'] = '''
+{
+    "N": 1134000,
+    "n_r0": 3,
+    "r0": 3.4,
+    "delta_r0": [
+        0.8,
+        1,
+        1
+    ],
+    "pcont": [
+        0.2,
+        0.75,
+        0.5
+    ],
+    "day": [
+        18,
+        22,
+        65
+    ],
+    "date": "2021-07-07",
+    "ndate": 100,
+    "hcap": 100000,
+    "hqar": 10000,
+    "tinc": 5.2,
+    "tinf": 2.9,
+    "ticu": 11,
+    "thsp": 21,
+    "tcrt": 7,
+    "trec": 14,
+    "tqar": 14,
+    "tqah": 2,
+    "pquar": 0.66,
+    "pcross": 0.01,
+    "pqhsp": 0.1,
+    "pj": 0.12,
+    "ph": 0.66,
+    "pc": 0.2,
+    "pf": 0.25
+}
+'''
+name['dn'] = 'Da Nang, Vietnam (7/2020-9/2020)'
