@@ -74,7 +74,6 @@ As an multi-compartment epidemiological model, there must exist specific relatio
 
 From this, we develop a system of differential equations to simulate the relationship between these compartments. The system reads:
 
-$$
 \begin{align*}
     \frac{dS}{dt} & =  - f(R_0, \Delta R_0, p_{cont}, p_{jrnl}, t) \left[ \frac{1}{T_{inf}} + \frac{1 - p_h}{T_{rec}} \right] I(t) S(t) \\
     \frac{dE}{dt} & =  f(R_0, \Delta R_0, p_{cont}, p_{jrnl}, t) \left[ \frac{1}{T_{inf}} + \frac{1 - p_h}{T_{rec}} \right] I(t) S(t) - \frac{1}{T_{inc}} E(t) \\
@@ -86,7 +85,6 @@ $$
     \frac{dR}{dt} & = (1 - p_c) \frac{H(t)}{T_{hsp}} + (1 - p_f) \frac{C(t)}{T_{icu}} \\
     \frac{dO}{dt} & =  \frac{1 - p_h}{T_{rec}} I(t) + \frac{p_h}{T_{rec}} H(t)
 \end{align*}
-$$
 
 with two main types of hyper-parameters
 * Proportion-related hyper-parameters $p$;
