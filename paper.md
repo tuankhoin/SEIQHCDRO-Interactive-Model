@@ -49,7 +49,7 @@ The web application of this interactive modelling tool can be found at [http://c
 
 As an multi-compartment epidemiological model, there must exist specific relations between each and every single compartment. Such relations are expressed though the model flowchart below
 
-![Flowchart](https://drive.google.com/uc?export=view&id=1nb9DFzmOBdlbp8eSaMUsKA45owrYauf_)                  
+![SEIQHCDRO Model Flowchart](https://drive.google.com/uc?export=view&id=1nb9DFzmOBdlbp8eSaMUsKA45owrYauf_)                  
 
 ## Formula
 
