@@ -43,28 +43,6 @@ In order to turn the research into an open-source web-app that everyone can acce
 
 The web application of this interactive modelling tool can be found at [http://covid19-modelling.com](http://covid19-modelling.com). The local installation instructions can be found within the next section.
 
-# Deployment Instructions
-
-Requirements:
-
-* Python 3
-  
-Steps:
-
-1. Clone the repo: `git clone https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model`
-2. Install all dependencies: `pip install requirements.txt`
-3. Run `app.py`
-
-# Technical Specifications
-
-This tool is built on Python 3.6, using the following tools:
-
-* **Dash/Flask**: Framework
-* **Plotly**: Plotting and framework
-* **Heroku**: CI & Deployment platform
-
-For all installed Python libraries, please refer to the requirements at `requirements.txt`.
-
 # Formation of the model 
 
 ## Model Flowchart
