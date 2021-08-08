@@ -129,9 +129,11 @@ There are two cases that would happen:
 
 In order to create the most interactive and convenient tool possible for COVID-19 modelling, we have decided to opt for 
 a number of features that makes it more comfortable for users to interact with this web application, including
+
 * The ability to capture 10 different policy schemes in place, corresponding to 10 consecutive time intervals. This would
 be helpful for policy advocates to simulate effects of different policy making processes.
 * 3 pairs of plots representing different aspect of the outbreak with built-in gadgets of `Plotly` for generated plots, including:
+    
     - **Overall trend of infection**: Incidence and cumulative number of hospitalized/infected COVID-19 cases,
     - **Critical and fatal cases**: Number of active critical cases daily and cumulative number of deceased cases,
     - **Spread and containment**: Effective reproduction number (Basic reproduction number by day) and total number of quarantined individuals.  
@@ -143,6 +145,7 @@ be helpful for policy advocates to simulate effects of different policy making p
 ## Cross-checking and testing features
 
 To facilitate the validation and cross-checking of models between users, we provide the following additional features:
+
 * Samples scenarios of the previous outbreaks in Vietnam, including the outbreaks in 
   
     - Danang (07-08/2020);
