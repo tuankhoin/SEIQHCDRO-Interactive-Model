@@ -106,21 +106,18 @@ There are two cases that would happen:
 
 * When $p'_{cont} \geq p_{cont}$ (i.e. the social distancing/lockdown measure tightens), the new function is:
 
-    $$
     \begin{align*}
         f(R_0, \Delta R'_0, p'_{cont}, p'_{jrnl}, t) & = \min(R0 \times (1 - p'_{cont}), f(R_0, \Delta R_0, p_{cont}, p_{jrnl}, T-1)) \\
         & - \Delta R'_0 / 15 \times (1 - p'_{cont}) \times (1 - p'_{jrnl}) \times (t - (T-1))
     \end{align*}
-    $$
+    
 
 * When $p'_{cont} < p_{cont}$ (i.e. the social distancing/lockdown measure loosens), the function now becomes:
-
-    $$
+ 
     \begin{align*}
         f(R_0, \Delta R'_0, p'_{cont}, p'_{jrnl}, t) & = \min(R0 \times (1 - p'_{cont}), f(R_0, \Delta R_0, p_{cont}, p_{jrnl}, T-1)) \\
         & + \Delta R'_0 / 15 \times p'_{cont} \times (1 - p'_{jrnl}) \times (t - (T-1))
     \end{align*}
-    $$
 
 # Tool features
 
