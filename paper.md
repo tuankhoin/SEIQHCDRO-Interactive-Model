@@ -35,7 +35,7 @@ COVID-19 SEIQHCDRO Modelling is a web application that lets users model the COVI
 
 # Statement of need
 
-The onset of a novel global pandemic, COVID-19, in late 2019 - beginning 2020 has put a huge pressure on health system of various countries. However, there has been a certain number of countries who arised as "role models" in containing and minimizing the impact of this pandemic, including Singapore [@covid19-sngapore:2021], New Zealand [@covid19-nz:2021], Taiwan [@covid19-taiwan:2020] or Vietnam [@covid19-vietnam:2021]. Particularly, in the past outbreaks, Vietnam has successfully controlled the COVID-19 pandemic by simultaneously applying numerous strategies, including aggressive contact tracing, mandatory quarantine, routine testing, etc [@covid19-vietnam:2020, covid19-vietnam:2021]. 
+The onset of a novel global pandemic, COVID-19, in late 2019 - beginning 2020 has put a huge pressure on health system of various countries. However, there has been a certain number of countries who arised as "role models" in containing and minimizing the impact of this pandemic, including Singapore [@covid19-sngapore:2021], New Zealand [@covid19-nz:2021], Taiwan [@covid19-taiwan:2020] or Vietnam [@covid19-vietnam:2021]. Particularly, in the past outbreaks, Vietnam has successfully controlled the COVID-19 pandemic by simultaneously applying numerous strategies, including aggressive contact tracing, mandatory quarantine, routine testing, etc [@covid19-vietnam:2020, @covid19-vietnam:2021]. 
 
 Taken inspiration from this successful case study, to quantify the effectiveness of social governance measures, we have developed a multi-compartment model that integrates all of these practices to estimate impacts of possible mitigation scenarios on the COVID-19 outbreak for any given location, using the SEIQHCDRO model, an extended multi-compartment epidemiological model. The research has been accepted as a presentation at The 52nd World Union Conference on Lung Health [@seiqhcdro-union:2021].
 
@@ -56,6 +56,7 @@ Steps:
 # Technical Specifications
 
 This tool is built on Python 3.6, using the following tools:
+
 * **Dash/Flask**: Framework
 * **Plotly**: Plotting and framework
 * **Heroku**: CI & Deployment platform
@@ -87,6 +88,7 @@ From this, we develop a system of differential equations to simulate the relatio
 \end{align*}
 
 with two main types of hyper-parameters
+
 * Proportion-related hyper-parameters $p$;
 * Time interval related hyperparameters $T$.
 
