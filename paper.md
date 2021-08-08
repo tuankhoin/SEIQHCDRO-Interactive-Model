@@ -46,9 +46,11 @@ The web application of this interactive modelling tool can be found at [http://c
 # Deployment Instructions
 
 Requirements:
+
 * Python 3
   
 Steps:
+
 1. Clone the repo: `git clone https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model`
 2. Install all dependencies: `pip install requirements.txt`
 3. Run `app.py`
@@ -142,6 +144,7 @@ be helpful for policy advocates to simulate effects of different policy making p
 
 To facilitate the validation and cross-checking of models between users, we provide the following additional features:
 * Samples scenarios of the previous outbreaks in Vietnam, including the outbreaks in 
+  
     - Danang (07-08/2020);
     - Hai Duong (01-03/2021); 
     - Bac Giang (05-07/2021); and 
@@ -149,7 +152,8 @@ To facilitate the validation and cross-checking of models between users, we prov
 * Import (Upload) a `.json` file that includes all information of the previously calibrated model to continue further moedification 
     without having to restart the whole process from the beginning;
 * Upload a csv file of the actual situation and illustrate it alongside with the prediction model. The uploaded csv file can include 
-    up to 5 following fields:   
+    up to 5 following fields:
+  
     - Number of new (incidence) cases per day (`daily_infected`);
     - Total (cumulative) number of cases (`cumulative_infected`);
     - Number of active critical cases (`active_critical`);
