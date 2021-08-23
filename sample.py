@@ -54,8 +54,8 @@ loc['hcmc'] = '''
     "pqhsp": 0.1,
     "pj": 0.12,
     "ph": 0.8,
-    "pc": 0.04,
-    "pf": 0.22
+    "pc": 0.05,
+    "pf": 0.6
 }
 '''
 name['hcmc'] = 'Ho Chi Minh City, Vietnam (Moderate Scenario - 5/2021)'
@@ -102,8 +102,8 @@ loc['hcmc_worst'] = '''
     "pqhsp": 0.1,
     "pj": 0.12,
     "ph": 0.8,
-    "pc": 0.04,
-    "pf": 0.22
+    "pc": 0.05,
+    "pf": 0.6
 }
 '''
 name['hcmc_worst'] = 'Ho Chi Minh City, Vietnam (Worst Scenario - 5/2021)'
@@ -150,8 +150,8 @@ loc['hcmc_best'] = '''
     "pqhsp": 0.1,
     "pj": 0.12,
     "ph": 0.8,
-    "pc": 0.04,
-    "pf": 0.22
+    "pc": 0.05,
+    "pf": 0.6
 }
 '''
 name['hcmc_best'] = 'Ho Chi Minh City, Vietnam (Best Scenario - 5/2021)'
