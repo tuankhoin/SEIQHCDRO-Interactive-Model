@@ -127,8 +127,7 @@ To facilitate the validation and cross-checking of models between users, we prov
 * Samples scenarios of the previous outbreaks in Vietnam, including the outbreaks in 
   
     - Danang (07-08/2020);
-    - Hai Duong (01-03/2021); 
-    - Bac Giang (05-07/2021); and 
+    - Hai Duong (01-03/2021); and
     - Ho Chi Minh (05/2021 onwards) with 3 scenarios: best, moderate and worst.
 * Import (Upload) a `.json` file that includes all information of the previously calibrated model to continue further moedification 
     without having to restart the whole process from the beginning;
