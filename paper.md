@@ -41,7 +41,7 @@ Taken inspiration from this successful case study, to quantify the effectiveness
 
 In order to turn the research into an open-source web-app that everyone can access and use with ease, as well as creating a tool for policy makers/public health specialists to facilitate their policy advocate/policy making process, this modelling tool is created as a result. Through this website, anyone can predict their own COVID outcome within any region, only through adjusting common social inputs.
 
-The web application of this interactive modelling tool can be found at [http://covid19-modelling.com](http://covid19-modelling.com). The local installation instructions can be found within the next section.
+The web application of this interactive modelling tool can be found at [covid19-modelling.com](covid19-modelling.com). The local installation instructions can be found within the next section.
 
 # Formation of the model 
 
