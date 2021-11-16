@@ -1,17 +1,17 @@
 ---
 title: 'SEIQHCDRO COVID-19 Interactive Modelling Tool'
 authors:
-- affiliation: '1'
+- affiliation: '1,2'
   name: Hoang Anh NGO
   orcid: 0000-0002-7583-753X
-- affiliation: '2'
+- affiliation: '3'
   name: Khoi T. Nguyen
   orcid: 0000-0001-8556-5876
-- affiliation: '1,3'
+- affiliation: '1,4'
   name: Thu-Anh Nguyen
   orcid: 0000-0002-2089-2902
 
-date: "24 July 2021"
+date: "15 November 2021"
 bibliography: paper.bib
 tags:
 - COVID-19
@@ -24,8 +24,10 @@ affiliations:
 - index: '1'
   name: The Woolcock Institute of Medical Research, Hanoi, Vietnam
 - index: '2'
-  name: The Melbourne School of Engineering, The University of Melbourne, Victoria, Australia
+  name: Usher Institute, University of Edinburgh, Edinburgh, UK
 - index: '3'
+  name: The Melbourne School of Engineering, The University of Melbourne, Victoria, Australia
+- index: '4'
   name: The Faculty of Medicine and Health, The University of Sydney, Sydney, NSW, Australia
 ---
 
