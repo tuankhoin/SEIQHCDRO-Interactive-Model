@@ -43,7 +43,7 @@ Taken inspiration from this successful case study, to quantify the effectiveness
 
 In order to turn the research into an open-source web-app that everyone can access and use with ease, as well as creating a tool for policy makers/public health specialists to facilitate their policy advocate/policy making process, this modelling tool is created as a result. Through this website, anyone can predict their own COVID outcome within any region, only through adjusting common social inputs.
 
-The web application of this interactive modelling tool can be found at [http://covid19-modelling.com](http://covid19-modelling.com). The local installation instructions can be found within the next section.
+The web application of this interactive modelling tool can be found at [covid19-modelling.com](http://www.covid19-modelling.com/). The local installation instructions can be found within the next section.
 
 # Formation of the model 
 
@@ -129,8 +129,7 @@ To facilitate the validation and cross-checking of models between users, we prov
 * Samples scenarios of the previous outbreaks in Vietnam, including the outbreaks in 
   
     - Danang (07-08/2020);
-    - Hai Duong (01-03/2021); 
-    - Bac Giang (05-07/2021); and 
+    - Hai Duong (01-03/2021); and
     - Ho Chi Minh (05/2021 onwards) with 3 scenarios: best, moderate and worst.
 * Import (Upload) a `.json` file that includes all information of the previously calibrated model to continue further moedification 
     without having to restart the whole process from the beginning;
