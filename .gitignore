@@ -118,3 +118,4 @@ dmypy.json
 venv
 *.pyc
 .DS_Store
+.vscode

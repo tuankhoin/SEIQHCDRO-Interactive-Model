@@ -2,84 +2,126 @@
 Main application script.
 """
 
-# Local Library
-import sample
+import base64
+import io
 
 # 3rd-party
 import json
-import base64
-import io
-import dash
-import dash_core_components as dcc
-import dash_bootstrap_components as dbc
-import dash_html_components as html
-from dash.dependencies import Input, Output, State, ALL
-
-import plotly.graph_objs as go
-from plotly.subplots import make_subplots
-
-import pandas as pd
-import numpy as np
 from datetime import date
+
+import dash
+import dash_bootstrap_components as dbc
+import dash_core_components as dcc
+import dash_html_components as html
+import numpy as np
+import pandas as pd
+import plotly.graph_objs as go
+from dash.dependencies import ALL, Input, Output, State
+from plotly.subplots import make_subplots
 from scipy.integrate import solve_ivp
 
+# Local Library
+import sample
+
 # Header
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', dbc.themes.BOOTSTRAP]
-app = dash.Dash(__name__, 
-                external_stylesheets=external_stylesheets, 
-                title='COVID-19 Modelling with SEIQHCDRO',
-                suppress_callback_exceptions = True)
+external_stylesheets = [
+    "https://codepen.io/chriddyp/pen/bWLwgP.css",
+    dbc.themes.BOOTSTRAP,
+]
+app = dash.Dash(
+    __name__,
+    external_stylesheets=external_stylesheets,
+    title="COVID-19 Modelling with SEIQHCDRO",
+    suppress_callback_exceptions=True,
+)
 server = app.server
 
 # Some frequently used CSS across different HTML elements
-styles = {
-    'pre': {
-        'border': 'thin lightgrey solid',
-        'overflowX': 'scroll'
-    }
-}
+styles = {"pre": {"border": "thin lightgrey solid", "overflowX": "scroll"}}
 
-colors = {
-    'background': '#111111',
-    'color': '#7FDBFF'
-}
+colors = {"background": "#111111", "color": "#7FDBFF"}
 
-tab = {'padding':'1%'}
+tab = {"padding": "1%"}
 
 PLOTLY_LOGO = "https://images.plot.ly/logo/new-branding/plotly-logomark.png"
 
 # Overall page layout
-app.layout = html.Div([
-    dcc.Location(id='url', refresh=False),
-    dbc.Navbar([
-        # Use row and col to control vertical alignment of logo / brand
-        dbc.Row(
+app.layout = html.Div(
+    [
+        dcc.Location(id="url", refresh=False),
+        dbc.Navbar(
             [
-                dbc.Col(html.Img(src=PLOTLY_LOGO, height="30px")),
-                dbc.Col(dbc.NavbarBrand("COVID-19 modelling with SEIQHCDRO", className="ml-2",style={'font-size':'20px', 'vertical-align':'center'})),
-                dbc.Col(dbc.NavLink("Home", href="/",className='text-light font-weight-bold',style={'font-size':'15px', 'vertical-align':'center'})),
-                dbc.Col(dbc.NavLink("About", href="/about",className='text-light font-weight-bold',style={'font-size':'15px', 'vertical-align':'center'}))
+                # Use row and col to control vertical alignment of logo / brand
+                dbc.Row(
+                    [
+                        dbc.Col(html.Img(src=PLOTLY_LOGO, height="30px")),
+                        dbc.Col(
+                            dbc.NavbarBrand(
+                                "COVID-19 modelling with SEIQHCDRO",
+                                className="ml-2",
+                                style={"font-size": "20px", "vertical-align": "center"},
+                            )
+                        ),
+                        dbc.Col(
+                            dbc.NavLink(
+                                "Home",
+                                href="/",
+                                className="text-light font-weight-bold",
+                                style={"font-size": "15px", "vertical-align": "center"},
+                            )
+                        ),
+                        dbc.Col(
+                            dbc.NavLink(
+                                "About",
+                                href="/about",
+                                className="text-light font-weight-bold",
+                                style={"font-size": "15px", "vertical-align": "center"},
+                            )
+                        ),
+                    ],
+                    align="center",
+                    no_gutters=True,
+                ),
             ],
-            align="center",
-            no_gutters=True,
+            color="dark",
+            dark=True,
+            style={"text-decoration": "none", "color": "white"},
         ),
-    ],color="dark",dark=True,
-    style={'text-decoration':'none','color':'white'}),
-    html.Div(id='page-content'),
-    html.Footer([
-                u'Copyright \u00a92021 SEIQHCDRO COVID-19 Interactive Modelling Tool by Hoang Anh NGO, Tuan-Khoi NGUYEN and Thu-Anh NGUYEN',
-                html.Div(['Visitors: ',html.Img(src="https://counter2.stat.ovh/private/freecounterstat.php?c=xj7lgw2xsbsyk917b5wrbr45ldmx56u6", style={'width':'12%'})], style={'width': '100%','text-align': 'center','margin':'1% 0 0 0'}),
-                ],style={'width':'100%', 
-                       'text-align':'center',
-                       #'border-style':'outset',
-                       'background-color':'#343a40',
-                       'padding':'2%'})
-])
+        html.Div(id="page-content"),
+        html.Footer(
+            [
+                "Copyright \u00a92021 SEIQHCDRO COVID-19 Interactive Modelling Tool by Hoang Anh NGO, Tuan-Khoi NGUYEN and Thu-Anh NGUYEN",
+                html.Div(
+                    [
+                        "Visitors: ",
+                        html.Img(
+                            src="https://counter2.stat.ovh/private/freecounterstat.php?c=xj7lgw2xsbsyk917b5wrbr45ldmx56u6",
+                            style={"width": "12%"},
+                        ),
+                    ],
+                    style={
+                        "width": "100%",
+                        "text-align": "center",
+                        "margin": "1% 0 0 0",
+                    },
+                ),
+            ],
+            style={
+                "width": "100%",
+                "text-align": "center",
+                #'border-style':'outset',
+                "background-color": "#343a40",
+                "padding": "2%",
+            },
+        ),
+    ]
+)
 
 # About page
-about_page = html.Div([
-                    dcc.Markdown(
-                        u'''
+about_page = html.Div(
+    [
+        dcc.Markdown(
+            """
                         #### SEIQHCDRO COVID-19 <br> INTERACTIVE MODELLING TOOL
                         
                         # Introduction
@@ -104,21 +146,36 @@ about_page = html.Div([
                         Such relations are expressed though the model flowchart below
                         
                         
-                        '''
-                    ,dangerously_allow_html=True),
-                    html.Div([html.Img(src="https://drive.google.com/uc?export=view&id=1nb9DFzmOBdlbp8eSaMUsKA45owrYauf_", style={'width': '50%', 'fill':'#000'})], style={'width': '100%','text-align': 'center'}),
-            dcc.Markdown(
-                        '''
+                        """,
+            dangerously_allow_html=True,
+        ),
+        html.Div(
+            [
+                html.Img(
+                    src="https://drive.google.com/uc?export=view&id=1nb9DFzmOBdlbp8eSaMUsKA45owrYauf_",
+                    style={"width": "50%", "fill": "#000"},
+                )
+            ],
+            style={"width": "100%", "text-align": "center"},
+        ),
+        dcc.Markdown(
+            """
                         ## Formula
     
                         From this, we develop a system of differential equations to simulate the relationship between these compartments. The system reads:
-                        '''
-            ),
-             html.Div([html.Img(src="https://quicklatex.com/cache3/2e/ql_5948b14b283613968f0b24fb80533a2e_l3.png",
-                                style={'width': '40%', 'fill': '#000'})],
-                      style={'width': '100%', 'text-align': 'center'}),
-             dcc.Markdown(
-                 '''
+                        """
+        ),
+        html.Div(
+            [
+                html.Img(
+                    src="https://quicklatex.com/cache3/2e/ql_5948b14b283613968f0b24fb80533a2e_l3.png",
+                    style={"width": "40%", "fill": "#000"},
+                )
+            ],
+            style={"width": "100%", "text-align": "center"},
+        ),
+        dcc.Markdown(
+            """
                  with two main types of hyper-parameters
                  * Proportion-related hyper-parameters `p`;
                  * Time interval related hyperparameters `T`.
@@ -131,13 +188,19 @@ about_page = html.Div([
                  One of the most important aspects of this model is the ability to capture different levels of social distancing/lockdown to the spread
                  of the disease. As such, we have integrated these impacts onto the function representing the effective reproduction number `R_t` (i.e the basic reproduction
                  number `R_0` with respect to time).
-                 '''
-             ),
-             html.Div([html.Img(src="https://quicklatex.com/cache3/f7/ql_580fe4eb71ceadb277d725dd86ca49f7_l3.png",
-                                style={'width': '15%', 'fill': '#000'})],
-                      style={'width': '100%', 'text-align': 'center'}),
-             dcc.Markdown(
-                 '''
+                 """
+        ),
+        html.Div(
+            [
+                html.Img(
+                    src="https://quicklatex.com/cache3/f7/ql_580fe4eb71ceadb277d725dd86ca49f7_l3.png",
+                    style={"width": "15%", "fill": "#000"},
+                )
+            ],
+            style={"width": "100%", "text-align": "center"},
+        ),
+        dcc.Markdown(
+            """
                  Assume that there exists two consecutive time intervals separated by a policy scheme change at time `T`. Before time `T`, the population
                  inherits a scheme with change of the basic reproduction number `delta R_0`, contact rate reduction `p_cont` and contact rate reduction due
                  to journalism `p_jrnl`. After time `T`, the population now inherits a new scheme with a new set of parameters, `delta R'_0`, `p'_cont` and 
@@ -146,21 +209,33 @@ about_page = html.Div([
                  There are two cases that would happen:
 
                  * When `p'_cont >= p_cont` (i.e. the social distancing/lockdown measure tightens), the new function is:
-                 '''
-             ),
-             html.Div([html.Img(src="https://quicklatex.com/cache3/9e/ql_11ac62405647900135857d3b2d429b9e_l3.png",
-                                style={'width': '40%', 'fill': '#000'})],
-                      style={'width': '100%', 'text-align': 'center'}),
-             dcc.Markdown(
-                 '''
+                 """
+        ),
+        html.Div(
+            [
+                html.Img(
+                    src="https://quicklatex.com/cache3/9e/ql_11ac62405647900135857d3b2d429b9e_l3.png",
+                    style={"width": "40%", "fill": "#000"},
+                )
+            ],
+            style={"width": "100%", "text-align": "center"},
+        ),
+        dcc.Markdown(
+            """
                  * When `p'_cont < p_cont` (i.e. the social distancing/lockdown measure loosens), the function now becomes:
-                 '''
-             ),
-             html.Div([html.Img(src="https://quicklatex.com/cache3/84/ql_1a46c5cd376b5ef2c5fa51f23f675484_l3.png",
-                                style={'width': '40%', 'fill': '#000'})],
-                      style={'width': '100%', 'text-align': 'center'}),
-             dcc.Markdown(
-                 '''
+                 """
+        ),
+        html.Div(
+            [
+                html.Img(
+                    src="https://quicklatex.com/cache3/84/ql_1a46c5cd376b5ef2c5fa51f23f675484_l3.png",
+                    style={"width": "40%", "fill": "#000"},
+                )
+            ],
+            style={"width": "100%", "text-align": "center"},
+        ),
+        dcc.Markdown(
+            """
                         # Tool features
                         
                         ## Modelling features
@@ -196,10 +271,10 @@ about_page = html.Div([
                             - Total (cumulative) number of deaths (`cumulative_deaths`);
                             - Number of active quarantined individuals (`active_quarantined`). 
                             
-                        '''
-                    ),
-                    dcc.Markdown(
-                    '''
+                        """
+        ),
+        dcc.Markdown(
+            """
                     # Mentions
                     
                     Up until now, our research project has been featured at two major conferences in lung health, public health and epidemiology, including:
@@ -215,10 +290,10 @@ about_page = html.Div([
                     # Citation
 
                     If SEIQHCDRO multi-compartment model in general or the interactive modelling website has been useful for your research and policy advocacy, and you would like to cite it in an scientific publication, please refer to our presentation at the **52nd Union World Conference on Lung Health** as follows:
-                    '''
-                    ),
-                    dcc.Markdown(
-                    '''
+                    """
+        ),
+        dcc.Markdown(
+            """
                     ```json
                     @misc{
                         author = {Hoang Anh NGO and Tuan-Khoi NGUYEN and Thu-Anh NGUYEN},
@@ -229,11 +304,10 @@ about_page = html.Div([
                         date = {19--22}
                     }
                     ```
-                    '''
-                ,
-                ),
-                    dcc.Markdown(
-                        '''
+                    """,
+        ),
+        dcc.Markdown(
+            """
                         # About the authors
                 
                         * [**Hoang Anh NGO**](https://orcid.org/0000-0002-7583-753X) is the main author and model developer of the project. He is about to graduate from École Polytechnique
@@ -246,10 +320,10 @@ about_page = html.Div([
                         She holds an honorary position as Senior Clinical Lecturer at University of Sydney, and the head of the 
                         Woolcock Institute of Medical Research in Vietnam.
                 
-                        '''
-                    ),
-                    dcc.Markdown(
-                        '''
+                        """
+        ),
+        dcc.Markdown(
+            """
                         # Acknowledgement
                         
                         We would like to send our sincerest gratitude towards all team members of [5F Team](https://5fteam.com/) for contributing 
@@ -266,10 +340,10 @@ about_page = html.Div([
                         colleagues and readers for their thoughtful and scholarly evaluation of the model. 
                         All comments are hugely appreciated.
                         
-                        '''
-                    ),
-                    dcc.Markdown(
-                        '''
+                        """
+        ),
+        dcc.Markdown(
+            """
                         # License 
                         SEIQHCDRO COVID-19 Interactive Modelling Tool is a free and open-source web application/software licensed under the 
                         [3-clause BSD license](https://github.com/tuankhoin/SEIQHCDRO-Interactive-Model/blob/main/LICENSE).
@@ -293,10 +367,11 @@ about_page = html.Div([
 
                         In no event will we be liable for any loss or damage including without limitation, indirect or consequential loss or damage, or any loss or damage whatsoever 
                         arising from loss of data or profits arising out of, or in connection with, the use of this website.
-                        '''
-                    )
-                ],
-                style = {'margin':'5%'})
+                        """
+        ),
+    ],
+    style={"margin": "5%"},
+)
 
 
 def generate_inputs():
@@ -309,371 +384,725 @@ def generate_inputs():
         A list of HTML Elements for the basic stage inputs.
     """
     num_slider = [
-                    html.Div([html.H3('Number of Stages:'),
-                            dbc.Tooltip(
-                                "Number of main representative stages during the pandemic",
-                                target="div-num", placement='right'
-                            ),
-                            dcc.Input(id='num', min=0, max=30, value=3, step=1,
-                                    type='number'#tooltip={'always_visible': True}
-                                    )],id='div-num')
-                  ]
-    
-    text_boxes = [html.H3('Stage Inputs'),
-                  html.Div(id='in-r0'),
-                  dbc.Tooltip(
-                      html.Ul([
-                          html.H6("Excluding the default first stage with zero reduction, each stage contains the following:"),
-                          html.Li("Starting date"),
-                          html.Li("Assumed reduction rate within 15 days when 100% containment scheme is in place "),
-                          html.Li("Contained proportion due to new policy scheme")],style={'text-align':'left'}),
-                      target="in-r0", placement='right'
-                  )
-                  ]
+        html.Div(
+            [
+                html.H3("Number of Stages:"),
+                dbc.Tooltip(
+                    "Number of main representative stages during the pandemic",
+                    target="div-num",
+                    placement="right",
+                ),
+                dcc.Input(
+                    id="num",
+                    min=0,
+                    max=30,
+                    value=3,
+                    step=1,
+                    type="number",  # tooltip={'always_visible': True}
+                ),
+            ],
+            id="div-num",
+        )
+    ]
+
+    text_boxes = [
+        html.H3("Stage Inputs"),
+        html.Div(id="in-r0"),
+        dbc.Tooltip(
+            html.Ul(
+                [
+                    html.H6(
+                        "Excluding the default first stage with zero reduction, each stage contains the following:"
+                    ),
+                    html.Li("Starting date"),
+                    html.Li(
+                        "Assumed reduction rate within 15 days when 100% containment scheme is in place "
+                    ),
+                    html.Li("Contained proportion due to new policy scheme"),
+                ],
+                style={"text-align": "left"},
+            ),
+            target="in-r0",
+            placement="right",
+        ),
+    ]
 
     input_list = [num_slider, text_boxes]
-    widgets = list()    
+    widgets = list()
     for sublist in input_list:
-        sublist.append(html.H1(''))
+        sublist.append(html.H1(""))
         for item in sublist:
             widgets.append(item)
 
     return widgets
 
-# Main page
-main_page = html.Div([
-    html.Div([
-        html.Div([html.H1("COVID-19 Multi-compartment Modelling Result".upper())],style={'width':'100%','text-align':'center','padding':'1%'}),
 
-        # Inputs
+# Main page
+main_page = html.Div(
+    [
         html.Div(
             [
-                # Basic inputs
-                dbc.Button(
-                    html.H2("Basic Inputs"),
-                    id="collapse-button",
-                    className="mb-3",
-                    color="primary",
-                    style={'width':'100%'}
+                html.Div(
+                    [html.H1("COVID-19 Multi-compartment Modelling Result".upper())],
+                    style={"width": "100%", "text-align": "center", "padding": "1%"},
                 ),
-                dbc.Collapse(
-                    [html.Div([html.H3('Population'),
-                               dbc.Tooltip(
-                                    "Population taken into account",
-                                    target="div-N", placement='right'
-                               ),
-                               dcc.Slider(id='slider-N', min=100000, max=100000000, value=11000000, step=1000,
-                                          tooltip={'always_visible': True, 'placement':'top'},
-                                          marks = {i: str(i) for i in [100000, 50000000,100000000]}
-                                          )],id='div-N'),
-
-                    html.Div([html.H3('Outbreak Date'),
-                               dbc.Tooltip(
-                                    "Assumed first day of outbreak",
-                                    target="div-date", placement='right'
-                               ),
-                                dcc.DatePickerSingle(
-                                    id='date',
-                                    min_date_allowed=date(2020, 1, 1),
-                                    max_date_allowed=date(2030, 12, 31),
-                                    initial_visible_month=date(2021, 5, 1),
-                                    date=date(2021, 5, 1),
-                                    display_format = 'DD/MM/YYYY'
-                                ),
-                    ], id = 'div-date'),
-
-                    html.Div([html.H3('Number of Days'),
-                               dbc.Tooltip(
-                                    "Length of outbreak",
-                                    target="div-ndate", placement='right'
-                               ),
-                                dcc.Input(id='ndate', value=300, min=10, max=1000, type='number')
-                    ], id = 'div-ndate'),
-
-                     html.Div([html.H3("Hospital Capacity: "),
-                               dbc.Tooltip(
-                                    "Hospital Capacity",
-                                    target="div-hcap", placement='right'
-                               ),
-                               dcc.Input(id='hcap', value=100000, type='number')], style={'margin':'4% 0%'},id='div-hcap'),
-
-                     html.Div([html.H3("Quarantine Capacity: "),
-                               dbc.Tooltip(
-                                    "Quarantine Capacity",
-                                    target="div-qar", placement='right'
-                               ),
-                               dcc.Input(id='hqar', value=10000, type='number')], style={'margin':'4% 0%'},id='div-qar'),
-
-                     html.Div([html.H3('Initial basic reproduction number (R0):'),
-                               dbc.Tooltip(
-                                    "Initial basic reproduction number at first day of outbreak",
-                                    target="div-r0", placement='right'
-                               ),
-                               dcc.Input(id='slider-r0', min=0, max=20, value=4.1, step=0.001,
-                                          type='number'#tooltip={'always_visible': True}
-                                          )],id='div-r0'),
-
-                     html.Div(generate_inputs()),
-                    
-
-                     ],
-                    id="collapse",
-                    style = tab
-                ),
-
-                # Proportional inputs
-                dbc.Button(
-                    html.H2("Proportion Inputs"),
-                    id="collapse-button-p",
-                    className="mb-3",
-                    color="info",
-                    style={'width':'100%'}
-                ),
-                dbc.Collapse(
+                # Inputs
+                html.Div(
                     [
-                     html.Div([html.H6('Hospitalisation'),
-                               dbc.Tooltip(
-                                    "Proportion of infected people getting hospitalized (For example, if 100 positive cases exist in the community, this proportion of them would be directly sent to a hospital).",
-                                    target="div-ph", placement='right'
-                               ),
-                               dcc.Slider(id='slider-ph', min=0, max=1, value=0.85, step=0.01,
-                                          tooltip={'always_visible': True}
-                                          )],id='div-ph'),
-
-                     html.Div([html.H6('Critical'),
-                               dbc.Tooltip(
-                                    "Proportion of COVID-19 positive hospitalized patients turning critical.",
-                                    target="div-pc", placement='right'
-                               ),
-                               dcc.Slider(id='slider-pc', min=0, max=1, value=0.04, step=0.01,
-                                          tooltip={'always_visible': True}
-                                          )],id='div-pc'),
-
-                     html.Div([html.H6('Deceased'),
-                               dbc.Tooltip(
-                                    "Proportion of COVID-19 positive critical patients deceased.",
-                                    target="div-pf", placement='right'
-                               ),
-                               dcc.Slider(id='slider-pf', min=0, max=1, value=0.25, step=0.01,
-                                          tooltip={'always_visible': True}
-                                          )],id='div-pf'),
-
-                     html.Div([html.H6('Media Impact'),
-                               dbc.Tooltip(
-                                    "Media Impact as a contact reduction rate on the reproduction number.",
-                                    target="div-pj", placement='right'
-                               ),
-                               dcc.Slider(id='slider-pj', min=0, max=1, value=0.12, step=0.01,
-                                          tooltip={'always_visible': True}
-                                          )],id='div-pj'),
-
-                     html.Div([html.H6('Quarantined'),
-                               dbc.Tooltip(
-                                    "Proportion of contact cases who requires quarantined actually get quarantined upon contact tracing (For example, if 100 contact cases need quarantine, this proportion of them would get quarantined immediately).",
-                                    target="div-pquar", placement='right'
-                               ),
-                               dcc.Slider(id='slider-pquar', min=0, max=1, value=0.8, step=0.01,
-                                          tooltip={'always_visible': True}
-                                          )],id='div-pquar'),
-
-                     html.Div([html.H6('Quarantined, then Hospitalised'),
-                               dbc.Tooltip(
-                                    "Proportion of individuals quarantined for a long duration of time before getting positive result and hospitalized.",
-                                    target="div-pqhsp", placement='right'
-                               ),
-                               dcc.Slider(id='slider-pqhsp', min=0, max=1, value=0.1, step=0.01,
-                                          tooltip={'always_visible': True}
-                                          )],id='div-pqhsp'),
-
-                     html.Div([html.H6('Cross-Contamination'),
-                               dbc.Tooltip(
-                                    "Cross-contamination rate in quarantine facilities.",
-                                    target="div-pcross", placement='right'
-                               ),
-                               dcc.Slider(id='slider-pcross', min=0, max=1, value=0.01, step=0.01,
-                                          tooltip={'always_visible': True}
-                                          )],id='div-pcross'),
-                     ],
-                    id="collapse-p",
-                    style = tab
-                ),
-
-                # Timing inputs
-                dbc.Button(
-                    html.H2("Time Inputs"),
-                    id="collapse-button-t",
-                    className="mb-3",
-                    color="danger",
-                    style={'width':'100%'}
-                ),
-                dbc.Collapse(
-                    [html.Div([html.H6('Incubation'),
-                               dbc.Tooltip(
-                                    "Incubation period.",
-                                    target="div-tinc", placement='right'
-                               ),
-                               dcc.Slider(id='slider-tinc', min=2.5, max=7, value=4.5, step=0.1,
-                                          tooltip={'always_visible': True}
-                                          )],id='div-tinc'),
-
-                     html.Div([html.H6('Infectious'),
-                               dbc.Tooltip(
-                                    "Infectious period.",
-                                    target="div-tinf", placement='right'
-                               ),
-                               dcc.Slider(id='slider-tinf', min=1.0, max=7, value=2.9, step=0.1,
-                                          tooltip={'always_visible': True}
-                                          )],id='div-tinf'),
-
-                     html.Div([html.H6('Intensive Care'),
-                               dbc.Tooltip(
-                                    "Time spent within the ICU.",
-                                    target="div-ticu", placement='right'
-                               ),
-                               dcc.Slider(id='slider-ticu', min=10.0, max=14, value=11, step=0.1,
-                                          tooltip={'always_visible': True}
-                                          )],id='div-ticu'),
-
-                     html.Div([html.H6('Hospitalised'),
-                               dbc.Tooltip(
-                                    "Time spent hospitalised for non-critical patients.",
-                                    target="div-thsp", placement='right'
-                               ),
-                               dcc.Slider(id='slider-thsp', min=7, max=21, value=21, step=0.1,
-                                          tooltip={'always_visible': True}
-                                          )],id='div-thsp'),
-                     html.Div([html.H6('Critical'),
-                               dbc.Tooltip(
-                                    "Time spent hospitalized before turning critical.",
-                                    target="div-tcrt", placement='right'
-                               ),
-                               dcc.Slider(id='slider-tcrt', min=1, max=14, value=7, step=0.1,
-                                          tooltip={'always_visible': True}
-                                          )],id='div-tcrt'),
-
-                     html.Div([html.H6('Self-Recovery'),
-                               dbc.Tooltip(
-                                    "Self-Recovery time for non-disclosed cases.",
-                                    target="div-trec", placement='right'
-                               ),
-                               dcc.Slider(id='slider-trec', min=7, max=21, value=21, step=0.1,
-                                          tooltip={'always_visible': True}
-                                          )],id='div-trec'),
-
-                     html.Div([html.H6('Quarantine'),
-                               dbc.Tooltip(
-                                    "Quarantine time under regulation.",
-                                    target="div-tqar", placement='right'
-                               ),
-                               dcc.Slider(id='slider-tqar', min=4, max=21, value=21, step=0.1,
-                                          tooltip={'always_visible': True}
-                                          )],id='div-tqar'),
-
-                     html.Div([html.H6('Quarantined, then Hospitalised'),
-                               dbc.Tooltip(
-                                    "Time interval between the last COVID-19 positive result until getting hospitalized.",
-                                    target="div-tqah", placement='right'
-                               ),
-                               dcc.Slider(id='slider-tqah', min=0, max=5, value=2, step=0.1,
-                                          tooltip={'always_visible': True}
-                                          )],id='div-tqah'),
-                     ],
-                    id="collapse-t",
-                    style = tab
-                ),
-
-            # Input uploader
-            html.Div([
-                dcc.Upload(html.Button([u'\f Upload custom .json input file'], style={'color':'white','margin':'2% 0', 'width':'100%'}),
-                        id='up', style={'padding':'2% 0', 'font-style':'bold'}),
-                dbc.Tooltip(
-                        "You can import your json file that you have exported previously, rather than having to readjust inputs all over again",
-                        target="div-up", placement='right'
-                    ),
-            ],id='div-up'),
-            html.Div([
-                dcc.Upload(html.Button([u'\f Upload .csv stats for comparing'], style={'color':'white','margin':'2% 0', 'width':'100%'}),
-                        id='up_stat', style={'padding':'0% 0', 'font-style':'bold'}),
-                dbc.Tooltip(
-                        html.Ul([
-                            html.H6("You can upload a csv file of real statistics to compare. The device will find any matching columns and add them to the plot for comparison (assuming 1st row is 1st day of outbreak). The following column names can be selected:"),
-                            html.Li("infected"),
-                            html.Li("daily_infected"),
-                            html.Li("active_critical"),
-                            html.Li("active_quarantined"),
-                            html.Li("deaths"),
-                            ],style={'text-align':'left'}),
-                        target="div-up-stat", placement='right'
-                    ),
-                html.P(id='err', style={'color': 'red'}),
-            ],id='div-up-stat')
-            ]
-        ,style = {'width':'33%', 'display':'inline-block', 'vertical-align':'top', 'padding':'2%'}),
-        
-        # Output
-        html.Div([
-            # Modes and sample picker
-            html.Div([
-                      dcc.Checklist(
-                            options=[
-                                {'label': 'Show Hospital Capacity', 'value': 1},
-                                {'label': 'Show Quarantine Capacity', 'value': 3},
-                                {'label': 'Show by Date', 'value': 2}
-                            ],
-                            value=[],
-                            labelStyle={'display': 'block'},
-                            id='mods'
-                        )
-                    ], style={'padding':'0% 3%','display':'inline-block','width':'35%'}),
-            html.Div([
-                      dcc.Dropdown(
-                            options=[
-                                {'label': sample.name[n], 'value': n} for n in sample.name.keys()
-                            ],
-                            placeholder='Select an example region',
-                            id='init'
-                        )
-                    ], style={'padding':'0% 3%','display':'inline-block','width':'55%'}),
-            
-            # Plots
-            html.Div([dcc.Graph(id='overall-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
-            html.Div([dcc.Graph(id='fatal-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
-            html.Div([dcc.Graph(id='r0-plot'),], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
-            
-            # File downloader
-            html.Div([html.Div(
+                        # Basic inputs
+                        dbc.Button(
+                            html.H2("Basic Inputs"),
+                            id="collapse-button",
+                            className="mb-3",
+                            color="primary",
+                            style={"width": "100%"},
+                        ),
+                        dbc.Collapse(
                             [
-                                html.H2("Download Statistics"),
-                                dcc.Input(id='file', value='',
-                                          type='text', placeholder='Specify exported file name (default: ''exported_stats'')',
-                                          style = {'width':'100%'}),
-                                html.Button("Statistics Data (.csv)", id="btn_csv", style={'color':'white','margin':'2%'}),
-                                dcc.Download(id="download-dataframe-csv"),
-                                html.Button("Information Summary (.txt)", id="btn_sum", style={'color':'white','margin':'2%'}),
-                                dcc.Download(id="download-sum"),
-                                html.Button("Export Inputs (.json)", id="btn_ipt", style={'color':'white','margin':'2%'}),
-                                dcc.Download(id="download-ipt"),
-                            ], style={'padding':'2% 3%','display':'inline-block', 'vertical-align':'bottom','text-align':'center', 'width':'100%'}
-                        ),    
-            ], style={'vertical-align':'top', 'border-style':'outset', 'margin':'1% 0%'}),
-                
-        ],
-        style = {'width':'66%', 'display':'inline-block', 'vertical-align':'top', 'margin':'1% 0%'}),
-        
+                                html.Div(
+                                    [
+                                        html.H3("Population"),
+                                        dbc.Tooltip(
+                                            "Population taken into account",
+                                            target="div-N",
+                                            placement="right",
+                                        ),
+                                        dcc.Slider(
+                                            id="slider-N",
+                                            min=100000,
+                                            max=100000000,
+                                            value=11000000,
+                                            step=1000,
+                                            tooltip={
+                                                "always_visible": True,
+                                                "placement": "top",
+                                            },
+                                            marks={
+                                                i: str(i)
+                                                for i in [100000, 50000000, 100000000]
+                                            },
+                                        ),
+                                    ],
+                                    id="div-N",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H3("Outbreak Date"),
+                                        dbc.Tooltip(
+                                            "Assumed first day of outbreak",
+                                            target="div-date",
+                                            placement="right",
+                                        ),
+                                        dcc.DatePickerSingle(
+                                            id="date",
+                                            min_date_allowed=date(2020, 1, 1),
+                                            max_date_allowed=date(2030, 12, 31),
+                                            initial_visible_month=date(2021, 5, 1),
+                                            date=date(2021, 5, 1),
+                                            display_format="DD/MM/YYYY",
+                                        ),
+                                    ],
+                                    id="div-date",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H3("Number of Days"),
+                                        dbc.Tooltip(
+                                            "Length of outbreak",
+                                            target="div-ndate",
+                                            placement="right",
+                                        ),
+                                        dcc.Input(
+                                            id="ndate",
+                                            value=300,
+                                            min=10,
+                                            max=1000,
+                                            type="number",
+                                        ),
+                                    ],
+                                    id="div-ndate",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H3("Hospital Capacity: "),
+                                        dbc.Tooltip(
+                                            "Hospital Capacity",
+                                            target="div-hcap",
+                                            placement="right",
+                                        ),
+                                        dcc.Input(
+                                            id="hcap", value=100000, type="number"
+                                        ),
+                                    ],
+                                    style={"margin": "4% 0%"},
+                                    id="div-hcap",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H3("Quarantine Capacity: "),
+                                        dbc.Tooltip(
+                                            "Quarantine Capacity",
+                                            target="div-qar",
+                                            placement="right",
+                                        ),
+                                        dcc.Input(
+                                            id="hqar", value=10000, type="number"
+                                        ),
+                                    ],
+                                    style={"margin": "4% 0%"},
+                                    id="div-qar",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H3(
+                                            "Initial basic reproduction number (R0):"
+                                        ),
+                                        dbc.Tooltip(
+                                            "Initial basic reproduction number at first day of outbreak",
+                                            target="div-r0",
+                                            placement="right",
+                                        ),
+                                        dcc.Input(
+                                            id="slider-r0",
+                                            min=0,
+                                            max=20,
+                                            value=4.1,
+                                            step=0.001,
+                                            type="number",  # tooltip={'always_visible': True}
+                                        ),
+                                    ],
+                                    id="div-r0",
+                                ),
+                                html.Div(generate_inputs()),
+                            ],
+                            id="collapse",
+                            style=tab,
+                        ),
+                        # Proportional inputs
+                        dbc.Button(
+                            html.H2("Proportion Inputs"),
+                            id="collapse-button-p",
+                            className="mb-3",
+                            color="info",
+                            style={"width": "100%"},
+                        ),
+                        dbc.Collapse(
+                            [
+                                html.Div(
+                                    [
+                                        html.H6("Hospitalisation"),
+                                        dbc.Tooltip(
+                                            "Proportion of infected people getting hospitalized (For example, if 100 positive cases exist in the community, this proportion of them would be directly sent to a hospital).",
+                                            target="div-ph",
+                                            placement="right",
+                                        ),
+                                        dcc.Slider(
+                                            id="slider-ph",
+                                            min=0,
+                                            max=1,
+                                            value=0.85,
+                                            step=0.01,
+                                            tooltip={"always_visible": True},
+                                        ),
+                                    ],
+                                    id="div-ph",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H6("Critical"),
+                                        dbc.Tooltip(
+                                            "Proportion of COVID-19 positive hospitalized patients turning critical.",
+                                            target="div-pc",
+                                            placement="right",
+                                        ),
+                                        dcc.Slider(
+                                            id="slider-pc",
+                                            min=0,
+                                            max=1,
+                                            value=0.04,
+                                            step=0.01,
+                                            tooltip={"always_visible": True},
+                                        ),
+                                    ],
+                                    id="div-pc",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H6("Deceased"),
+                                        dbc.Tooltip(
+                                            "Proportion of COVID-19 positive critical patients deceased.",
+                                            target="div-pf",
+                                            placement="right",
+                                        ),
+                                        dcc.Slider(
+                                            id="slider-pf",
+                                            min=0,
+                                            max=1,
+                                            value=0.25,
+                                            step=0.01,
+                                            tooltip={"always_visible": True},
+                                        ),
+                                    ],
+                                    id="div-pf",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H6("Media Impact"),
+                                        dbc.Tooltip(
+                                            "Media Impact as a contact reduction rate on the reproduction number.",
+                                            target="div-pj",
+                                            placement="right",
+                                        ),
+                                        dcc.Slider(
+                                            id="slider-pj",
+                                            min=0,
+                                            max=1,
+                                            value=0.12,
+                                            step=0.01,
+                                            tooltip={"always_visible": True},
+                                        ),
+                                    ],
+                                    id="div-pj",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H6("Quarantined"),
+                                        dbc.Tooltip(
+                                            "Proportion of contact cases who requires quarantined actually get quarantined upon contact tracing (For example, if 100 contact cases need quarantine, this proportion of them would get quarantined immediately).",
+                                            target="div-pquar",
+                                            placement="right",
+                                        ),
+                                        dcc.Slider(
+                                            id="slider-pquar",
+                                            min=0,
+                                            max=1,
+                                            value=0.8,
+                                            step=0.01,
+                                            tooltip={"always_visible": True},
+                                        ),
+                                    ],
+                                    id="div-pquar",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H6("Quarantined, then Hospitalised"),
+                                        dbc.Tooltip(
+                                            "Proportion of individuals quarantined for a long duration of time before getting positive result and hospitalized.",
+                                            target="div-pqhsp",
+                                            placement="right",
+                                        ),
+                                        dcc.Slider(
+                                            id="slider-pqhsp",
+                                            min=0,
+                                            max=1,
+                                            value=0.1,
+                                            step=0.01,
+                                            tooltip={"always_visible": True},
+                                        ),
+                                    ],
+                                    id="div-pqhsp",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H6("Cross-Contamination"),
+                                        dbc.Tooltip(
+                                            "Cross-contamination rate in quarantine facilities.",
+                                            target="div-pcross",
+                                            placement="right",
+                                        ),
+                                        dcc.Slider(
+                                            id="slider-pcross",
+                                            min=0,
+                                            max=1,
+                                            value=0.01,
+                                            step=0.01,
+                                            tooltip={"always_visible": True},
+                                        ),
+                                    ],
+                                    id="div-pcross",
+                                ),
+                            ],
+                            id="collapse-p",
+                            style=tab,
+                        ),
+                        # Timing inputs
+                        dbc.Button(
+                            html.H2("Time Inputs"),
+                            id="collapse-button-t",
+                            className="mb-3",
+                            color="danger",
+                            style={"width": "100%"},
+                        ),
+                        dbc.Collapse(
+                            [
+                                html.Div(
+                                    [
+                                        html.H6("Incubation"),
+                                        dbc.Tooltip(
+                                            "Incubation period.",
+                                            target="div-tinc",
+                                            placement="right",
+                                        ),
+                                        dcc.Slider(
+                                            id="slider-tinc",
+                                            min=2.5,
+                                            max=7,
+                                            value=4.5,
+                                            step=0.1,
+                                            tooltip={"always_visible": True},
+                                        ),
+                                    ],
+                                    id="div-tinc",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H6("Infectious"),
+                                        dbc.Tooltip(
+                                            "Infectious period.",
+                                            target="div-tinf",
+                                            placement="right",
+                                        ),
+                                        dcc.Slider(
+                                            id="slider-tinf",
+                                            min=1.0,
+                                            max=7,
+                                            value=2.9,
+                                            step=0.1,
+                                            tooltip={"always_visible": True},
+                                        ),
+                                    ],
+                                    id="div-tinf",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H6("Intensive Care"),
+                                        dbc.Tooltip(
+                                            "Time spent within the ICU.",
+                                            target="div-ticu",
+                                            placement="right",
+                                        ),
+                                        dcc.Slider(
+                                            id="slider-ticu",
+                                            min=10.0,
+                                            max=14,
+                                            value=11,
+                                            step=0.1,
+                                            tooltip={"always_visible": True},
+                                        ),
+                                    ],
+                                    id="div-ticu",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H6("Hospitalised"),
+                                        dbc.Tooltip(
+                                            "Time spent hospitalised for non-critical patients.",
+                                            target="div-thsp",
+                                            placement="right",
+                                        ),
+                                        dcc.Slider(
+                                            id="slider-thsp",
+                                            min=7,
+                                            max=21,
+                                            value=21,
+                                            step=0.1,
+                                            tooltip={"always_visible": True},
+                                        ),
+                                    ],
+                                    id="div-thsp",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H6("Critical"),
+                                        dbc.Tooltip(
+                                            "Time spent hospitalized before turning critical.",
+                                            target="div-tcrt",
+                                            placement="right",
+                                        ),
+                                        dcc.Slider(
+                                            id="slider-tcrt",
+                                            min=1,
+                                            max=14,
+                                            value=7,
+                                            step=0.1,
+                                            tooltip={"always_visible": True},
+                                        ),
+                                    ],
+                                    id="div-tcrt",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H6("Self-Recovery"),
+                                        dbc.Tooltip(
+                                            "Self-Recovery time for non-disclosed cases.",
+                                            target="div-trec",
+                                            placement="right",
+                                        ),
+                                        dcc.Slider(
+                                            id="slider-trec",
+                                            min=7,
+                                            max=21,
+                                            value=21,
+                                            step=0.1,
+                                            tooltip={"always_visible": True},
+                                        ),
+                                    ],
+                                    id="div-trec",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H6("Quarantine"),
+                                        dbc.Tooltip(
+                                            "Quarantine time under regulation.",
+                                            target="div-tqar",
+                                            placement="right",
+                                        ),
+                                        dcc.Slider(
+                                            id="slider-tqar",
+                                            min=4,
+                                            max=21,
+                                            value=21,
+                                            step=0.1,
+                                            tooltip={"always_visible": True},
+                                        ),
+                                    ],
+                                    id="div-tqar",
+                                ),
+                                html.Div(
+                                    [
+                                        html.H6("Quarantined, then Hospitalised"),
+                                        dbc.Tooltip(
+                                            "Time interval between the last COVID-19 positive result until getting hospitalized.",
+                                            target="div-tqah",
+                                            placement="right",
+                                        ),
+                                        dcc.Slider(
+                                            id="slider-tqah",
+                                            min=0,
+                                            max=5,
+                                            value=2,
+                                            step=0.1,
+                                            tooltip={"always_visible": True},
+                                        ),
+                                    ],
+                                    id="div-tqah",
+                                ),
+                            ],
+                            id="collapse-t",
+                            style=tab,
+                        ),
+                        # Input uploader
+                        html.Div(
+                            [
+                                dcc.Upload(
+                                    html.Button(
+                                        ["\f Upload custom .json input file"],
+                                        style={
+                                            "color": "white",
+                                            "margin": "2% 0",
+                                            "width": "100%",
+                                        },
+                                    ),
+                                    id="up",
+                                    style={"padding": "2% 0", "font-style": "bold"},
+                                ),
+                                dbc.Tooltip(
+                                    "You can import your json file that you have exported previously, rather than having to readjust inputs all over again",
+                                    target="div-up",
+                                    placement="right",
+                                ),
+                            ],
+                            id="div-up",
+                        ),
+                        html.Div(
+                            [
+                                dcc.Upload(
+                                    html.Button(
+                                        ["\f Upload .csv stats for comparing"],
+                                        style={
+                                            "color": "white",
+                                            "margin": "2% 0",
+                                            "width": "100%",
+                                        },
+                                    ),
+                                    id="up_stat",
+                                    style={"padding": "0% 0", "font-style": "bold"},
+                                ),
+                                dbc.Tooltip(
+                                    html.Ul(
+                                        [
+                                            html.H6(
+                                                "You can upload a csv file of real statistics to compare. The device will find any matching columns and add them to the plot for comparison (assuming 1st row is 1st day of outbreak). The following column names can be selected:"
+                                            ),
+                                            html.Li("infected"),
+                                            html.Li("daily_infected"),
+                                            html.Li("active_critical"),
+                                            html.Li("active_quarantined"),
+                                            html.Li("deaths"),
+                                        ],
+                                        style={"text-align": "left"},
+                                    ),
+                                    target="div-up-stat",
+                                    placement="right",
+                                ),
+                                html.P(id="err", style={"color": "red"}),
+                            ],
+                            id="div-up-stat",
+                        ),
+                    ],
+                    style={
+                        "width": "33%",
+                        "display": "inline-block",
+                        "vertical-align": "top",
+                        "padding": "2%",
+                    },
+                ),
+                # Output
+                html.Div(
+                    [
+                        # Modes and sample picker
+                        html.Div(
+                            [
+                                dcc.Checklist(
+                                    options=[
+                                        {"label": "Show Hospital Capacity", "value": 1},
+                                        {
+                                            "label": "Show Quarantine Capacity",
+                                            "value": 3,
+                                        },
+                                        {"label": "Show by Date", "value": 2},
+                                    ],
+                                    value=[],
+                                    labelStyle={"display": "block"},
+                                    id="mods",
+                                )
+                            ],
+                            style={
+                                "padding": "0% 3%",
+                                "display": "inline-block",
+                                "width": "35%",
+                            },
+                        ),
+                        html.Div(
+                            [
+                                dcc.Dropdown(
+                                    options=[
+                                        {"label": sample.name[n], "value": n}
+                                        for n in sample.name.keys()
+                                    ],
+                                    placeholder="Select an example region",
+                                    id="init",
+                                )
+                            ],
+                            style={
+                                "padding": "0% 3%",
+                                "display": "inline-block",
+                                "width": "55%",
+                            },
+                        ),
+                        # Plots
+                        html.Div(
+                            [
+                                dcc.Graph(id="overall-plot"),
+                            ],
+                            style={
+                                "vertical-align": "top",
+                                "border-style": "outset",
+                                "margin": "1% 0%",
+                            },
+                        ),
+                        html.Div(
+                            [
+                                dcc.Graph(id="fatal-plot"),
+                            ],
+                            style={
+                                "vertical-align": "top",
+                                "border-style": "outset",
+                                "margin": "1% 0%",
+                            },
+                        ),
+                        html.Div(
+                            [
+                                dcc.Graph(id="r0-plot"),
+                            ],
+                            style={
+                                "vertical-align": "top",
+                                "border-style": "outset",
+                                "margin": "1% 0%",
+                            },
+                        ),
+                        # File downloader
+                        html.Div(
+                            [
+                                html.Div(
+                                    [
+                                        html.H2("Download Statistics"),
+                                        dcc.Input(
+                                            id="file",
+                                            value="",
+                                            type="text",
+                                            placeholder="Specify exported file name (default: "
+                                            "exported_stats"
+                                            ")",
+                                            style={"width": "100%"},
+                                        ),
+                                        html.Button(
+                                            "Statistics Data (.csv)",
+                                            id="btn_csv",
+                                            style={"color": "white", "margin": "2%"},
+                                        ),
+                                        dcc.Download(id="download-dataframe-csv"),
+                                        html.Button(
+                                            "Information Summary (.txt)",
+                                            id="btn_sum",
+                                            style={"color": "white", "margin": "2%"},
+                                        ),
+                                        dcc.Download(id="download-sum"),
+                                        html.Button(
+                                            "Export Inputs (.json)",
+                                            id="btn_ipt",
+                                            style={"color": "white", "margin": "2%"},
+                                        ),
+                                        dcc.Download(id="download-ipt"),
+                                    ],
+                                    style={
+                                        "padding": "2% 3%",
+                                        "display": "inline-block",
+                                        "vertical-align": "bottom",
+                                        "text-align": "center",
+                                        "width": "100%",
+                                    },
+                                ),
+                            ],
+                            style={
+                                "vertical-align": "top",
+                                "border-style": "outset",
+                                "margin": "1% 0%",
+                            },
+                        ),
+                    ],
+                    style={
+                        "width": "66%",
+                        "display": "inline-block",
+                        "vertical-align": "top",
+                        "margin": "1% 0%",
+                    },
+                ),
+            ]
+        )
+    ]
+)
 
-    ])
-])
 
-
-# Dynamically creating stage inputs 
+# Dynamically creating stage inputs
 @app.callback(
-    Output('in-r0', 'children'),
-    Input('init', 'value'),
-    [Input('num', 'value')],
-    [Input('up', 'contents')],
-    State('up', 'filename'),
-    )
-def ins_generate(init,n,content,file):
+    Output("in-r0", "children"),
+    Input("init", "value"),
+    [Input("num", "value")],
+    [Input("up", "contents")],
+    State("up", "filename"),
+)
+def ins_generate(init, n, content, file):
     r"""
     Generate dynamic stage inputs based on number of stages, either from file or from input.
     Triggered when there is change in at least 1 variable.
@@ -696,31 +1125,172 @@ def ins_generate(init,n,content,file):
     """
     # Check which input is changing
     ctx = dash.callback_context.triggered
-    current_call = [] if not ctx else ctx[0]['prop_id'].split('.')[0]
+    current_call = [] if not ctx else ctx[0]["prop_id"].split(".")[0]
 
     # If it's only changing in irrelevant variables, set to default
-    if (not file or 'up' not in current_call) and 'init' not in current_call:
+    if (not file or "up" not in current_call) and "init" not in current_call:
         # Default values for up to 30 stages
-        d = [6,20,30,49,55,60,69,70,80,85,90,95,100,105,110,115,120,125,130,135,140,145,145,145,145,145,145,145,145,145]
-        dr = [1.5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-        pco = [0.1, 0.4, 0.6, 0.8,0.8,0.85,0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1, 0.9, 0.9, 0.95, 1]
-        return [html.Div([html.H5(f'Stage {i+1}:'),
-                        html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=1000, value=d[i], step=1, type='number', style={'width':'80%'})],
-                                    style={'width': '33%', 'display': 'inline-block'}),
-                        html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=dr[i], step=0.1, type='number', style={'width':'100%'})],
-                                    style={'width': '28%', 'display': 'inline-block', 'margin':'0 5% 0 0'}),
-                        html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=pco[i], step=0.01, tooltip={'always_visible': False}, marks={0:'0',1:'1'})],
-                                    style={'width': '33%', 'display': 'inline-block'})
-                        ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(n)]
+        d = [
+            6,
+            20,
+            30,
+            49,
+            55,
+            60,
+            69,
+            70,
+            80,
+            85,
+            90,
+            95,
+            100,
+            105,
+            110,
+            115,
+            120,
+            125,
+            130,
+            135,
+            140,
+            145,
+            145,
+            145,
+            145,
+            145,
+            145,
+            145,
+            145,
+            145,
+        ]
+        dr = [
+            1.5,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+        ]
+        pco = [
+            0.1,
+            0.4,
+            0.6,
+            0.8,
+            0.8,
+            0.85,
+            0.9,
+            0.9,
+            0.95,
+            1,
+            0.9,
+            0.9,
+            0.95,
+            1,
+            0.9,
+            0.9,
+            0.95,
+            1,
+            0.9,
+            0.9,
+            0.95,
+            1,
+            0.9,
+            0.9,
+            0.95,
+            1,
+            0.9,
+            0.9,
+            0.95,
+            1,
+        ]
+        return [
+            html.Div(
+                [
+                    html.H5(f"Stage {i+1}:"),
+                    html.Div(
+                        [
+                            html.H6("Starting Date"),
+                            dcc.Input(
+                                id={"role": "day", "index": i},
+                                min=1,
+                                max=1000,
+                                value=d[i],
+                                step=1,
+                                type="number",
+                                style={"width": "80%"},
+                            ),
+                        ],
+                        style={"width": "33%", "display": "inline-block"},
+                    ),
+                    html.Div(
+                        [
+                            html.H6("R0 Reduction"),
+                            dcc.Input(
+                                id={"role": "r0", "index": i},
+                                value=dr[i],
+                                step=0.1,
+                                type="number",
+                                style={"width": "100%"},
+                            ),
+                        ],
+                        style={
+                            "width": "28%",
+                            "display": "inline-block",
+                            "margin": "0 5% 0 0",
+                        },
+                    ),
+                    html.Div(
+                        [
+                            html.H6("Contained Proportion"),
+                            dcc.Slider(
+                                id={"role": "pcont", "index": i},
+                                min=0,
+                                max=1,
+                                value=pco[i],
+                                step=0.01,
+                                tooltip={"always_visible": False},
+                                marks={0: "0", 1: "1"},
+                            ),
+                        ],
+                        style={"width": "33%", "display": "inline-block"},
+                    ),
+                ],
+                style={"border-style": "outset", "margin": "1%", "padding": "1%"},
+            )
+            for i in range(n)
+        ]
 
     # Choosing which to change the stage inputs, by finding out the triggered component
-    json_stage = ['delta_r0', 'pcont', 'day', 'n_r0']
+    json_stage = ["delta_r0", "pcont", "day", "n_r0"]
     # If it's sample that is looked for, use the inputs from sample file
-    if current_call=='init':
+    if current_call == "init":
         jf = json.loads(sample.loc[init])
     # If it's a file, use the inputs from it
     else:
-        _, content_string = content.split(',')
+        _, content_string = content.split(",")
         decoded = base64.b64decode(content_string)
         jf = json.loads(decoded)
 
@@ -731,22 +1301,71 @@ def ins_generate(init,n,content,file):
             if i not in jf:
                 return dash.no_update
         # Inconsistent number of stage variables
-        if len(jf['day']) != len(jf['delta_r0']) or len(jf['day']) != len(jf['pcont']):
+        if len(jf["day"]) != len(jf["delta_r0"]) or len(jf["day"]) != len(jf["pcont"]):
             return dash.no_update
 
-    return [html.Div([html.H5(f'Stage {i+1}:'),
-                        html.Div([html.H6('Starting Date'), dcc.Input(id={'role':'day', 'index':i}, min=1, max=1000, value=jf['day'][i], step=1, type='number', style={'width':'80%'})],
-                                    style={'width': '33%', 'display': 'inline-block'}),
-                        html.Div([html.H6('R0 Reduction'), dcc.Input(id={'role':'r0', 'index':i}, value=jf['delta_r0'][i], step=0.1, type='number', style={'width':'100%'})],
-                                    style={'width': '28%', 'display': 'inline-block', 'margin':'0 5% 0 0'}),
-                        html.Div([html.H6('Contained Proportion'), dcc.Slider(id={'role':'pcont', 'index':i}, min=0, max=1, value=jf['pcont'][i], step=0.01, tooltip={'always_visible': False}, marks={0:'0',1:'1'})],
-                                    style={'width': '33%', 'display': 'inline-block'})
-                        ], style={'border-style':'outset', 'margin':'1%', 'padding': '1%'}) for i in range(jf['n_r0'])]
+    return [
+        html.Div(
+            [
+                html.H5(f"Stage {i+1}:"),
+                html.Div(
+                    [
+                        html.H6("Starting Date"),
+                        dcc.Input(
+                            id={"role": "day", "index": i},
+                            min=1,
+                            max=1000,
+                            value=jf["day"][i],
+                            step=1,
+                            type="number",
+                            style={"width": "80%"},
+                        ),
+                    ],
+                    style={"width": "33%", "display": "inline-block"},
+                ),
+                html.Div(
+                    [
+                        html.H6("R0 Reduction"),
+                        dcc.Input(
+                            id={"role": "r0", "index": i},
+                            value=jf["delta_r0"][i],
+                            step=0.1,
+                            type="number",
+                            style={"width": "100%"},
+                        ),
+                    ],
+                    style={
+                        "width": "28%",
+                        "display": "inline-block",
+                        "margin": "0 5% 0 0",
+                    },
+                ),
+                html.Div(
+                    [
+                        html.H6("Contained Proportion"),
+                        dcc.Slider(
+                            id={"role": "pcont", "index": i},
+                            min=0,
+                            max=1,
+                            value=jf["pcont"][i],
+                            step=0.01,
+                            tooltip={"always_visible": False},
+                            marks={0: "0", 1: "1"},
+                        ),
+                    ],
+                    style={"width": "33%", "display": "inline-block"},
+                ),
+            ],
+            style={"border-style": "outset", "margin": "1%", "padding": "1%"},
+        )
+        for i in range(jf["n_r0"])
+    ]
+
 
 @app.callback(
-    [Output(f"collapse{i}", "is_open") for i in ['','-p','-t']],
-    [Input(f"collapse-button{i}", "n_clicks") for i in ['','-p','-t']],
-    [State(f"collapse{i}", "is_open") for i in ['','-p','-t']],
+    [Output(f"collapse{i}", "is_open") for i in ["", "-p", "-t"]],
+    [Input(f"collapse-button{i}", "n_clicks") for i in ["", "-p", "-t"]],
+    [State(f"collapse{i}", "is_open") for i in ["", "-p", "-t"]],
 )
 def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
     r"""
@@ -781,54 +1400,82 @@ def toggle_accordion(n1, n2, n3, is_open1, is_open2, is_open3):
         return False, False, not is_open3
     return False, False, False
 
+
 @app.callback(
-    Output('overall-plot', 'figure'),
-    Output('fatal-plot', 'figure'),
-    Output('r0-plot', 'figure'),
+    Output("overall-plot", "figure"),
+    Output("fatal-plot", "figure"),
+    Output("r0-plot", "figure"),
     Output("download-dataframe-csv", "data"),
     Output("download-sum", "data"),
     Output("download-ipt", "data"),
-    Input('slider-N', component_property='value'),
-    Input('num', 'value'),
-    Input('slider-r0', component_property='value'),
-    [Input({'role':'r0', 'index':ALL}, component_property='value')],
-    [Input({'role':'pcont', 'index':ALL}, component_property='value')],
-    [Input({'role':'day', 'index':ALL}, component_property='value')],
-    Input('date', component_property='date'),
-    Input('ndate', 'value'),
-    Input('hcap', component_property='value'),
-    Input('hqar', component_property='value'),
-    Input('slider-tinc', component_property='value'),
-    Input('slider-tinf', component_property='value'),
-    Input('slider-ticu', component_property='value'),
-    Input('slider-thsp', component_property='value'),
-    Input('slider-tcrt', component_property='value'),
-    Input('slider-trec', component_property='value'),
-    Input('slider-tqar', component_property='value'),
-    Input('slider-tqah', component_property='value'),
-    Input('slider-pquar', component_property='value'),
-    Input('slider-pcross', component_property='value'),
-    Input('slider-pqhsp', component_property='value'),
-    Input('slider-pj', component_property='value'),
-    Input('slider-ph', component_property='value'),
-    Input('slider-pc', component_property='value'),
-    Input('slider-pf', component_property='value'),
+    Input("slider-N", component_property="value"),
+    Input("num", "value"),
+    Input("slider-r0", component_property="value"),
+    [Input({"role": "r0", "index": ALL}, component_property="value")],
+    [Input({"role": "pcont", "index": ALL}, component_property="value")],
+    [Input({"role": "day", "index": ALL}, component_property="value")],
+    Input("date", component_property="date"),
+    Input("ndate", "value"),
+    Input("hcap", component_property="value"),
+    Input("hqar", component_property="value"),
+    Input("slider-tinc", component_property="value"),
+    Input("slider-tinf", component_property="value"),
+    Input("slider-ticu", component_property="value"),
+    Input("slider-thsp", component_property="value"),
+    Input("slider-tcrt", component_property="value"),
+    Input("slider-trec", component_property="value"),
+    Input("slider-tqar", component_property="value"),
+    Input("slider-tqah", component_property="value"),
+    Input("slider-pquar", component_property="value"),
+    Input("slider-pcross", component_property="value"),
+    Input("slider-pqhsp", component_property="value"),
+    Input("slider-pj", component_property="value"),
+    Input("slider-ph", component_property="value"),
+    Input("slider-pc", component_property="value"),
+    Input("slider-pf", component_property="value"),
     Input("btn_csv", "n_clicks"),
     Input("btn_sum", "n_clicks"),
     Input("btn_ipt", "n_clicks"),
-    Input('mods', component_property='value'),
-    Input('file', component_property='value'),
-    Input('up_stat', 'contents'),
-    State('up_stat', 'filename'),
+    Input("mods", component_property="value"),
+    Input("file", component_property="value"),
+    Input("up_stat", "contents"),
+    State("up_stat", "filename"),
     prevent_initial_call=True,
 )
-def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
-                 hcap, hqar,
-                 tinc, tinf, ticu, thsp, tcrt,
-                 trec, tqar, tqah, 
-                 pquar, pcross, pqhsp,
-                 pj, ph, pc, pf,
-                 ligma,sugma,sigma_duck,mod,file,contents,filename):
+def update_graph(
+    N,
+    n_r0,
+    r0,
+    delta_r0,
+    pcont,
+    day,
+    date,
+    ndate,
+    hcap,
+    hqar,
+    tinc,
+    tinf,
+    ticu,
+    thsp,
+    tcrt,
+    trec,
+    tqar,
+    tqah,
+    pquar,
+    pcross,
+    pqhsp,
+    pj,
+    ph,
+    pc,
+    pf,
+    ligma,
+    sugma,
+    sigma_duck,
+    mod,
+    file,
+    contents,
+    filename,
+):
     r"""
     Produce/change output plot. Triggered on open, or when any variable changes.
 
@@ -845,6 +1492,7 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
     download1, download2, download3: `file`
         Exported file for download, if requested
     """
+
     def R0_dynamic(t):
         r"""
         Get R0 based on day and stage inputs.
@@ -874,149 +1522,228 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
                 i += 1
             # Initial stage
             if i == 0:
-                return r0 * (1 - pcont[0]) - 2 * delta_r0[0] / 30 * (t - (day[0] - 1)) * pcont[0]
+                return (
+                    r0 * (1 - pcont[0])
+                    - 2 * delta_r0[0] / 30 * (t - (day[0] - 1)) * pcont[0]
+                )
             else:
                 # Recursively call the function, as R0 works in a similar fashion to Hidden Markov Model
                 # If there is increase in proportion contamination (See formula for details)
                 if pcont[i] >= pcont[i - 1]:
                     return max(
-                        min(R0_dynamic(day[i] - 1), r0 * (1 - pcont[i])) - 2 * delta_r0[i] / 30 * (t - (day[i] - 1)) *
-                        pcont[i], 0)
+                        min(R0_dynamic(day[i] - 1), r0 * (1 - pcont[i]))
+                        - 2 * delta_r0[i] / 30 * (t - (day[i] - 1)) * pcont[i],
+                        0,
+                    )
                 # If there is decrease in proportion contamination (See formula for details)
                 else:
                     if min(R0_dynamic(day[i] - 1), r0 * (1 - pcont[i])) > 0:
-                        return min(R0_dynamic(day[i] - 1), r0 * (1 - pcont[i])) + 2 * delta_r0[i] / 30 * (
-                                t - (day[i] - 1)) * (1 - pcont[i])
+                        return min(
+                            R0_dynamic(day[i] - 1), r0 * (1 - pcont[i])
+                        ) + 2 * delta_r0[i] / 30 * (t - (day[i] - 1)) * (1 - pcont[i])
                     else:
                         return 0.0
 
     # Open up comparison csv file, if there is one
     compare = False
     if contents:
-        _, content_string = contents.split(',')
+        _, content_string = contents.split(",")
         decoded = base64.b64decode(content_string)
         try:
-            if 'csv' in filename:
-                df_compare = pd.read_csv(
-                    io.StringIO(decoded.decode('utf-8')))
+            if "csv" in filename:
+                df_compare = pd.read_csv(io.StringIO(decoded.decode("utf-8")))
                 compare = True
         except Exception as e:
             print(e)
 
     # Solve for output variables
-    args = (R0_dynamic,
-            tinf, tinc, thsp, tcrt,
-            ticu, tqar, tqah, trec,
-            ph, pc, pf,
-            pj, pquar, pqhsp, pcross)
+    args = (
+        R0_dynamic,
+        tinf,
+        tinc,
+        thsp,
+        tcrt,
+        ticu,
+        tqar,
+        tqah,
+        trec,
+        ph,
+        pc,
+        pf,
+        pj,
+        pquar,
+        pqhsp,
+        pcross,
+    )
 
     n_infected = 1
     initial_state = [(N - n_infected) / N, 0, n_infected / N, 0, 0, 0, 0, 0, 0]
 
-    sol = solve_ivp(SEIQHCDRO_model, [0, ndate],
-                    initial_state, args=args,
-                    t_eval=np.arange(ndate+1), method="Radau")
+    sol = solve_ivp(
+        SEIQHCDRO_model,
+        [0, ndate],
+        initial_state,
+        args=args,
+        t_eval=np.arange(ndate + 1),
+        method="Radau",
+    )
     S, E, I, Q, H, C, D, R, O = sol.y
 
     # Show by days passed pr date?
-    x_day = pd.date_range(date, periods=ndate+1).tolist()
-    x = x_day if 2 in mod else np.linspace(0, ndate, ndate+1)
-    
+    x_day = pd.date_range(date, periods=ndate + 1).tolist()
+    x = x_day if 2 in mod else np.linspace(0, ndate, ndate + 1)
+
     # Infected, Hospitalised
     ift = np.round((I + H + C + D + R + O) * N)
     hsp = np.round((H + C + D + R) * N)
-    hsp_in = np.append([0],[hsp[i + 1] - hsp[i] if hsp[i+1]>hsp[i] else 0 for i in range(ndate)])
-    ift_in = np.append([0],[ift[i + 1] - ift[i] if ift[i+1]>ift[i] else 0 for i in range(ndate)])
+    hsp_in = np.append(
+        [0], [hsp[i + 1] - hsp[i] if hsp[i + 1] > hsp[i] else 0 for i in range(ndate)]
+    )
+    ift_in = np.append(
+        [0], [ift[i + 1] - ift[i] if ift[i + 1] > ift[i] else 0 for i in range(ndate)]
+    )
     for i in range(ndate):
-        hsp[i+1]=hsp[i]+hsp_in[i]
-        ift[i+1]=ift[i]+ift_in[i]
+        hsp[i + 1] = hsp[i] + hsp_in[i]
+        ift[i + 1] = ift[i] + ift_in[i]
 
     # Critical, Dead
     crt = np.round((C + D) * N)
     ded = np.round(D * N)
-    crt_in = np.append([0],[crt[i + 1] - crt[i] if crt[i+1]>crt[i] else 0 for i in range(ndate)])
-    ded_in = np.append([0],[ded[i + 1] - ded[i] if ded[i+1]>ded[i] else 0 for i in range(ndate)])
+    crt_in = np.append(
+        [0], [crt[i + 1] - crt[i] if crt[i + 1] > crt[i] else 0 for i in range(ndate)]
+    )
+    ded_in = np.append(
+        [0], [ded[i + 1] - ded[i] if ded[i + 1] > ded[i] else 0 for i in range(ndate)]
+    )
 
     # Quarantine
-    qar = np.round((E+I+Q+H+C+D)*N)
+    qar = np.round((E + I + Q + H + C + D) * N)
 
     # R0
-    r0_trend = np.array([R0_dynamic(t) for t in np.linspace(0, ndate, ndate+1)])
+    r0_trend = np.array([R0_dynamic(t) for t in np.linspace(0, ndate, ndate + 1)])
 
-    df = pd.DataFrame({"Date": x_day, 
-                       "Infected": ift, 
-                       "Daily Infected": ift_in, 
-                       "Hospitalised": hsp,
-                       "Daily Hospitalised": hsp_in,  
-                       "Active ICU": crt-ded,
-                       "Deaths":ded})
-    
+    df = pd.DataFrame(
+        {
+            "Date": x_day,
+            "Infected": ift,
+            "Daily Infected": ift_in,
+            "Hospitalised": hsp,
+            "Daily Hospitalised": hsp_in,
+            "Active ICU": crt - ded,
+            "Deaths": ded,
+        }
+    )
+
     # Plotting
-    fig = make_subplots(rows=1, cols=2, x_title="Date" if 2 in mod else "Days since the beginning of outbreak", y_title="Cases")
+    fig = make_subplots(
+        rows=1,
+        cols=2,
+        x_title="Date" if 2 in mod else "Days since the beginning of outbreak",
+        y_title="Cases",
+    )
 
-    fig.add_trace(go.Scatter(x=x, y=ift, name='Total Infected'), row=1, col=2)
-    fig.add_trace(go.Scatter(x=x, y=hsp, name='Total Hospitalised'), row=1, col=2)
-    fig.add_trace(go.Scatter(x=x, y=hsp_in, name='Daily Hospital Incidence'), row=1, col=1)
-    fig.add_trace(go.Scatter(x=x, y=ift_in, name='Daily Infected Incidence'), row=1, col=1)
+    fig.add_trace(go.Scatter(x=x, y=ift, name="Total Infected"), row=1, col=2)
+    fig.add_trace(go.Scatter(x=x, y=hsp, name="Total Hospitalised"), row=1, col=2)
+    fig.add_trace(
+        go.Scatter(x=x, y=hsp_in, name="Daily Hospital Incidence"), row=1, col=1
+    )
+    fig.add_trace(
+        go.Scatter(x=x, y=ift_in, name="Daily Infected Incidence"), row=1, col=1
+    )
     if 1 in mod:
-        fig.add_trace(go.Scatter(x=x, y=hcap * np.ones(ndate+1), name='Hospital Capacity'), row=1, col=2)
-        
+        fig.add_trace(
+            go.Scatter(x=x, y=hcap * np.ones(ndate + 1), name="Hospital Capacity"),
+            row=1,
+            col=2,
+        )
+
     fig.update_layout(
         title={
-            'text': "OVERALL TREND OF INFECTION",
-            'y': 0.9,
-            'x': 0.5,
-            'xanchor': 'center',
-            'yanchor': 'top'},
+            "text": "OVERALL TREND OF INFECTION",
+            "y": 0.9,
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "top",
+        },
         title_font_size=20,
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor = 'rgb(61,61,61)',
-        font=dict(color='rgb(174, 211, 210)')
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgb(61,61,61)",
+        font=dict(color="rgb(174, 211, 210)"),
     )
-    fig.update_xaxes(zerolinecolor='rgb(110,110,110)', gridwidth=1, gridcolor='rgb(100,100,100)')
-    fig.update_yaxes(zerolinecolor='rgb(110,110,110)', gridwidth=1, gridcolor='rgb(100,100,100)')
+    fig.update_xaxes(
+        zerolinecolor="rgb(110,110,110)", gridwidth=1, gridcolor="rgb(100,100,100)"
+    )
+    fig.update_yaxes(
+        zerolinecolor="rgb(110,110,110)", gridwidth=1, gridcolor="rgb(100,100,100)"
+    )
 
-    fig1 = make_subplots(rows=1, cols=2, x_title="Date" if 2 in mod else "Days since the beginning of outbreak", y_title="Cases")
-    
-    fig1.add_trace(go.Scatter(x=x, y=crt-ded, name='Active ICU'), row=1, col=1)
-    fig1.add_trace(go.Scatter(x=x, y=ded, name='Deaths'), row=1, col=2)
+    fig1 = make_subplots(
+        rows=1,
+        cols=2,
+        x_title="Date" if 2 in mod else "Days since the beginning of outbreak",
+        y_title="Cases",
+    )
+
+    fig1.add_trace(go.Scatter(x=x, y=crt - ded, name="Active ICU"), row=1, col=1)
+    fig1.add_trace(go.Scatter(x=x, y=ded, name="Deaths"), row=1, col=2)
 
     fig1.update_layout(
         title={
-            'text': "CRITICAL AND FATAL CASES",
-            'y': 0.9,
-            'x': 0.5,
-            'xanchor': 'center',
-            'yanchor': 'top'},
+            "text": "CRITICAL AND FATAL CASES",
+            "y": 0.9,
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "top",
+        },
         title_font_size=20,
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor = 'rgb(61,61,61)',
-        font=dict(color='rgb(174, 211, 210)')
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgb(61,61,61)",
+        font=dict(color="rgb(174, 211, 210)"),
     )
-    fig1.update_xaxes(zerolinecolor='rgb(110,110,110)', gridwidth=1, gridcolor='rgb(100,100,100)')
-    fig1.update_yaxes(zerolinecolor='rgb(110,110,110)', gridwidth=1, gridcolor='rgb(100,100,100)')
+    fig1.update_xaxes(
+        zerolinecolor="rgb(110,110,110)", gridwidth=1, gridcolor="rgb(100,100,100)"
+    )
+    fig1.update_yaxes(
+        zerolinecolor="rgb(110,110,110)", gridwidth=1, gridcolor="rgb(100,100,100)"
+    )
 
-    fig2 = make_subplots(rows=1, cols=2, x_title="Date" if 2 in mod else "Days since the beginning of outbreak", y_title="Cases")
+    fig2 = make_subplots(
+        rows=1,
+        cols=2,
+        x_title="Date" if 2 in mod else "Days since the beginning of outbreak",
+        y_title="Cases",
+    )
 
-    fig2.add_trace(go.Scatter(x=x, y=r0_trend, name='Effective Reproduction Number'), row=1, col=1)
-    fig2.add_trace(go.Scatter(x=x, y=qar, name='Total quarantined'), row=1, col=2)
+    fig2.add_trace(
+        go.Scatter(x=x, y=r0_trend, name="Effective Reproduction Number"), row=1, col=1
+    )
+    fig2.add_trace(go.Scatter(x=x, y=qar, name="Total quarantined"), row=1, col=2)
     if 3 in mod:
-        fig2.add_trace(go.Scatter(x=x, y=hqar * np.ones(ndate+1), name='Quarantine Capacity'), row=1, col=2)
+        fig2.add_trace(
+            go.Scatter(x=x, y=hqar * np.ones(ndate + 1), name="Quarantine Capacity"),
+            row=1,
+            col=2,
+        )
 
     fig2.update_layout(
         title={
-            'text': "SPREAD AND CONTAINMENT",
-            'y': 0.9,
-            'x': 0.5,
-            'xanchor': 'center',
-            'yanchor': 'top'},
+            "text": "SPREAD AND CONTAINMENT",
+            "y": 0.9,
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "top",
+        },
         title_font_size=20,
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor = 'rgb(61,61,61)',
-        font=dict(color='rgb(174, 211, 210)')
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgb(61,61,61)",
+        font=dict(color="rgb(174, 211, 210)"),
     )
-    fig2.update_xaxes(zerolinecolor='rgb(110,110,110)', gridwidth=1, gridcolor='rgb(100,100,100)')
-    fig2.update_yaxes(zerolinecolor='rgb(110,110,110)', gridwidth=1, gridcolor='rgb(100,100,100)')
+    fig2.update_xaxes(
+        zerolinecolor="rgb(110,110,110)", gridwidth=1, gridcolor="rgb(100,100,100)"
+    )
+    fig2.update_yaxes(
+        zerolinecolor="rgb(110,110,110)", gridwidth=1, gridcolor="rgb(100,100,100)"
+    )
 
     if 2 in mod:
         fig.update_xaxes(dtick="M1", tickformat="%d/%m/%y")
@@ -1025,38 +1752,96 @@ def update_graph(N, n_r0, r0, delta_r0, pcont, day, date, ndate,
 
     # Add comparison lines if there is any
     if compare:
-        if 'infected' in df_compare.columns:
-            fig.add_trace(go.Scatter(x=x, y=df_compare['infected'], name='Actual Infected'), row=1, col=2)
-        if 'daily_infected' in df_compare.columns:
-            fig.add_trace(go.Scatter(x=x, y=df_compare['daily_infected'], name='Actual Daily Infected'), row=1, col=1)
-        if 'active_critical' in df_compare.columns:
-            fig1.add_trace(go.Scatter(x=x, y=df_compare['active_critical'], name='Actual ICU'), row=1, col=1)
-        if 'active_quarantined' in df_compare.columns:
-            fig2.add_trace(go.Scatter(x=x, y=df_compare['active_quarantined'], name='Actual On Quarantine'), row=1, col=2)
-        if 'deaths' in df_compare.columns:
-            fig1.add_trace(go.Scatter(x=x, y=df_compare['deaths'], name='Actual Deaths'), row=1, col=2)
+        if "infected" in df_compare.columns:
+            fig.add_trace(
+                go.Scatter(x=x, y=df_compare["infected"], name="Actual Infected"),
+                row=1,
+                col=2,
+            )
+        if "daily_infected" in df_compare.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=x, y=df_compare["daily_infected"], name="Actual Daily Infected"
+                ),
+                row=1,
+                col=1,
+            )
+        if "active_critical" in df_compare.columns:
+            fig1.add_trace(
+                go.Scatter(x=x, y=df_compare["active_critical"], name="Actual ICU"),
+                row=1,
+                col=1,
+            )
+        if "active_quarantined" in df_compare.columns:
+            fig2.add_trace(
+                go.Scatter(
+                    x=x, y=df_compare["active_quarantined"], name="Actual On Quarantine"
+                ),
+                row=1,
+                col=2,
+            )
+        if "deaths" in df_compare.columns:
+            fig1.add_trace(
+                go.Scatter(x=x, y=df_compare["deaths"], name="Actual Deaths"),
+                row=1,
+                col=2,
+            )
 
     # Check if there is any download triggered. If there is, send a file, depending on the specified format
     ctx = dash.callback_context.triggered
     if ctx:
-        name = 'exported_stats' if not file else file
-        current_call = ctx[0]['prop_id'].split('.')[0]
-        if current_call=='btn_csv':
-            return fig,fig1,fig2, dcc.send_data_frame(df.to_csv, name+".csv"), None, None
-        elif current_call=='btn_ipt':
-            json_out = json.dumps(
-                {"N":N, "n_r0":n_r0, "r0":r0, "delta_r0":delta_r0, 
-                 "pcont":pcont, "day":day, "date":date, "ndate": ndate,
-                 "hcap":hcap, "hqar":hqar,
-                 "tinc":tinc, "tinf":tinf, "ticu":ticu, "thsp":thsp, "tcrt":tcrt,
-                 "trec":trec, "tqar":tqar, "tqah":tqah, 
-                 "pquar":pquar, "pcross":pcross, "pqhsp":pqhsp,
-                 "pj":pj, "ph":ph, "pc":pc, "pf":pf},
-                indent=4
+        name = "exported_stats" if not file else file
+        current_call = ctx[0]["prop_id"].split(".")[0]
+        if current_call == "btn_csv":
+            return (
+                fig,
+                fig1,
+                fig2,
+                dcc.send_data_frame(df.to_csv, name + ".csv"),
+                None,
+                None,
             )
-            return fig,fig1,fig2, None, None, dict(content=json_out, filename=name+".json")
-        elif current_call=='btn_sum':
-            text=f'''
+        elif current_call == "btn_ipt":
+            json_out = json.dumps(
+                {
+                    "N": N,
+                    "n_r0": n_r0,
+                    "r0": r0,
+                    "delta_r0": delta_r0,
+                    "pcont": pcont,
+                    "day": day,
+                    "date": date,
+                    "ndate": ndate,
+                    "hcap": hcap,
+                    "hqar": hqar,
+                    "tinc": tinc,
+                    "tinf": tinf,
+                    "ticu": ticu,
+                    "thsp": thsp,
+                    "tcrt": tcrt,
+                    "trec": trec,
+                    "tqar": tqar,
+                    "tqah": tqah,
+                    "pquar": pquar,
+                    "pcross": pcross,
+                    "pqhsp": pqhsp,
+                    "pj": pj,
+                    "ph": ph,
+                    "pc": pc,
+                    "pf": pf,
+                },
+                indent=4,
+            )
+            return (
+                fig,
+                fig1,
+                fig2,
+                None,
+                None,
+                dict(content=json_out, filename=name + ".json"),
+            )
+        elif current_call == "btn_sum":
+            text = f"""
 Generated by SEIQHCDRO COVID-19 Modelling Team for Vietnam: Hoang-Anh NGO, Tuan Khoi NGUYEN and Thu-Anh NGUYEN
 
 Population: {N} people
@@ -1093,41 +1878,49 @@ _{np.max(hsp)} hospitalised patients
 _{np.max(crt)} in critical condition
 _{np.max(ded)} deceased
 
-            '''
-            return fig,fig1,fig2, None, dict(content=text, filename=name+".txt"),None
-    return fig,fig1,fig2, None, None, None
+            """
+            return (
+                fig,
+                fig1,
+                fig2,
+                None,
+                dict(content=text, filename=name + ".txt"),
+                None,
+            )
+    return fig, fig1, fig2, None, None, None
+
 
 # Change input from uploaded files or sample files
 @app.callback(
-    Output('slider-N', component_property='value'),
-    Output('num', 'value'),
-    Output('slider-r0', component_property='value'),
-    Output('date', component_property='date'),
-    Output('ndate', component_property='value'),
-    Output('hcap', component_property='value'),
-    Output('hqar', component_property='value'),
-    Output('slider-tinc', component_property='value'),
-    Output('slider-tinf', component_property='value'),
-    Output('slider-ticu', component_property='value'),
-    Output('slider-thsp', component_property='value'),
-    Output('slider-tcrt', component_property='value'),
-    Output('slider-trec', component_property='value'),
-    Output('slider-tqar', component_property='value'),
-    Output('slider-tqah', component_property='value'),
-    Output('slider-pquar', component_property='value'),
-    Output('slider-pcross', component_property='value'),
-    Output('slider-pqhsp', component_property='value'),
-    Output('slider-pj', component_property='value'),
-    Output('slider-ph', component_property='value'),
-    Output('slider-pc', component_property='value'),
-    Output('slider-pf', component_property='value'),
-    Output('err', 'children'),
-    Input('init', 'value'),
-    Input('up', 'contents'),
-    State('up', 'filename'),
-    prevent_initial_call=True
+    Output("slider-N", component_property="value"),
+    Output("num", "value"),
+    Output("slider-r0", component_property="value"),
+    Output("date", component_property="date"),
+    Output("ndate", component_property="value"),
+    Output("hcap", component_property="value"),
+    Output("hqar", component_property="value"),
+    Output("slider-tinc", component_property="value"),
+    Output("slider-tinf", component_property="value"),
+    Output("slider-ticu", component_property="value"),
+    Output("slider-thsp", component_property="value"),
+    Output("slider-tcrt", component_property="value"),
+    Output("slider-trec", component_property="value"),
+    Output("slider-tqar", component_property="value"),
+    Output("slider-tqah", component_property="value"),
+    Output("slider-pquar", component_property="value"),
+    Output("slider-pcross", component_property="value"),
+    Output("slider-pqhsp", component_property="value"),
+    Output("slider-pj", component_property="value"),
+    Output("slider-ph", component_property="value"),
+    Output("slider-pc", component_property="value"),
+    Output("slider-pf", component_property="value"),
+    Output("err", "children"),
+    Input("init", "value"),
+    Input("up", "contents"),
+    State("up", "filename"),
+    prevent_initial_call=True,
 )
-def load_to_input(init,content,file):
+def load_to_input(init, content, file):
     r"""
     Load json file content to inputs.
 
@@ -1147,62 +1940,91 @@ def load_to_input(init,content,file):
     output : `(Any | List)`
         The modified outputs and upload status, for informing or debugging
     """
-    components = [  'slider-N',
-                    'n_r0',
-                    'slider-r0',
-                    'date',
-                    'ndate',
-                    'hcap',
-                    'hqar',
-                    'slider-tinc',
-                    'slider-tinf',
-                    'slider-ticu',
-                    'slider-thsp',
-                    'slider-tcrt',
-                    'slider-trec',
-                    'slider-tqar',
-                    'slider-tqah',
-                    'slider-pquar',
-                    'slider-pcross',
-                    'slider-pqhsp',
-                    'slider-pj',
-                    'slider-ph',
-                    'slider-pc',
-                    'slider-pf',]
+    components = [
+        "slider-N",
+        "n_r0",
+        "slider-r0",
+        "date",
+        "ndate",
+        "hcap",
+        "hqar",
+        "slider-tinc",
+        "slider-tinf",
+        "slider-ticu",
+        "slider-thsp",
+        "slider-tcrt",
+        "slider-trec",
+        "slider-tqar",
+        "slider-tqah",
+        "slider-pquar",
+        "slider-pcross",
+        "slider-pqhsp",
+        "slider-pj",
+        "slider-ph",
+        "slider-pc",
+        "slider-pf",
+    ]
 
-    json_attrib = [w.replace('slider-','') if 'slider-' in w else w for w in components]
-    json_stage = ['delta_r0', 'pcont', 'day']
-    
+    json_attrib = [
+        w.replace("slider-", "") if "slider-" in w else w for w in components
+    ]
+    json_stage = ["delta_r0", "pcont", "day"]
+
     # Check which file to be used from
     ctx = dash.callback_context.triggered
     if ctx:
-        current_call = ctx[0]['prop_id'].split('.')[0]
+        current_call = ctx[0]["prop_id"].split(".")[0]
         # Sample file to be used
-        if current_call=='init':
+        if current_call == "init":
             jf = json.loads(sample.loc[init])
             updated_name = sample.name[init]
         # Uploaded file to be used
         else:
             if not file:
-                return [dash.no_update for i in components] + ['Error: File not found!']
-            _, content_string = content.split(',')
+                return [dash.no_update for i in components] + ["Error: File not found!"]
+            _, content_string = content.split(",")
             decoded = base64.b64decode(content_string)
             jf = json.loads(decoded)
             # Irrelevant attribute handling
-            for i in json_attrib+json_stage:
+            for i in json_attrib + json_stage:
                 if i not in jf:
-                    return [dash.no_update for i in components] + [f'Error: Input "{i}" not found!']
+                    return [dash.no_update for i in components] + [
+                        f'Error: Input "{i}" not found!'
+                    ]
             # Inconsistent input handling
-            if len(jf['day']) != len(jf['delta_r0']) or len(jf['day']) != len(jf['pcont']):
-                return[dash.no_update for i in components] + [f'Error: Number of stage inputs not consistent!']
+            if len(jf["day"]) != len(jf["delta_r0"]) or len(jf["day"]) != len(
+                jf["pcont"]
+            ):
+                return [dash.no_update for i in components] + [
+                    f"Error: Number of stage inputs not consistent!"
+                ]
             updated_name = file
 
-    return [jf[i] for i in json_attrib] + [html.P(f'Updated inputs from {updated_name}!',style={'color':'chartreuse'})]
+    return [jf[i] for i in json_attrib] + [
+        html.P(f"Updated inputs from {updated_name}!", style={"color": "chartreuse"})
+    ]
 
 
-def SEIQHCDRO_model(t, y, R_0,
-                    T_inf, T_inc, T_hsp, T_crt, T_icu, T_quar, T_quar_hosp, T_rec,
-                    p_h, p_c, p_f, p_jrnl, p_quar, p_quar_hosp, p_cross_cont):
+def SEIQHCDRO_model(
+    t,
+    y,
+    R_0,
+    T_inf,
+    T_inc,
+    T_hsp,
+    T_crt,
+    T_icu,
+    T_quar,
+    T_quar_hosp,
+    T_rec,
+    p_h,
+    p_c,
+    p_f,
+    p_jrnl,
+    p_quar,
+    p_quar_hosp,
+    p_cross_cont,
+):
     """
     Main function of SEIQHCDRO model.
 
@@ -1235,20 +2057,32 @@ def SEIQHCDRO_model(t, y, R_0,
 
     # Check if R is constant or not
     if callable(R_0):
+
         def R0_dynamic(t):
             return R_0(t)
+
     else:
+
         def R0_dynamic(t):
             return R_0
 
     S, E, I, Q, H, C, D, R, O = y
 
-    dS_dt = - R0_dynamic(t) * (1 / T_inf + (1 - p_h) / T_rec) * I * S
-    dE_dt = R0_dynamic(t) * (1 / T_inf + (1 - p_h) / T_rec) * I * S - 1 / T_inc * E - p_quar * (E) / T_quar
+    dS_dt = -R0_dynamic(t) * (1 / T_inf + (1 - p_h) / T_rec) * I * S
+    dE_dt = (
+        R0_dynamic(t) * (1 / T_inf + (1 - p_h) / T_rec) * I * S
+        - 1 / T_inc * E
+        - p_quar * (E) / T_quar
+    )
     dI_dt = 1 / T_inc * E - (p_h / T_inf + (1 - p_h) / T_rec) * I
     dQ_dt = p_quar * (E) / T_quar - (p_quar_hosp + p_cross_cont) * Q / T_quar_hosp
-    dH_dt = p_h / T_inf * I - (1 - p_c) / T_hsp * H - p_c / T_crt * H - p_h / T_rec * H + (
-                p_quar_hosp + p_cross_cont) * Q / T_quar_hosp
+    dH_dt = (
+        p_h / T_inf * I
+        - (1 - p_c) / T_hsp * H
+        - p_c / T_crt * H
+        - p_h / T_rec * H
+        + (p_quar_hosp + p_cross_cont) * Q / T_quar_hosp
+    )
     dC_dt = p_c / T_crt * H - C / (T_icu + T_crt)
     dD_dt = p_f / (T_icu + T_crt) * C
     dR_dt = (1 - p_c) / T_hsp * H + (1 - p_f) / (T_icu + T_crt) * C
@@ -1257,9 +2091,12 @@ def SEIQHCDRO_model(t, y, R_0,
     dy_dt = [dS_dt, dE_dt, dI_dt, dQ_dt, dH_dt, dC_dt, dD_dt, dR_dt, dO_dt]
     return dy_dt
 
+
 # Update the index
-@app.callback(dash.dependencies.Output('page-content', 'children'),
-              [dash.dependencies.Input('url', 'pathname')])
+@app.callback(
+    dash.dependencies.Output("page-content", "children"),
+    [dash.dependencies.Input("url", "pathname")],
+)
 def display_page(pathname):
     r"""
     Routing the content to display.
@@ -1274,13 +2111,13 @@ def display_page(pathname):
     content : `dash_html_components.Div`
         A Div of HTML Elements for the specified route.
     """
-    if pathname == '/about':
+    if pathname == "/about":
         return about_page
     else:
         return main_page
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # If Mac, uncomment the next line, comment out the 2nd line
-    #app.server.run(port=8000, host='127.0.0.1')
+    # app.server.run(port=8000, host='127.0.0.1')
     app.run_server(debug=True)
