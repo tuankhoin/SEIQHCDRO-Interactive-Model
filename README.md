@@ -89,7 +89,7 @@ There are two cases that would happen:
 
 * When `p'_cont < p_cont` (i.e. the social distancing/lockdown measure loosens), the function now becomes:
 
-    ![case2](https://quicklatex.com/cache3/84/ql_1a46c5cd376b5ef2c5fa51f23f675484_l3.png)
+    ![case2](https://drive.google.com/uc?export=view&id=1IBcmRAffnW26DYXZtCqby9U-w0qpn9eF)
 </details>
 
 ## Tool features
