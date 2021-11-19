@@ -65,9 +65,7 @@ As an multi-compartment epidemiological model, there must exist specific relatio
 
 From this, we develop a system of differential equations to simulate the relationship between these compartments. The system reads:
 
-<p align="center">
-  <img src="https://drive.google.com/uc?export=view&id=1I6YFfapQGGgh7Cdq_AST_fmCWVaGWTZk"/>
-</p>
+![Formula](https://drive.google.com/uc?export=view&id=1I6YFfapQGGgh7Cdq_AST_fmCWVaGWTZk)
 
 with two main types of hyper-parameters
 * Proportion-related hyper-parameters `p`;
@@ -89,15 +87,11 @@ There are two cases that would happen:
 
 * When `p'_cont >= p_cont` (i.e. the social distancing/lockdown measure tightens), the new function is:
   
-    <p align="center">
-      <img src="https://drive.google.com/uc?export=view&id=1PyMewJ3MVu30Ot5Qg-EvqmTm6GqtGLE9" alt="case1"/>
-    </p>
+    ![case1](https://drive.google.com/uc?export=view&id=1PyMewJ3MVu30Ot5Qg-EvqmTm6GqtGLE9)
 
 * When `p'_cont < p_cont` (i.e. the social distancing/lockdown measure loosens), the function now becomes:
 
-    <p align="center">
-      <img src="https://drive.google.com/uc?export=view&id=1IBcmRAffnW26DYXZtCqby9U-w0qpn9eF" alt="case2"/>
-    </p>
+    ![case2](https://drive.google.com/uc?export=view&id=1IBcmRAffnW26DYXZtCqby9U-w0qpn9eF)
 </details>
 
 ## Tool features
