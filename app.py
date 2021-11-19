@@ -294,14 +294,17 @@ about_page = html.Div(
         ),
         dcc.Markdown(
             """
-                    ```json
-                    @misc{
-                        author = {Hoang Anh NGO and Tuan-Khoi NGUYEN and Thu-Anh NGUYEN},
-                        title = {A novel compartment model for analyzing and predicting COVID-19 outbreaks in Vietnam},
-                        howpublished = {Oral presentation at the 52nd Union World Conference on Lung Health}
-                        year = {2021},
-                        month = {October},
-                        date = {19--22}
+                    ```bibtex
+                    @inproceedings{seiqhcdro-2021,
+                      author = {Hoang Anh NGO and Tuan-Khoi NGUYEN and Thu-Anh NGUYEN},
+                      title = {A novel compartment model for analyzing and predicting COVID-19 outbreaks in Vietnam},
+                      booktitle = {Abstract Book, 52nd Union World Conference on Lung Health of the International Union Against Tuberculosis and Lung Disease (The Union)},
+                      year = {2021},
+                      month = {October},
+                      date = {19--22},
+                      pages = {S78--S78},
+                      url = {https://theunion.org/sites/default/files/2021-10/UNION2021_Abstracts_High.pdf},
+                      address = {Virtual}
                     }
                     ```
                     """,
