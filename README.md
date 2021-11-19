@@ -96,7 +96,7 @@ There are two cases that would happen:
 * When `p'_cont < p_cont` (i.e. the social distancing/lockdown measure loosens), the function now becomes:
 
     <p align="center">
-      <img src="https://drive.google.com/uc?export=view&id=1IBcmRAffnW26DYXZtCqby9U-w0qpn9eF" alt="case1"/>
+      <img src="https://drive.google.com/uc?export=view&id=1IBcmRAffnW26DYXZtCqby9U-w0qpn9eF" alt="case2"/>
     </p>
 </details>
 
