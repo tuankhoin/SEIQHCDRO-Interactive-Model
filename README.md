@@ -79,7 +79,9 @@ To obtain the result, this system of ordinary differential equations (ODEs) will
 
 One of the most important aspects of this model is the ability to capture different levels of social distancing/lockdown to the spread of the disease. As such, we have integrated these impacts onto the function representing the effective reproduction number `R_t` (i.e the basic reproduction number `R_0` with respect to time).
 
-![r0_formula](https://drive.google.com/uc?export=view&id=1r76mV3WO22H-Xm5wT_uDU4lHMpaKQxJh)
+<p align="center">
+  <img src="https://drive.google.com/uc?export=view&id=1r76mV3WO22H-Xm5wT_uDU4lHMpaKQxJh" alt="r0_formula"/>
+</p>
 
 Assume that there exists two consecutive time intervals separated by a policy scheme change at time `T`. Before time `T`, the population inherits a scheme with change of the basic reproduction number `delta R_0`, contact rate reduction `p_cont` and contact rate reduction due to journalism `p_jrnl`. After time `T`, the population now inherits a new scheme with a new set of parameters, `delta R'_0`, `p'_cont` and `p'_jrnl`, respectively.
 
