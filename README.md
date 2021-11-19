@@ -1,6 +1,6 @@
 # SEIQHCDRO COVID-19 INTERACTIVE MODELLING TOOL
 ![Heroku](https://pyheroku-badge.herokuapp.com/?app=vn-covid-modelling&style=flat)
-![ver](https://img.shields.io/badge/version-v2.0-blue)
+![ver](https://img.shields.io/badge/version-v3.0-blue)
 ![issues](https://img.shields.io/github/issues/tuankhoin/SEIQHCDRO-Interactive-Model)
 
  Interactive website that takes different scenarios to predict COVID outcomes in Vietnam
