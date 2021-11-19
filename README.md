@@ -89,7 +89,9 @@ There are two cases that would happen:
 
 * When `p'_cont >= p_cont` (i.e. the social distancing/lockdown measure tightens), the new function is:
   
-    ![case1](https://drive.google.com/uc?export=view&id=1PyMewJ3MVu30Ot5Qg-EvqmTm6GqtGLE9)
+    <p align="center">
+      <img src="https://drive.google.com/uc?export=view&id=1PyMewJ3MVu30Ot5Qg-EvqmTm6GqtGLE9" alt="case1"/>
+    </p>
 
 * When `p'_cont < p_cont` (i.e. the social distancing/lockdown measure loosens), the function now becomes:
 
