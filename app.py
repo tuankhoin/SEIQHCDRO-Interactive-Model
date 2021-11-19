@@ -168,7 +168,7 @@ about_page = html.Div(
         html.Div(
             [
                 html.Img(
-                    src="https://quicklatex.com/cache3/2e/ql_5948b14b283613968f0b24fb80533a2e_l3.png",
+                    src="https://drive.google.com/uc?export=view&id=1I6YFfapQGGgh7Cdq_AST_fmCWVaGWTZk",
                     style={"width": "40%", "fill": "#000"},
                 )
             ],
@@ -193,7 +193,7 @@ about_page = html.Div(
         html.Div(
             [
                 html.Img(
-                    src="https://quicklatex.com/cache3/f7/ql_580fe4eb71ceadb277d725dd86ca49f7_l3.png",
+                    src="https://drive.google.com/uc?export=view&id=1r76mV3WO22H-Xm5wT_uDU4lHMpaKQxJh",
                     style={"width": "15%", "fill": "#000"},
                 )
             ],
@@ -214,7 +214,7 @@ about_page = html.Div(
         html.Div(
             [
                 html.Img(
-                    src="https://quicklatex.com/cache3/9e/ql_11ac62405647900135857d3b2d429b9e_l3.png",
+                    src="https://drive.google.com/uc?export=view&id=1PyMewJ3MVu30Ot5Qg-EvqmTm6GqtGLE9",
                     style={"width": "40%", "fill": "#000"},
                 )
             ],
@@ -228,7 +228,7 @@ about_page = html.Div(
         html.Div(
             [
                 html.Img(
-                    src="https://quicklatex.com/cache3/84/ql_1a46c5cd376b5ef2c5fa51f23f675484_l3.png",
+                    src="https://drive.google.com/uc?export=view&id=1IBcmRAffnW26DYXZtCqby9U-w0qpn9eF",
                     style={"width": "40%", "fill": "#000"},
                 )
             ],
