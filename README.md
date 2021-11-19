@@ -65,7 +65,7 @@ As an multi-compartment epidemiological model, there must exist specific relatio
 
 From this, we develop a system of differential equations to simulate the relationship between these compartments. The system reads:
 
-![Formula](https://quicklatex.com/cache3/2e/ql_5948b14b283613968f0b24fb80533a2e_l3.png)
+![Formula](https://drive.google.com/file/d/1_hP1Cri_qV3akQlIznOI0yWhuCNkLzQ5/view?usp=sharing)
 
 with two main types of hyper-parameters
 * Proportion-related hyper-parameters `p`;
