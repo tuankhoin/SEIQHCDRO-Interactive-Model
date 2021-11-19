@@ -103,7 +103,7 @@ There are two cases that would happen:
 
 In order to create the most interactive and convenient tool possible for COVID-19 modelling, we have decided to opt for 
 a number of features that makes it more comfortable for users to interact with this web application, including
-* The ability to capture 10 different policy schemes in place, corresponding to 10 consecutive time intervals. This would
+* The ability to capture 30 different policy schemes in place, corresponding to 30 consecutive time intervals. This would
 be helpful for policy advocates to simulate effects of different policy making processes.
 * 3 pairs of plots representing different aspect of the outbreak with built-in gadgets of `Plotly` for generated plots, including:
     - **Overall trend of infection**: Incidence and cumulative number of hospitalized/infected COVID-19 cases,
