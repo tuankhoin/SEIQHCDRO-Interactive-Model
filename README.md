@@ -66,7 +66,7 @@ As an multi-compartment epidemiological model, there must exist specific relatio
 From this, we develop a system of differential equations to simulate the relationship between these compartments. The system reads:
 
 <p align="center">
-  <img src="https://drive.google.com/uc?export=view&id=1I6YFfapQGGgh7Cdq_AST_fmCWVaGWTZk" alt="Flowchart"/>
+  <img src="https://drive.google.com/uc?export=view&id=1I6YFfapQGGgh7Cdq_AST_fmCWVaGWTZk"/>
 </p>
 
 with two main types of hyper-parameters
