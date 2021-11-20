@@ -161,9 +161,9 @@ If SEIQHCDRO multi-compartment model in general or the interactive modelling web
 ```
 ## About the authors
 
-* [**Tuan-Khoi Nguyen**](https://tkhoinguyen.netlify.app/) is the data engineer and tool developer of this project. He is graduating from The University of Melbourne with a Bachelor of Science in Mechatronics, and about to continue his Masters within the same field. His research interest focuses on Machine Learning and its autonomous applications in Robotics and real life problems.
-* [**Hoang Anh NGO**](https://orcid.org/0000-0002-7583-753X) is the main author of the SEIQHCDRO model. He is about to graduate from École Polytechnique with a double major in Mathematics and Economics, minor in Computational Economics. He is also currently a Research Contractor at Woolcock Institute of Medical Research
-Vietnam. His research interests focus on Epidemiology, (Online) Machine Learning and its applications in Medicine.
+* [**Tuan-Khoi Nguyen**](https://tkhoinguyen.netlify.app/) is the data engineer and tool developer of this project. He is currently in his first year of Masters of Science in Mechatronics at The University of Melbourne with a Bachelor of Science in Mechatronics, after finishing the BSc. within the same field. His research interest focuses on Machine Learning and its autonomous applications in Robotics and real life problems.
+* [**Hoang Anh NGO**](https://orcid.org/0000-0002-7583-753X) is the main author of the SEIQHCDRO model. He finished his undergraduate study at École Polytechnique with a double major in Mathematics and Economics, minor in Computational Economics and is currently pursuing a Master of Science in Epidemiology at The University of Edinburgh. He is also currently a Research Contractor at Woolcock Institute of Medical Research
+Vietnam and Department of Information and Network (INFRES, Télécom Paris). His research interests focus on Epidemiology, (Online) Machine Learning and its applications in Medicine.
 * Dr [**Nguyen Thu Anh**](https://www.researchgate.net/profile/Nguyen-Anh-50) is the epidemiological supervisor of this project. She is an epidemiologist and a social scientist by training, with more than 20 years of experience. She holds an honorary position as Senior Clinical Lecturer at University of Sydney, and the head of the Woolcock Institute of Medical Research in Vietnam.
 
 ## Acknowledgement
