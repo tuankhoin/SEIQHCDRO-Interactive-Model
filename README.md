@@ -141,6 +141,8 @@ Up until now, our research project will be featured at two major conferences in 
 - [8th Vietnam Lung Association (VILA) Scientific Conference 2021](https://drive.google.com/file/d/10uBQJATgEIVgIAbQdp9n4oWGGYqOiKf-/view?fbclid=IwAR3bNTaz_4UKZxa2TaN5ge6FSJL88vURX7xzFURjkE0J-B4hxuKT_3ZZ3vQ).
 
 Besides, our research has also been featured on a lot of renowned newspapers in Vietnam, including Tuoi tre, VNExpress, Soha, Viet Nam News, etc. as a major tool for our policy advocates to fight against the COVID-19 pandemic in Vietnam.
+ 
+Update 2/2022: The project has been featured on 2021 Forbes Under 30 in Vietnam, which was being awarded to the project leader at the time.
 
 ## Citation
 
