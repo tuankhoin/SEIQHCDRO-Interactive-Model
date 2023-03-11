@@ -6,6 +6,8 @@
 
 > If you are interested to see how the website looked like, feel free to clone the repo and run it on localhost under `dash` and `flask` packages on Python.
 
+> Kind regards - Khoi
+
  Interactive website that takes different scenarios to predict COVID outcomes in Vietnam
 - [SEIQHCDRO COVID-19 INTERACTIVE MODELLING TOOL](#seiqhcdro-covid-19-interactive-modelling-tool)
   - [Introduction](#introduction)
