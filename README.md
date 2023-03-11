@@ -1,7 +1,10 @@
 # SEIQHCDRO COVID-19 INTERACTIVE MODELLING TOOL
-![Heroku](https://pyheroku-badge.herokuapp.com/?app=vn-covid-modelling&style=flat)
 ![ver](https://img.shields.io/badge/version-v3.0-blue)
 ![issues](https://img.shields.io/github/issues/tuankhoin/SEIQHCDRO-Interactive-Model)
+
+> **UPDATE 11/03/2023**: Heroku have now stopped supporting free-tier website hosting, and the website, which operated on Heroku free dynos, is down as a result. As students with many commitments, we don't have funding, and no longer have time to fiddle around and set-up an alternative host. When time allows, this can probably be implemented on PythonAnywhere. But for now, it will probably take some long hibernation, after having served for years and becoming outdated. On behalf of the team, I would like to express my sincere thank you to those who have shown a great interest in the website. It has been a wild ride, and I appreciate every experience brought to me. I hope to see you again, as more projects come.
+
+> If you are interested to see how the website looked like, feel free to clone the repo and run it on localhost under `dash` and `flask` packages on Python.
 
  Interactive website that takes different scenarios to predict COVID outcomes in Vietnam
 - [SEIQHCDRO COVID-19 INTERACTIVE MODELLING TOOL](#seiqhcdro-covid-19-interactive-modelling-tool)
